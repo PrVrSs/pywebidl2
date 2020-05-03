@@ -1,0 +1,102 @@
+[
+    {
+        "type": "interface",
+        "name": "B",
+        "inheritance": null,
+        "members": [
+            {
+                "type": "operation",
+                "name": "g",
+                "idlType": {
+                    "type": "return-type",
+                    "extAttrs": [],
+                    "generic": "",
+                    "nullable": false,
+                    "union": false,
+                    "idlType": "void"
+                },
+                "arguments": [],
+                "extAttrs": [],
+                "special": ""
+            },
+            {
+                "type": "operation",
+                "name": "g",
+                "idlType": {
+                    "type": "return-type",
+                    "extAttrs": [],
+                    "generic": "",
+                    "nullable": false,
+                    "union": false,
+                    "idlType": "void"
+                },
+                "arguments": [
+                    {
+                        "type": "argument",
+                        "name": "b",
+                        "extAttrs": [],
+                        "idlType": {
+                            "type": "argument-type",
+                            "extAttrs": [],
+                            "generic": "",
+                            "nullable": false,
+                            "union": false,
+                            "idlType": "B"
+                        },
+                        "default": null,
+                        "optional": false,
+                        "variadic": false
+                    }
+                ],
+                "extAttrs": [],
+                "special": ""
+            },
+            {
+                "type": "operation",
+                "name": "g",
+                "idlType": {
+                    "type": "return-type",
+                    "extAttrs": [],
+                    "generic": "",
+                    "nullable": false,
+                    "union": false,
+                    "idlType": "void"
+                },
+                "arguments": [
+                    {
+                        "type": "argument",
+                        "name": "s",
+                        "extAttrs": [
+                            {
+                                "type": "extended-attribute",
+                                "name": "AllowAny",
+                                "rhs": null,
+                                "arguments": []
+                            }
+                        ],
+                        "idlType": {
+                            "type": "argument-type",
+                            "extAttrs": [],
+                            "generic": "",
+                            "nullable": false,
+                            "union": false,
+                            "idlType": "DOMString"
+                        },
+                        "default": null,
+                        "optional": false,
+                        "variadic": false
+                    }
+                ],
+                "extAttrs": [],
+                "special": ""
+            }
+        ],
+        "extAttrs": [],
+        "partial": false
+    },
+    {
+        "type": "eof",
+        "value": "",
+        "trivia": ""
+    }
+]
