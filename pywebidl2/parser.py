@@ -3,7 +3,7 @@ from more_itertools.recipes import first_true
 
 from .errors import WebIDLParseError
 from .expressions import Identifier, IdentifierList
-from .statement import ExtendedAttribute
+from .statement import ExtendedAttribute, Interface
 from .token_type import TokenType
 
 
@@ -51,15 +51,24 @@ class BaseParser:
 class Parser(BaseParser):
 
     def parse(self):
-        return list(self.definitions())
+        return self.definitions()
 
     def definitions(self):
+        definitions = []
+
         while not self._is_at_end():
-            yield self.definition()
+            definitions.append(self.definition())
+
+        return definitions
 
     def definition(self):
         extended_attrs = list(self.extended_attributes())
-        return extended_attrs
+
+        return Interface(
+            name='',
+            inheritance='',
+            ext_attrs=extended_attrs,
+        )
 
     def extended_attributes(self):
         if not self._match(TokenType.LEFT_SQUARE):
@@ -79,14 +88,19 @@ class Parser(BaseParser):
         )
 
     def rhs(self):
-        if self._match(TokenType.EQUAL):
-            if self._match(TokenType.LEFT_PAREN):
-                return self.list_identifier()
+        if not self._match(TokenType.EQUAL):
+            return
 
+        if self._match(TokenType.LEFT_PAREN):
+            return self.identifier_list()
+
+        return self.identifier()
+
+    def identifier(self):
         return Identifier(
             self._consume(TokenType.IDENTIFIER, 'Expected variable name'))
 
-    def list_identifier(self):
+    def identifier_list(self):
         values = []
 
         while not self._match(TokenType.RIGHT_PAREN):

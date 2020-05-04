@@ -1,5 +1,6 @@
 class Statement:
     type: str
+    _fields: tuple
 
 
 class Partial(Statement):
@@ -16,6 +17,14 @@ class Partial(Statement):
 class Interface(Statement):
 
     type = 'interface'
+
+    _fields = (
+        'name',
+        'inheritance',
+        'members',
+        'ext_attrs',
+        'partial',
+    )
 
     def __init__(
             self,
@@ -38,6 +47,12 @@ class Interface(Statement):
 class ExtendedAttribute(Statement):
 
     type = 'extended-attribute'
+
+    _fields = (
+        'name',
+        'rhs',
+        'arguments',
+    )
 
     def __init__(self, name, rhs=None, arguments=None):
         self.name = name

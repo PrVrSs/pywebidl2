@@ -5,6 +5,10 @@ class Expression:
 class Identifier(Expression):
     type = 'identifier'
 
+    _fields = (
+        'value',
+    )
+
     def __init__(self, value):
         self.value = value
 
@@ -14,6 +18,10 @@ class Identifier(Expression):
 
 class IdentifierList(Expression):
     type = 'identifier-list'
+
+    _fields = (
+        'value',
+    )
 
     def __init__(self, value):
         self.value = value
