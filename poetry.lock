@@ -31,7 +31,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "0.4.3"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "More routines for operating on iterables, beyond itertools"
 name = "more-itertools"
 optional = false
@@ -156,7 +156,7 @@ python-versions = "*"
 version = "0.1.9"
 
 [metadata]
-content-hash = "0e02e3cafcc5a4cf1fa417d791f3e1242f3eb78309cc330d0a2f68c466436117"
+content-hash = "696f6a4fb37b322bca9e33837e32e08a770393f33282be1cf057ff72eeac9098"
 python-versions = "^3.8"
 
 [metadata.files]

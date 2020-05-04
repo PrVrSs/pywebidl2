@@ -1,13 +1,15 @@
+from more_itertools.more import peekable
+from more_itertools.recipes import first_true
+
 from .errors import WebIDLParseError
-from .expressions import Identifier
+from .expressions import Identifier, IdentifierList
 from .statement import ExtendedAttribute
 from .token_type import TokenType
 
 
 class BaseParser:
     def __init__(self, token_list):
-        self._current = 0
-        self._token_list = token_list
+        self.tokens = peekable(token_list)
 
     def _consume(self, token_type, message: str = ''):
         if not self._check(token_type):
@@ -16,46 +18,34 @@ class BaseParser:
         return self._advance()
 
     def _match(self, *token_types):
-        for token in token_types:
-            if self._check(token):
-                self._advance()
+        if _ := first_true(token_types, pred=self._check):
+            self._advance()
 
-                return True
-
-        return False
+        return _ is not None
 
     def _check(self, token_type):
         if self._is_at_end():
             return False
 
-        return self._peek().token_type == token_type
+        return self.tokens.peek().token_type == token_type
 
     def _advance(self):
-        if not self._is_at_end():
-            self._current += 1
-
-        return self._previous()
+        return next(self.tokens)
 
     def _is_at_end(self):
-        return self._peek().token_type == TokenType.EOF
+        return self.tokens.peek().token_type == TokenType.EOF
 
     def _is_at_right_paren(self):
-        return self._peek().token_type == TokenType.RIGHT_PAREN
+        return self.tokens.peek().token_type == TokenType.RIGHT_PAREN
 
     def _is_at_right_square(self):
-        return self._peek().token_type == TokenType.RIGHT_SQUARE
+        return self.tokens.peek().token_type == TokenType.RIGHT_SQUARE
 
     def _is_at_left_square(self):
-        return self._peek().token_type == TokenType.LEFT_SQUARE
+        return self.tokens.peek().token_type == TokenType.LEFT_SQUARE
 
     def _is_at_right_slash(self):
-        return self._peek().token_type == TokenType.SLASH
-
-    def _peek(self):
-        return self._token_list[self._current]
-
-    def _previous(self):
-        return self._token_list[self._current - 1]
+        return self.tokens.peek().token_type == TokenType.SLASH
 
 
 class Parser(BaseParser):
@@ -90,8 +80,23 @@ class Parser(BaseParser):
 
     def rhs(self):
         if self._match(TokenType.EQUAL):
-            return Identifier(
+            if self._match(TokenType.LEFT_PAREN):
+                return self.list_identifier()
+
+        return Identifier(
+            self._consume(TokenType.IDENTIFIER, 'Expected variable name'))
+
+    def list_identifier(self):
+        values = []
+
+        while not self._match(TokenType.RIGHT_PAREN):
+            if self._match(TokenType.COMMA):
+                continue
+
+            values.append(
                 self._consume(TokenType.IDENTIFIER, 'Expected variable name'))
+
+        return IdentifierList(values)
 
 
 # [Global=(Worker,ServiceWorker), Exposed=ServiceWorker]

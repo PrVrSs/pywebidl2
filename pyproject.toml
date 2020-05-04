@@ -17,6 +17,7 @@ keywords = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
+more-itertools = "^8.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.4.1"
