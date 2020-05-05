@@ -6,6 +6,8 @@ class TokenType(IntEnum):
     RIGHT_PAREN = auto()
     LEFT_SQUARE = auto()
     RIGHT_SQUARE = auto()
+    LEFT_BRACE = auto()
+    RIGHT_BRACE = auto()
     SEMICOLON = auto()
     DOT = auto()
     EQUAL = auto()
@@ -13,6 +15,8 @@ class TokenType(IntEnum):
     WHITESPACE = auto()
     COMMA = auto()
     IDENTIFIER = auto()
+
+    INTERFACE = auto()
 
     # literals
     TERMINAL = auto()

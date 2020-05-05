@@ -93,10 +93,5 @@
         ],
         "extAttrs": [],
         "partial": false
-    },
-    {
-        "type": "eof",
-        "value": "",
-        "trivia": ""
     }
 ]

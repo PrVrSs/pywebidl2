@@ -27,6 +27,9 @@ class Scanner:
 
     _identifier_head = string.ascii_letters + '_-'
     _identifier_body = _identifier_head + string.digits
+    _keywords = dict(
+        interface=TokenType.INTERFACE,
+    )
 
     def __init__(self, source: str = ''):
         self.source: str = source
@@ -61,6 +64,10 @@ class Scanner:
             self._add_token(TokenType.LEFT_PAREN)
         elif char == ')':
             self._add_token(TokenType.RIGHT_PAREN)
+        elif char == '{':
+            self._add_token(TokenType.LEFT_BRACE)
+        elif char == '}':
+            self._add_token(TokenType.RIGHT_BRACE)
         elif char == '[':
             self._add_token(TokenType.LEFT_SQUARE)
         elif char == ']':
@@ -69,6 +76,8 @@ class Scanner:
             self._add_token(TokenType.COMMA)
         elif char == '=':
             self._add_token(TokenType.EQUAL)
+        elif char == ';':
+            self._add_token(TokenType.SEMICOLON)
 
     def _comment(self):
         while self._peek() != '\n' and not self._is_at_end():
@@ -90,8 +99,11 @@ class Scanner:
         while self._is_alpha(self._peek()):
             self._advance()
 
-        if self._current_string not in NON_TERMINALS:
-            self._add_token(TokenType.IDENTIFIER, self._current_string,)
+        if token := self._keywords.get(self._current_string):
+            self._add_token(token)
+            return
+
+        self._add_token(TokenType.IDENTIFIER, self._current_string)
 
     def _number(self):
         while self._peek().isdigit():

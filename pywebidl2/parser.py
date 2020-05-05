@@ -3,7 +3,14 @@ from more_itertools.recipes import first_true
 
 from .errors import WebIDLParseError
 from .expressions import Identifier, IdentifierList
-from .statement import ExtendedAttribute, Interface
+from .statement import (
+    ExtendedAttribute,
+    Interface,
+    Operation,
+    ReturnType,
+    Argument,
+    ArgumentType,
+)
 from .token_type import TokenType
 
 
@@ -58,17 +65,59 @@ class Parser(BaseParser):
 
         while not self._is_at_end():
             definitions.append(self.definition())
+            self._consume(TokenType.SEMICOLON, 'Expected ";"')
 
         return definitions
 
     def definition(self):
         extended_attrs = list(self.extended_attributes())
 
+        if self._match(TokenType.INTERFACE):
+            return self.interface(extended_attrs)
+
+    def interface(self, extended_attrs):
+        name = self._consume(TokenType.IDENTIFIER, 'Expected interface name')
+        members = []
+
+        self._consume(TokenType.LEFT_BRACE, 'Expected left brace')
+
+        while not self._match(TokenType.RIGHT_BRACE):
+            members.append(self.member())
+            self._consume(TokenType.SEMICOLON, 'Expected ";"')
+
         return Interface(
-            name='',
-            inheritance='',
+            name=name,
             ext_attrs=extended_attrs,
+            members=members,
         )
+
+    def member(self):
+        idl_type = self.return_type()
+        name = self._consume(TokenType.IDENTIFIER, 'Expected variable name')
+
+        self._consume(TokenType.LEFT_PAREN, 'Expected "("')
+
+        arguments = []
+        while not self._match(TokenType.RIGHT_PAREN):
+            arguments.append(self.argument())
+
+        return Operation(name=name, idl_type=idl_type, arguments=arguments)
+
+    def argument(self):
+        ext_attrs = list(self.extended_attributes())
+
+        idl_type = self.argument_type()
+        name = self._consume(TokenType.IDENTIFIER, 'Expected interface name')
+
+        return Argument(name=name, idl_type=idl_type, ext_attrs=ext_attrs)
+
+    def argument_type(self):
+        idl_type = self._consume(TokenType.IDENTIFIER, 'Expected variable name')
+        return ArgumentType(idl_type=idl_type)
+
+    def return_type(self):
+        idl_type = self._consume(TokenType.IDENTIFIER, 'Expected variable name')
+        return ReturnType(idl_type=idl_type)
 
     def extended_attributes(self):
         if not self._match(TokenType.LEFT_SQUARE):
@@ -111,14 +160,3 @@ class Parser(BaseParser):
                 self._consume(TokenType.IDENTIFIER, 'Expected variable name'))
 
         return IdentifierList(values)
-
-
-# [Global=(Worker,ServiceWorker), Exposed=ServiceWorker]
-
-# [IntAttr=0, FloatAttr=3.14, StringAttr="abc", IdentifierAttr=_null, IdentifiersAttr=(_null, _const), FloatList=(3.14)]
-# [
-#     Constructor,
-#     Constructor(double radius)
-# ]
-
-# [Exposed=Window]
