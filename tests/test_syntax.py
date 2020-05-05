@@ -1,17 +1,15 @@
-from pywebidl2.tokeniser import Scanner
-from pywebidl2.parser import Parser
-from pywebidl2.ast_printer import JSONPrinter
-
 import json
+
+from pywebidl2 import JSONPrinter, Parser, Scanner
 
 
 def test_syntax(syntax_fixture):
-    target_file, expected_file = syntax_fixture
+    idl, baseline = syntax_fixture
 
-    scanner = Scanner(target_file.read_text())
+    scanner = Scanner(idl.read_text())
     parser = Parser(scanner.tokens)
 
-    with expected_file.open() as expected:
+    with baseline.open() as expected:
         assert [
-            JSONPrinter().print(defin) for defin in parser.parse()
+            JSONPrinter().print(definition) for definition in parser.parse()
         ] == json.load(expected)
