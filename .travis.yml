@@ -12,3 +12,7 @@ before_install:
 install: poetry install
 
 script: make test
+
+after_success:
+  - pip install codecov
+  - codecov
