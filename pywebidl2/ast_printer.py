@@ -68,7 +68,7 @@ class JSONPrinter(Visitor):
     def visit_identifier(self, expr):
         return dict(
             type=expr.type,
-            value=expr.name.lexeme,
+            value=expr.value.lexeme,
         )
 
     def visit_identifier_list(self, expr):
