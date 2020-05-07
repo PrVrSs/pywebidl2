@@ -1,7 +1,53 @@
-from .visitor import Visitor
+from typing import Iterable
+
+from .productions import Visitor
+from .productions.node import (
+    Node,
+    Argument,
+    ArgumentType,
+    ExtendedAttribute,
+    Identifier,
+    IdentifierList,
+    Interface,
+    Operation,
+    ReturnType,
+)
 
 
-class JSONPrinter(Visitor):
+class Walker(Visitor):
+
+    def _visit_children(self, node: Node) -> Iterable[Node]:
+        yield node
+
+        for child in node.children:
+            yield from child.accept(self)
+
+    def visit_interface_stmt(self, node: Interface) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_ext_attr(self, node: ExtendedAttribute) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_identifier(self, node: Identifier) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_identifier_list(self, node: IdentifierList) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_operation(self, node: Operation) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_return_type(self, node: ReturnType) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_argument(self, node: Argument) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_argument_type(self, node: ArgumentType) -> Iterable[Node]:
+        return self._visit_children(node)
+
+
+class JsonView(Visitor):
 
     def visit_interface_stmt(self, node):
         return dict(

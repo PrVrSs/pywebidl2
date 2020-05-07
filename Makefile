@@ -12,4 +12,8 @@ unit:
 		--cov-report=term-missing \
  		--cov-config=.coveragerc \
 
+.PHONY: mypy
+mypy:
+	mypy $(PROJECT_DIR)
+
 test: unit

@@ -1,5 +1,5 @@
 import string
-from typing import NamedTuple
+from typing import NamedTuple, List
 
 from .token_type import TokenType
 
@@ -26,14 +26,16 @@ class Scanner:
 
     _identifier_head = string.ascii_letters + '_-'
     _identifier_body = _identifier_head + string.digits
-    _keywords = dict(
-        interface=TokenType.INTERFACE,
-        optional=TokenType.OPTIONAL,
-    )
+    _keywords = {
+        'interface': TokenType.INTERFACE,
+        'optional': TokenType.OPTIONAL,
+        'async': TokenType.ASYNC,
+        'iterable': TokenType.ITERABLE,
+    }
 
     def __init__(self, source: str = ''):
         self.source: str = source
-        self.tokens = []
+        self.tokens: List[Token] = []
         self._start: int = 0
         self._current: int = 0
 

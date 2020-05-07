@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterable
 
 # TODO: add `as_dict method`
 # TODO: use metaclass - remove boilerplate. or just attrs
@@ -9,7 +9,7 @@ class Node:
     type: str
 
     @property
-    def children(self) -> List['Node']:
+    def children(self) -> Iterable['Node']:
         for field in vars(self).values():
             if isinstance(field, Node):
                 yield field

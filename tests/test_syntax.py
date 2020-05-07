@@ -1,6 +1,6 @@
 import json
 
-from pywebidl2 import JSONPrinter, parse
+from pywebidl2 import JsonView, parse
 
 
 def test_syntax(syntax_fixture):
@@ -10,5 +10,5 @@ def test_syntax(syntax_fixture):
 
     with baseline.open() as expected:
         assert [
-            JSONPrinter().visit(definition) for definition in definitions
+            JsonView().visit(definition) for definition in definitions
         ] == json.load(expected)

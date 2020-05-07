@@ -3,6 +3,9 @@
 [run]
 # Whether to measure branch coverage in addition to statement coverage.
 branch = True
+# List of file name patterns, the files to leave out of measurement or reporting
+omit =
+    */__main__.py
 
 [report]
 # Target coverage percentage

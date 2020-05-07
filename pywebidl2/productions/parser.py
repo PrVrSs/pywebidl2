@@ -1,7 +1,6 @@
 from more_itertools.more import peekable
 from more_itertools.recipes import first_true
 
-from .errors import WebIDLParseError
 from .node import (
     ExtendedAttribute,
     Identifier,
@@ -13,6 +12,7 @@ from .node import (
     ArgumentType,
 )
 from .token_type import TokenType
+from ..errors import WebIDLParseError
 
 
 class BaseParser:
