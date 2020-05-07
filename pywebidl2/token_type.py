@@ -16,6 +16,7 @@ class TokenType(IntEnum):
     COMMA = auto()
     IDENTIFIER = auto()
 
+    OPTIONAL = auto()
     INTERFACE = auto()
 
     # literals

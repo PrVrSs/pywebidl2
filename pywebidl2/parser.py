@@ -2,9 +2,10 @@ from more_itertools.more import peekable
 from more_itertools.recipes import first_true
 
 from .errors import WebIDLParseError
-from .expressions import Identifier, IdentifierList
-from .statement import (
+from .node import (
     ExtendedAttribute,
+    Identifier,
+    IdentifierList,
     Interface,
     Operation,
     ReturnType,
@@ -105,15 +106,22 @@ class Parser(BaseParser):
 
     def argument(self):
         ext_attrs = list(self.extended_attributes())
-
+        optional = self._match(TokenType.OPTIONAL)
         idl_type = self.argument_type()
-        name = self._consume(TokenType.IDENTIFIER, 'Expected interface name')
+        name = self._consume(TokenType.IDENTIFIER, 'Expected argument name')
 
-        return Argument(name=name, idl_type=idl_type, ext_attrs=ext_attrs)
+        return Argument(
+            name=name,
+            idl_type=idl_type,
+            ext_attrs=ext_attrs,
+            optional=optional,
+        )
 
     def argument_type(self):
+        ext_attrs = list(self.extended_attributes())
         idl_type = self._consume(TokenType.IDENTIFIER, 'Expected variable name')
-        return ArgumentType(idl_type=idl_type)
+
+        return ArgumentType(idl_type=idl_type, ext_attrs=ext_attrs)
 
     def return_type(self):
         idl_type = self._consume(TokenType.IDENTIFIER, 'Expected variable name')

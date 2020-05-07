@@ -1,34 +1,30 @@
+from typing import List
+
 # TODO: add `as_dict method`
 # TODO: use metaclass - remove boilerplate. or just attrs
 
 
-class Statement:
+class Node:
+
     type: str
-    _fields: tuple
 
-
-class Partial(Statement):
-
-    type = 'partial'
-
-    def __init__(self):
-        pass
+    @property
+    def children(self) -> List['Node']:
+        for field in vars(self).values():
+            if isinstance(field, Node):
+                yield field
+            elif isinstance(field, list):
+                for item in field:
+                    if isinstance(item, Node):
+                        yield item
 
     def accept(self, visitor):
-        return visitor.visit_partial_stmt(self)
+        raise NotImplementedError
 
 
-class Interface(Statement):
+class Interface(Node):
 
     type = 'interface'
-
-    _fields = (
-        'name',
-        'inheritance',
-        'members',
-        'ext_attrs',
-        'partial',
-    )
 
     def __init__(
             self,
@@ -48,15 +44,9 @@ class Interface(Statement):
         return visitor.visit_interface_stmt(self)
 
 
-class ExtendedAttribute(Statement):
+class ExtendedAttribute(Node):
 
     type = 'extended-attribute'
-
-    _fields = (
-        'name',
-        'rhs',
-        'arguments',
-    )
 
     def __init__(self, name, rhs=None, arguments=None):
         self.name = name
@@ -67,16 +57,9 @@ class ExtendedAttribute(Statement):
         return visitor.visit_ext_attr(self)
 
 
-class Operation(Statement):
-    type = 'operation'
+class Operation(Node):
 
-    _fields = (
-        'name',
-        'idl_type',
-        'arguments',
-        'ext_attrs',
-        'special',
-    )
+    type = 'operation'
 
     def __init__(self, name, idl_type=None, arguments=None, ext_attrs=None, special=''):
         self.name = name
@@ -89,16 +72,9 @@ class Operation(Statement):
         return visitor.visit_operation(self)
 
 
-class ReturnType(Statement):
-    type = 'return-type'
+class ReturnType(Node):
 
-    _fields = (
-        'idl_type',
-        'nullable',
-        'union',
-        'ext_attrs',
-        'generic',
-    )
+    type = 'return-type'
 
     def __init__(
             self,
@@ -118,17 +94,9 @@ class ReturnType(Statement):
         return visitor.visit_return_type(self)
 
 
-class Argument(Statement):
-    type = 'argument'
+class Argument(Node):
 
-    _fields = (
-        'name',
-        'ext_attrs',
-        'idl_type',
-        'default',
-        'optional',
-        'variadic',
-    )
+    type = 'argument'
 
     def __init__(self, name, idl_type, ext_attrs=None, default=None, optional=False, variadic=False):
         self.name = name
@@ -142,16 +110,9 @@ class Argument(Statement):
         return visitor.visit_argument(self)
 
 
-class ArgumentType(Statement):
-    type = 'argument-type'
+class ArgumentType(Node):
 
-    _fields = (
-        'idl_type',
-        'nullable',
-        'union',
-        'ext_attrs',
-        'generic',
-    )
+    type = 'argument-type'
 
     def __init__(
             self,
@@ -169,3 +130,25 @@ class ArgumentType(Statement):
 
     def accept(self, visitor):
         return visitor.visit_argument_type(self)
+
+
+class Identifier(Node):
+
+    type = 'identifier'
+
+    def __init__(self, value):
+        self.value = value
+
+    def accept(self, visitor):
+        return visitor.visit_identifier(self)
+
+
+class IdentifierList(Node):
+
+    type = 'identifier-list'
+
+    def __init__(self, value):
+        self.value = value
+
+    def accept(self, visitor):
+        return visitor.visit_identifier_list(self)

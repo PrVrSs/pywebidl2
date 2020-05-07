@@ -2,7 +2,6 @@ import string
 from typing import NamedTuple
 
 from .token_type import TokenType
-from .constant import NON_TERMINALS
 
 
 class TokenInfo(NamedTuple):
@@ -29,6 +28,7 @@ class Scanner:
     _identifier_body = _identifier_head + string.digits
     _keywords = dict(
         interface=TokenType.INTERFACE,
+        optional=TokenType.OPTIONAL,
     )
 
     def __init__(self, source: str = ''):

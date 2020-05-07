@@ -1,31 +1,50 @@
-from collections import deque
+from typing import List
 
-from .expressions import Expression
-from .statement import Statement
-
-
-def iter_fields(node):
-    for field in node._fields:
-        try:
-            yield field, getattr(node, field)
-        except AttributeError:
-            pass
-
-
-def iter_child_nodes(node):
-    for name, field in iter_fields(node):
-        if isinstance(field, (Expression, Statement)):
-            yield field
-        elif isinstance(field, list):
-            for item in field:
-                if isinstance(item, (Expression, Statement)):
-                    yield item
+from .node import (
+    Node,
+    Argument,
+    ArgumentType,
+    ExtendedAttribute,
+    Identifier,
+    IdentifierList,
+    Interface,
+    Operation,
+    ReturnType,
+)
+from .visitor import Visitor
 
 
-def walk(node):
-    todo = deque([node])
+class walk(Visitor):
 
-    while todo:
-        node = todo.popleft()
-        todo.extend(iter_child_nodes(node))
+    def __new__(cls, node: Node) -> List[Node]:
+        return super().__new__(cls).visit(node)
+
+    def _visit_children(self, node: Node) -> List[Node]:
         yield node
+
+        for child in node.children:
+            yield from child.accept(self)
+
+    def visit_interface_stmt(self, node: Interface) -> List[Node]:
+        return self._visit_children(node)
+
+    def visit_ext_attr(self, node: ExtendedAttribute) -> List[Node]:
+        return self._visit_children(node)
+
+    def visit_identifier(self, node: Identifier) -> List[Node]:
+        return self._visit_children(node)
+
+    def visit_identifier_list(self, node: IdentifierList) -> List[Node]:
+        return self._visit_children(node)
+
+    def visit_operation(self, node: Operation) -> List[Node]:
+        return self._visit_children(node)
+
+    def visit_return_type(self, node: ReturnType) -> List[Node]:
+        return self._visit_children(node)
+
+    def visit_argument(self, node: Argument) -> List[Node]:
+        return self._visit_children(node)
+
+    def visit_argument_type(self, node: ArgumentType) -> List[Node]:
+        return self._visit_children(node)

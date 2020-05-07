@@ -3,76 +3,73 @@ from .visitor import Visitor
 
 class JSONPrinter(Visitor):
 
-    def print(self, expr):
-        return expr.accept(self)
-
-    def visit_interface_stmt(self, stmt):
+    def visit_interface_stmt(self, node):
         return dict(
-            type=stmt.type,
-            name=stmt.name.lexeme,
-            extAttrs=[ext_attr.accept(self) for ext_attr in stmt.ext_attrs],
-            members=[member.accept(self) for member in stmt.members],
-            inheritance=stmt.inheritance,
-            partial=stmt.partial,
+            type=node.type,
+            name=node.name.lexeme,
+            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
+            members=[member.accept(self) for member in node.members],
+            inheritance=node.inheritance,
+            partial=node.partial,
         )
 
-    def visit_operation(self, stmt):
+    def visit_operation(self, node):
         return dict(
-            type=stmt.type,
-            name=stmt.name.lexeme,
-            idlType=stmt.idl_type.accept(self),
-            arguments=[argument.accept(self) for argument in stmt.arguments],
-            special=stmt.special,
-            extAttrs=[ext_attr.accept(self) for ext_attr in stmt.ext_attrs],
+            type=node.type,
+            name=node.name.lexeme,
+            idlType=node.idl_type.accept(self),
+            arguments=[argument.accept(self) for argument in node.arguments],
+            special=node.special,
+            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
         )
 
-    def visit_argument(self, stmt):
+    def visit_argument(self, node):
         return dict(
-            name=stmt.name.lexeme,
-            type=stmt.type,
-            idlType=stmt.idl_type.accept(self),
-            default=stmt.default,
-            optional=stmt.optional,
-            variadic=stmt.variadic,
-            extAttrs=[ext_attr.accept(self) for ext_attr in stmt.ext_attrs],
+            name=node.name.lexeme,
+            type=node.type,
+            idlType=node.idl_type.accept(self),
+            default=node.default,
+            optional=node.optional,
+            variadic=node.variadic,
+            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
         )
 
-    def visit_argument_type(self, stmt):
+    def visit_argument_type(self, node):
         return dict(
-            type=stmt.type,
-            idlType=stmt.idl_type.lexeme,
-            nullable=stmt.nullable,
-            union=stmt.union,
-            extAttrs=[ext_attr.accept(self) for ext_attr in stmt.ext_attrs],
-            generic=stmt.generic,
+            type=node.type,
+            idlType=node.idl_type.lexeme,
+            nullable=node.nullable,
+            union=node.union,
+            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
+            generic=node.generic,
         )
 
-    def visit_return_type(self, stmt):
+    def visit_return_type(self, node):
         return dict(
-            type=stmt.type,
-            idlType=stmt.idl_type.lexeme,
-            nullable=stmt.nullable,
-            union=stmt.union,
-            extAttrs=[ext_attr.accept(self) for ext_attr in stmt.ext_attrs],
-            generic=stmt.generic,
+            type=node.type,
+            idlType=node.idl_type.lexeme,
+            nullable=node.nullable,
+            union=node.union,
+            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
+            generic=node.generic,
         )
 
-    def visit_ext_attr(self, stmt):
+    def visit_ext_attr(self, node):
         return dict(
-            type=stmt.type,
-            name=stmt.name.lexeme,
-            rhs=stmt.rhs and stmt.rhs.accept(self) or None,
-            arguments=[argument.accept(self) for argument in stmt.arguments],
+            type=node.type,
+            name=node.name.lexeme,
+            rhs=node.rhs and node.rhs.accept(self) or None,
+            arguments=[argument.accept(self) for argument in node.arguments],
         )
 
-    def visit_identifier(self, expr):
+    def visit_identifier(self, node):
         return dict(
-            type=expr.type,
-            value=expr.value.lexeme,
+            type=node.type,
+            value=node.value.lexeme,
         )
 
-    def visit_identifier_list(self, expr):
+    def visit_identifier_list(self, node):
         return dict(
-            type=expr.type,
-            value=[{'value': value} for value in expr.value],
+            type=node.type,
+            value=[{'value': value} for value in node.value],
         )

@@ -1,0 +1,57 @@
+[
+    {
+        "type": "interface",
+        "name": "Foo",
+        "inheritance": null,
+        "members": [
+            {
+                "type": "operation",
+                "name": "foo",
+                "idlType": {
+                    "type": "return-type",
+                    "extAttrs": [],
+                    "generic": "",
+                    "nullable": false,
+                    "union": false,
+                    "idlType": "void"
+                },
+                "arguments": [
+                    {
+                        "type": "argument",
+                        "name": "argname",
+                        "extAttrs": [
+                            {
+                                "type": "extended-attribute",
+                                "name": "ExtAttr",
+                                "rhs": null,
+                                "arguments": []
+                            }
+                        ],
+                        "idlType": {
+                            "type": "argument-type",
+                            "extAttrs": [
+                                {
+                                    "type": "extended-attribute",
+                                    "name": "Clamp",
+                                    "rhs": null,
+                                    "arguments": []
+                                }
+                            ],
+                            "generic": "",
+                            "nullable": false,
+                            "union": false,
+                            "idlType": "short"
+                        },
+                        "default": null,
+                        "optional": true,
+                        "variadic": false
+                    }
+                ],
+                "extAttrs": [],
+                "special": ""
+            }
+        ],
+        "extAttrs": [],
+        "partial": false
+    }
+]
