@@ -3,6 +3,7 @@ from more_itertools.recipes import first_true
 
 from .node import (
     Argument,
+    Attribute,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
@@ -83,7 +84,9 @@ class Parser(BaseParser):
     def member(self):
         async_ = self._match(TokenType.ASYNC)
 
-        if self._match(TokenType.ITERABLE):
+        if self._match(TokenType.ATTRIBUTE):
+            return self.attribute()
+        elif self._match(TokenType.ITERABLE):
             return self.iterable(async_)
 
         idl_type = self.idl_type('return-type')
@@ -91,6 +94,13 @@ class Parser(BaseParser):
         arguments = list(self.argument())
 
         return Operation(name=name, idl_type=idl_type, arguments=arguments)
+
+    def attribute(self):
+        return Attribute(
+            idl_type=self.idl_type(type_='attribute-type'),
+            name=self._advance(),  # self._consume(
+            # TokenType.IDENTIFIER, 'Expected argument name')
+        )
 
     def iterable(self, async_):
         self._consume(TokenType.LEFT_ANGLE, 'Expected "<"')
@@ -117,17 +127,19 @@ class Parser(BaseParser):
                 ext_attrs=list(self.extended_attributes()),
                 optional=self._match(TokenType.OPTIONAL),
                 idl_type=self.idl_type(type_='argument-type'),
-                name=self._consume(
-                    TokenType.IDENTIFIER, 'Expected argument name'),
+                name=self._advance(),  # self._consume(
+                # TokenType.IDENTIFIER, 'Expected argument name')
             )
 
             self._match(TokenType.COMMA)
 
     def idl_type(self, type_=None):
-        ext_attrs = list(self.extended_attributes())
-        idl_type = self._consume(TokenType.IDENTIFIER, 'Expected variable name')
+        return IDLType(
+            type_=type_,
+            ext_attrs=list(self.extended_attributes()),
+            idl_type=self._consume(TokenType.IDENTIFIER, 'Expected idl type'),
 
-        return IDLType(type_=type_, idl_type=idl_type, ext_attrs=ext_attrs)
+        )
 
     def extended_attributes(self):
         if not self._match(TokenType.LEFT_SQUARE):

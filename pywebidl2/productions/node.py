@@ -147,6 +147,28 @@ class Iterable_(Node):  # TODO: fix naming
         return visitor.visit_iterable(self)
 
 
+class Attribute(Node):
+
+    type = 'attribute'
+
+    def __init__(
+            self,
+            name,
+            idl_type=None,
+            readonly=False,
+            ext_attrs=None,
+            special='',
+    ):
+        self.name = name
+        self.idl_type = idl_type
+        self.readonly = readonly
+        self.ext_attrs = ext_attrs or []
+        self.special = special
+
+    def accept(self, visitor):
+        return visitor.visit_attribute(self)
+
+
 class IDLType(Node):
 
     type = None

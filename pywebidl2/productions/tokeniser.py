@@ -31,6 +31,8 @@ class Scanner:
         'optional': TokenType.OPTIONAL,
         'async': TokenType.ASYNC,
         'iterable': TokenType.ITERABLE,
+        'attribute': TokenType.ATTRIBUTE,
+        'unsigned': TokenType.UNSIGNED,
     }
 
     def __init__(self, source: str = ''):
@@ -106,10 +108,19 @@ class Scanner:
             self._advance()
 
         if token := self._keywords.get(self._current_string):
-            self._add_token(token)
+            if not self._bounded(token):
+                self._add_token(token)
+
             return
 
         self._add_token(TokenType.IDENTIFIER, self._current_string)
+
+    def _bounded(self, token):
+        if _ := token is TokenType.UNSIGNED:
+            self._advance()
+            self._scan_token()
+
+        return _
 
     def _number(self):
         while self._peek().isdigit():

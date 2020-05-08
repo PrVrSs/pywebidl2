@@ -1,0 +1,41 @@
+[
+    {
+        "type": "interface",
+        "name": "Person",
+        "inheritance": null,
+        "members": [
+            {
+                "type": "attribute",
+                "name": "age",
+                "idlType": {
+                    "type": "attribute-type",
+                    "extAttrs": [],
+                    "generic": "",
+                    "nullable": false,
+                    "union": false,
+                    "idlType": "unsigned short"
+                },
+                "extAttrs": [],
+                "special": "",
+                "readonly": false
+            },
+            {
+                "type": "attribute",
+                "name": "required",
+                "idlType": {
+                    "type": "attribute-type",
+                    "extAttrs": [],
+                    "generic": "",
+                    "nullable": false,
+                    "union": false,
+                    "idlType": "any"
+                },
+                "extAttrs": [],
+                "special": "",
+                "readonly": false
+            }
+        ],
+        "extAttrs": [],
+        "partial": false
+    }
+]

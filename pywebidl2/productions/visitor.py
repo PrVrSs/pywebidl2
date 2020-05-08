@@ -3,6 +3,7 @@ from typing import Generic, TypeVar
 from .node import (
     Node,
     Argument,
+    Attribute,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
@@ -42,4 +43,7 @@ class Visitor(Generic[_TV]):
         raise NotImplementedError
 
     def visit_idl_type(self, node: IDLType) -> _TV:
+        raise NotImplementedError
+
+    def visit_attribute(self, node: Attribute) -> _TV:
         raise NotImplementedError

@@ -4,6 +4,7 @@ from .productions import Visitor
 from .productions.node import (
     Node,
     Argument,
+    Attribute,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
@@ -44,6 +45,9 @@ class Walker(Visitor):
         return self._visit_children(node)
 
     def visit_idl_type(self, node: IDLType) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_attribute(self, node: Attribute) -> Iterable[Node]:
         return self._visit_children(node)
 
 
@@ -118,4 +122,14 @@ class JsonView(Visitor):
             union=node.union,
             extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
             generic=node.generic,
+        )
+
+    def visit_attribute(self, node: Attribute):
+        return dict(
+            type=node.type,
+            name=node.name.lexeme,
+            idlType=node.idl_type.accept(self),
+            readonly=node.readonly,
+            special=node.special,
+            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
         )

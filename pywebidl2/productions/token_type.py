@@ -18,7 +18,9 @@ class TokenType(IntEnum):
     COMMA = auto()
     IDENTIFIER = auto()
 
+    UNSIGNED = auto()
     ASYNC = auto()
+    ATTRIBUTE = auto()
     ITERABLE = auto()
     OPTIONAL = auto()
     INTERFACE = auto()
