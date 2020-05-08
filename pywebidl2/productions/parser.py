@@ -2,14 +2,14 @@ from more_itertools.more import peekable
 from more_itertools.recipes import first_true
 
 from .node import (
+    Argument,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
+    IDLType,
     Interface,
+    Iterable_,
     Operation,
-    ReturnType,
-    Argument,
-    ArgumentType,
 )
 from .token_type import TokenType
 from ..errors import WebIDLParseError
@@ -42,18 +42,6 @@ class BaseParser:
 
     def _is_at_end(self):
         return self.tokens.peek().token_type == TokenType.EOF
-
-    def _is_at_right_paren(self):
-        return self.tokens.peek().token_type == TokenType.RIGHT_PAREN
-
-    def _is_at_right_square(self):
-        return self.tokens.peek().token_type == TokenType.RIGHT_SQUARE
-
-    def _is_at_left_square(self):
-        return self.tokens.peek().token_type == TokenType.LEFT_SQUARE
-
-    def _is_at_right_slash(self):
-        return self.tokens.peek().token_type == TokenType.SLASH
 
 
 class Parser(BaseParser):
@@ -93,39 +81,53 @@ class Parser(BaseParser):
         )
 
     def member(self):
-        idl_type = self.return_type()
+        async_ = self._match(TokenType.ASYNC)
+
+        if self._match(TokenType.ITERABLE):
+            return self.iterable(async_)
+
+        idl_type = self.idl_type('return-type')
         name = self._consume(TokenType.IDENTIFIER, 'Expected variable name')
-
-        self._consume(TokenType.LEFT_PAREN, 'Expected "("')
-
-        arguments = []
-        while not self._match(TokenType.RIGHT_PAREN):
-            arguments.append(self.argument())
+        arguments = list(self.argument())
 
         return Operation(name=name, idl_type=idl_type, arguments=arguments)
 
-    def argument(self):
-        ext_attrs = list(self.extended_attributes())
-        optional = self._match(TokenType.OPTIONAL)
-        idl_type = self.argument_type()
-        name = self._consume(TokenType.IDENTIFIER, 'Expected argument name')
+    def iterable(self, async_):
+        self._consume(TokenType.LEFT_ANGLE, 'Expected "<"')
 
-        return Argument(
-            name=name,
+        idl_type = []
+        while not self._match(TokenType.RIGHT_ANGLE):
+            idl_type.append(self.idl_type())
+            self._match(TokenType.COMMA)
+
+        arguments = list(self.argument())
+
+        return Iterable_(
+            async_=async_,
             idl_type=idl_type,
-            ext_attrs=ext_attrs,
-            optional=optional,
+            arguments=arguments
         )
 
-    def argument_type(self):
+    def argument(self):
+        if not self._match(TokenType.LEFT_PAREN):
+            return []
+
+        while not self._match(TokenType.RIGHT_PAREN):
+            yield Argument(
+                ext_attrs=list(self.extended_attributes()),
+                optional=self._match(TokenType.OPTIONAL),
+                idl_type=self.idl_type(type_='argument-type'),
+                name=self._consume(
+                    TokenType.IDENTIFIER, 'Expected argument name'),
+            )
+
+            self._match(TokenType.COMMA)
+
+    def idl_type(self, type_=None):
         ext_attrs = list(self.extended_attributes())
         idl_type = self._consume(TokenType.IDENTIFIER, 'Expected variable name')
 
-        return ArgumentType(idl_type=idl_type, ext_attrs=ext_attrs)
-
-    def return_type(self):
-        idl_type = self._consume(TokenType.IDENTIFIER, 'Expected variable name')
-        return ReturnType(idl_type=idl_type)
+        return IDLType(type_=type_, idl_type=idl_type, ext_attrs=ext_attrs)
 
     def extended_attributes(self):
         if not self._match(TokenType.LEFT_SQUARE):

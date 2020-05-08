@@ -4,13 +4,13 @@ from .productions import Visitor
 from .productions.node import (
     Node,
     Argument,
-    ArgumentType,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
+    IDLType,
+    Iterable_,
     Interface,
     Operation,
-    ReturnType,
 )
 
 
@@ -37,13 +37,13 @@ class Walker(Visitor):
     def visit_operation(self, node: Operation) -> Iterable[Node]:
         return self._visit_children(node)
 
-    def visit_return_type(self, node: ReturnType) -> Iterable[Node]:
-        return self._visit_children(node)
-
     def visit_argument(self, node: Argument) -> Iterable[Node]:
         return self._visit_children(node)
 
-    def visit_argument_type(self, node: ArgumentType) -> Iterable[Node]:
+    def visit_iterable(self, node: Iterable_) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_idl_type(self, node: IDLType) -> Iterable[Node]:
         return self._visit_children(node)
 
 
@@ -80,26 +80,6 @@ class JsonView(Visitor):
             extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
         )
 
-    def visit_argument_type(self, node):
-        return dict(
-            type=node.type,
-            idlType=node.idl_type.lexeme,
-            nullable=node.nullable,
-            union=node.union,
-            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
-            generic=node.generic,
-        )
-
-    def visit_return_type(self, node):
-        return dict(
-            type=node.type,
-            idlType=node.idl_type.lexeme,
-            nullable=node.nullable,
-            union=node.union,
-            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
-            generic=node.generic,
-        )
-
     def visit_ext_attr(self, node):
         return dict(
             type=node.type,
@@ -118,4 +98,24 @@ class JsonView(Visitor):
         return dict(
             type=node.type,
             value=[{'value': value} for value in node.value],
+        )
+
+    def visit_iterable(self, node):
+        return {
+            'type': node.type,
+            'arguments': [argument.accept(self) for argument in node.arguments],
+            'extAttrs': [ext_attr.accept(self) for ext_attr in node.ext_attrs],
+            'async': node.async_,
+            'readonly': node.readonly,
+            'idlType': [idl_type.accept(self) for idl_type in node.idl_type],
+        }
+
+    def visit_idl_type(self, node):
+        return dict(
+            type=node.type,
+            idlType=node.idl_type.lexeme,
+            nullable=node.nullable,
+            union=node.union,
+            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
+            generic=node.generic,
         )

@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Optional
 
 # TODO: add `as_dict method`
 # TODO: use metaclass - remove boilerplate. or just attrs
@@ -6,7 +6,7 @@ from typing import Iterable
 
 class Node:
 
-    type: str
+    type: Optional[str]
 
     @property
     def children(self) -> Iterable['Node']:
@@ -61,7 +61,14 @@ class Operation(Node):
 
     type = 'operation'
 
-    def __init__(self, name, idl_type=None, arguments=None, ext_attrs=None, special=''):
+    def __init__(
+            self,
+            name,
+            idl_type=None,
+            arguments=None,
+            ext_attrs=None,
+            special='',
+    ):
         self.name = name
         self.idl_type = idl_type
         self.arguments = arguments or []
@@ -72,33 +79,19 @@ class Operation(Node):
         return visitor.visit_operation(self)
 
 
-class ReturnType(Node):
-
-    type = 'return-type'
-
-    def __init__(
-            self,
-            idl_type,
-            nullable=False,
-            union=False,
-            ext_attrs=None,
-            generic='',
-    ):
-        self.idl_type = idl_type
-        self.nullable = nullable
-        self.union = union
-        self.ext_attrs = ext_attrs or []
-        self.generic = generic
-
-    def accept(self, visitor):
-        return visitor.visit_return_type(self)
-
-
 class Argument(Node):
 
     type = 'argument'
 
-    def __init__(self, name, idl_type, ext_attrs=None, default=None, optional=False, variadic=False):
+    def __init__(
+            self,
+            name,
+            idl_type,
+            ext_attrs=None,
+            default=None,
+            optional=False,
+            variadic=False
+    ):
         self.name = name
         self.ext_attrs = ext_attrs or []
         self.idl_type = idl_type
@@ -108,28 +101,6 @@ class Argument(Node):
 
     def accept(self, visitor):
         return visitor.visit_argument(self)
-
-
-class ArgumentType(Node):
-
-    type = 'argument-type'
-
-    def __init__(
-            self,
-            idl_type,
-            nullable=False,
-            union=False,
-            ext_attrs=None,
-            generic='',
-    ):
-        self.idl_type = idl_type
-        self.nullable = nullable
-        self.union = union
-        self.ext_attrs = ext_attrs or []
-        self.generic = generic
-
-    def accept(self, visitor):
-        return visitor.visit_argument_type(self)
 
 
 class Identifier(Node):
@@ -152,3 +123,49 @@ class IdentifierList(Node):
 
     def accept(self, visitor):
         return visitor.visit_identifier_list(self)
+
+
+class Iterable_(Node):  # TODO: fix naming
+
+    type = 'iterable'
+
+    def __init__(
+            self,
+            arguments=None,
+            ext_attrs=None,
+            idl_type=None,
+            async_=False,
+            readonly=False
+    ):
+        self.arguments = arguments or []
+        self.ext_attrs = ext_attrs or []
+        self.idl_type = idl_type or []
+        self.async_ = async_
+        self.readonly = readonly
+
+    def accept(self, visitor):
+        return visitor.visit_iterable(self)
+
+
+class IDLType(Node):
+
+    type = None
+
+    def __init__(
+            self,
+            idl_type,
+            type_=None,
+            nullable=False,
+            union=False,
+            ext_attrs=None,
+            generic='',
+    ):
+        self.type = type_
+        self.idl_type = idl_type
+        self.nullable = nullable
+        self.union = union
+        self.ext_attrs = ext_attrs or []
+        self.generic = generic
+
+    def accept(self, visitor):
+        return visitor.visit_idl_type(self)

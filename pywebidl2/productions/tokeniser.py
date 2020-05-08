@@ -74,6 +74,10 @@ class Scanner:
             self._add_token(TokenType.LEFT_SQUARE)
         elif char == ']':
             self._add_token(TokenType.RIGHT_SQUARE)
+        elif char == '<':
+            self._add_token(TokenType.LEFT_ANGLE)
+        elif char == '>':
+            self._add_token(TokenType.RIGHT_ANGLE)
         elif char == ',':
             self._add_token(TokenType.COMMA)
         elif char == '=':

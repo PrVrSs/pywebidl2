@@ -3,13 +3,13 @@ from typing import Generic, TypeVar
 from .node import (
     Node,
     Argument,
-    ArgumentType,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
+    IDLType,
+    Iterable_,
     Interface,
     Operation,
-    ReturnType,
 )
 
 
@@ -35,11 +35,11 @@ class Visitor(Generic[_TV]):
     def visit_operation(self, node: Operation) -> _TV:
         raise NotImplementedError
 
-    def visit_return_type(self, node: ReturnType) -> _TV:
-        raise NotImplementedError
-
     def visit_argument(self, node: Argument) -> _TV:
         raise NotImplementedError
 
-    def visit_argument_type(self, node: ArgumentType) -> _TV:
+    def visit_iterable(self, node: Iterable_) -> _TV:
+        raise NotImplementedError
+
+    def visit_idl_type(self, node: IDLType) -> _TV:
         raise NotImplementedError

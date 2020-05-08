@@ -8,6 +8,8 @@ class TokenType(IntEnum):
     RIGHT_SQUARE = auto()
     LEFT_BRACE = auto()
     RIGHT_BRACE = auto()
+    LEFT_ANGLE = auto()
+    RIGHT_ANGLE = auto()
     SEMICOLON = auto()
     DOT = auto()
     EQUAL = auto()
