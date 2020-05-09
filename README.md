@@ -9,8 +9,26 @@
 
 *This is a tool for the [Web IDL](https://heycam.github.io/webidl/) language.*
 
-## Quickstart
+## Quick start
 
 ```shell script
 pip install pywebidl2
 ```
+
+## Tests
+
+```shell script
+make test
+```
+
+## Documentation
+
+**See** [original parser](https://github.com/w3c/webidl2.js)
+
+## Contributing
+
+Any help is welcome and appreciated.
+
+## License
+
+*pywebidl2* is licensed under the terms of the MIT License (see the file LICENSE).

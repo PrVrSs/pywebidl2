@@ -38,7 +38,7 @@ class NodeMeta(type):
 
 class Node(metaclass=NodeMeta):
 
-    def __init__(self, **_):
+    def __init__(self, **_: Any):
         ...
 
     @property
