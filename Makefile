@@ -16,4 +16,8 @@ unit:
 mypy:
 	mypy $(PROJECT_DIR)
 
+.PHONY: lint
+lint:
+	pylint $(PROJECT_DIR)
+
 test: unit

@@ -51,6 +51,7 @@ class Scanner:
         self.tokens.append(Token(TokenType.EOF, '', None,))
 
     def _scan_token(self) -> None:
+        # pylint: disable=too-many-branches
         char: str = self._advance()
 
         if char in string.whitespace:

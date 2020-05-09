@@ -12,7 +12,7 @@ from .visitors import Walker
               default='parse',
               type=click.Choice(('parse', 'validate')))
 def cli(action):
-    pass
+    print(action)
 
 
 def validate(_: str) -> bool:

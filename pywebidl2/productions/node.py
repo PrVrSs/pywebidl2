@@ -3,6 +3,19 @@ from typing import Iterable, Optional
 # TODO: add `as_dict method`
 # TODO: use metaclass - remove boilerplate. or just attrs
 
+__all__ = (
+    'Node',
+    'Argument',
+    'Attribute',
+    'ExtendedAttribute',
+    'Identifier',
+    'IdentifierList',
+    'IDLType',
+    'Interface',
+    'Iterable_',
+    'Operation',
+)
+
 
 class Node:
 
@@ -125,7 +138,7 @@ class IdentifierList(Node):
         return visitor.visit_identifier_list(self)
 
 
-class Iterable_(Node):  # TODO: fix naming
+class Iterable_(Node):  # pylint: disable=invalid-name
 
     type = 'iterable'
 

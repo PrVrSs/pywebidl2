@@ -48,16 +48,12 @@ class BaseParser:
 class Parser(BaseParser):
 
     def parse(self):
-        return self.definitions()
+        return list(self.definitions())
 
     def definitions(self):
-        definitions = []
-
         while not self._is_at_end():
-            definitions.append(self.definition())
-            self._consume(TokenType.SEMICOLON, 'Expected ";"')
-
-        return definitions
+            yield self.definition()
+            self._consume(TokenType.SEMICOLON, 'Expected ";" after definition')
 
     def definition(self):
         extended_attrs = list(self.extended_attributes())
