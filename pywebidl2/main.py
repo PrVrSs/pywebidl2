@@ -18,14 +18,15 @@ def walk(node: Node) -> Iterable[Node]:
 
 
 def parse(text: str):
-    scanner = Scanner(text)
-    parser = Parser(scanner.tokens)
+    return Parser(Scanner(text).tokens).parse()
 
-    return parser.parse()
+
+def pretty_parse(text: str):
+    return [JsonView().visit(definition) for definition in parse(text)]
 
 
 actions = {
-    'parse': parse,
+    'parse': pretty_parse,
     'validate': validate,
 }
 
@@ -38,5 +39,4 @@ actions = {
               required=True,
               type=click.Path(exists=True, dir_okay=False, resolve_path=True))
 def cli(action, file):
-    definitions = actions[action](Path(file).read_text())
-    pprint.pprint([JsonView().visit(definition) for definition in definitions])
+    pprint.pprint(actions[action](Path(file).read_text()))
