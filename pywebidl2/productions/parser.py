@@ -85,17 +85,19 @@ class Parser(BaseParser):
         elif self._match(TokenType.ITERABLE):
             return self.iterable(async_)
 
-        idl_type = self.idl_type('return-type')
-        name = self._consume(TokenType.IDENTIFIER, 'Expected variable name')
-        arguments = list(self.argument())
-
-        return Operation(name=name, idl_type=idl_type, arguments=arguments)
+        return Operation(
+            idl_type=self.idl_type('return-type'),
+            name=self._consume(TokenType.IDENTIFIER, 'Expected variable name'),
+            arguments=list(self.argument()),
+            ext_attrs=[],
+        )
 
     def attribute(self):
         return Attribute(
             idl_type=self.idl_type(type_='attribute-type'),
             name=self._advance(),  # self._consume(
             # TokenType.IDENTIFIER, 'Expected argument name')
+            ext_attrs=[],
         )
 
     def iterable(self, async_):
@@ -111,7 +113,8 @@ class Parser(BaseParser):
         return Iterable_(
             async_=async_,
             idl_type=idl_type,
-            arguments=arguments
+            arguments=arguments,
+            ext_attrs=[]
         )
 
     def argument(self):
@@ -131,7 +134,7 @@ class Parser(BaseParser):
 
     def idl_type(self, type_=None):
         return IDLType(
-            type_=type_,
+            type=type_,
             ext_attrs=list(self.extended_attributes()),
             idl_type=self._consume(TokenType.IDENTIFIER, 'Expected idl type'),
 
@@ -151,7 +154,7 @@ class Parser(BaseParser):
         return ExtendedAttribute(
             name=self._consume(TokenType.IDENTIFIER, 'Expected variable name'),
             rhs=self.rhs(),
-            arguments=None
+            arguments=[],
         )
 
     def rhs(self):
@@ -165,7 +168,7 @@ class Parser(BaseParser):
 
     def identifier(self):
         return Identifier(
-            self._consume(TokenType.IDENTIFIER, 'Expected variable name'))
+            value=self._consume(TokenType.IDENTIFIER, 'Expected variable name'))
 
     def identifier_list(self):
         values = []
@@ -177,4 +180,4 @@ class Parser(BaseParser):
             values.append(
                 self._consume(TokenType.IDENTIFIER, 'Expected variable name'))
 
-        return IdentifierList(values)
+        return IdentifierList(value=values)

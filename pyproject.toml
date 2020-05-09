@@ -17,14 +17,15 @@ keywords = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-more-itertools = "^8.2.0"
+
 click = "^7.1.2"
+more-itertools = "^8.2.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.4.1"
 mypy = "^0.770"
-pytest-cov = "^2.8.1"
 pylint = "^2.5.2"
+pytest = "^5.4.1"
+pytest-cov = "^2.8.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
