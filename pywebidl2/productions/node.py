@@ -8,6 +8,8 @@ __all__ = (
     'Node',
     'Argument',
     'Attribute',
+    'Callback',
+    'CallbackInterface',
     'ExtendedAttribute',
     'Identifier',
     'IdentifierList',
@@ -15,6 +17,10 @@ __all__ = (
     'Interface',
     'Iterable_',
     'Operation',
+    'Value',
+    'Const',
+    'Infinity',
+    'Nan',
 )
 
 
@@ -45,7 +51,6 @@ class Node(metaclass=NodeMeta):
     def children(self) -> Iterable['Node']:
         for field_name in self.__annotations__.keys():
             field = getattr(self, field_name, None)
-
             if isinstance(field, Node):
                 yield field
             elif isinstance(field, list):
@@ -69,6 +74,32 @@ class Interface(Node):
 
     def accept(self, visitor):
         return visitor.visit_interface_stmt(self)
+
+
+class CallbackInterface(Node):
+
+    name: Token
+    members: List[Any]
+    ext_attrs: List[Any]
+
+    type: str = 'callback interface'
+    inheritance: Any = None
+    partial: bool = False
+
+    def accept(self, visitor):
+        return visitor.visit_callback_interface(self)
+
+
+class Callback(Node):
+    name: Token
+    idl_type: Any
+    arguments: List[Any]
+    ext_attrs: List[Any]
+
+    type: str = 'callback'
+
+    def accept(self, visitor):
+        return visitor.visit_callback(self)
 
 
 class ExtendedAttribute(Node):
@@ -172,3 +203,43 @@ class IDLType(Node):
 
     def accept(self, visitor):
         return visitor.visit_idl_type(self)
+
+
+class Value(Node):
+
+    type: str
+    value: Any
+
+    def accept(self, visitor):
+        return visitor.visit_value(self)
+
+
+class Const(Node):
+
+    name: Token
+    value: Value
+    ext_attrs: List[Any]
+    idl_type: IDLType
+
+    type: str = 'const'
+
+    def accept(self, visitor):
+        return visitor.visit_const(self)
+
+
+class Infinity(Node):
+
+    negative: bool
+
+    type: str = 'Infinity'
+
+    def accept(self, visitor):
+        return visitor.visit_infinity(self)
+
+
+class Nan(Node):
+
+    type: str = 'NaN'
+
+    def accept(self, visitor):
+        return visitor.visit_nan(self)

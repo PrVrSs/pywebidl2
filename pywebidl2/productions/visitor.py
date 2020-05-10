@@ -4,6 +4,9 @@ from .node import (
     Node,
     Argument,
     Attribute,
+    Callback,
+    CallbackInterface,
+    Const,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
@@ -11,6 +14,9 @@ from .node import (
     Iterable_,
     Interface,
     Operation,
+    Infinity,
+    Nan,
+    Value,
 )
 
 
@@ -46,4 +52,22 @@ class Visitor(Generic[_TV]):
         raise NotImplementedError
 
     def visit_attribute(self, node: Attribute) -> _TV:
+        raise NotImplementedError
+
+    def visit_callback(self, node: Callback) -> _TV:
+        raise NotImplementedError
+
+    def visit_callback_interface(self, node: CallbackInterface) -> _TV:
+        raise NotImplementedError
+
+    def visit_const(self, node: Const) -> _TV:
+        raise NotImplementedError
+
+    def visit_value(self, node: Value) -> _TV:
+        raise NotImplementedError
+
+    def visit_infinity(self, node: Infinity) -> _TV:
+        raise NotImplementedError
+
+    def visit_nan(self, node: Nan) -> _TV:
         raise NotImplementedError

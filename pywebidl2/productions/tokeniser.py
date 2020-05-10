@@ -33,6 +33,13 @@ class Scanner:
         'iterable': TokenType.ITERABLE,
         'attribute': TokenType.ATTRIBUTE,
         'unsigned': TokenType.UNSIGNED,
+        'callback': TokenType.CALLBACK,
+        'const': TokenType.CONST,
+        'Infinity': TokenType.INFINITY,
+        'unrestricted': TokenType.UNRESTRICTED,
+        'false': TokenType.FALSE,
+        'true': TokenType.TRUE,
+        'NaN': TokenType.NAN,
     }
 
     def __init__(self, source: str = ''):
@@ -56,15 +63,6 @@ class Scanner:
 
         if char in string.whitespace:
             pass
-        elif char == '"':
-            self._constant()
-        elif self._is_identifier(char):
-            self._identifier()
-        elif char.isdigit():
-            self._number()
-        elif char == '/':
-            if self._match('/'):
-                self._comment()
         elif char == '(':
             self._add_token(TokenType.LEFT_PAREN)
         elif char == ')':
@@ -85,8 +83,21 @@ class Scanner:
             self._add_token(TokenType.COMMA)
         elif char == '=':
             self._add_token(TokenType.EQUAL)
+        elif char == '-':
+            self._add_token(TokenType.MINUS)
+        elif char == '+':
+            self._add_token(TokenType.PLUS)
         elif char == ';':
             self._add_token(TokenType.SEMICOLON)
+        elif char == '"':
+            self._constant()
+        elif self._is_identifier(char):
+            self._identifier()
+        elif char.isdigit():
+            self._number()
+        elif char == '/':
+            if self._match('/'):
+                self._comment()
 
     def _comment(self):
         while self._peek() != '\n' and not self._is_at_end():
@@ -117,7 +128,7 @@ class Scanner:
         self._add_token(TokenType.IDENTIFIER, self._current_string)
 
     def _bounded(self, token):
-        if _ := token is TokenType.UNSIGNED:
+        if _ := token in (TokenType.UNSIGNED, TokenType.UNRESTRICTED):
             self._advance()
             self._scan_token()
 
@@ -127,7 +138,23 @@ class Scanner:
         while self._peek().isdigit():
             self._advance()
 
-        self._add_token(TokenType.N)
+        self._complex_number()
+        self._hex()
+
+        self._add_token(TokenType.NUMBER)
+
+    def _hex(self):
+        if self._peek() == 'x':
+            self._advance()
+            while self._peek() in string.hexdigits:
+                self._advance()
+
+    def _complex_number(self):
+        for symbol in '.e':
+            if self._peek() == symbol:
+                self._advance()
+                while self._peek().isdigit():
+                    self._advance()
 
     def _advance(self) -> str:
         self._current += 1

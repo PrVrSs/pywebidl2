@@ -13,11 +13,19 @@ class TokenType(IntEnum):
     SEMICOLON = auto()
     DOT = auto()
     EQUAL = auto()
+    COMMA = auto()
+    MINUS = auto()
+    PLUS = auto()
     NEW_LINE = auto()
     WHITESPACE = auto()
-    COMMA = auto()
-    IDENTIFIER = auto()
 
+    NAN = auto()
+    FALSE = auto()
+    TRUE = auto()
+    UNRESTRICTED = auto()
+    INFINITY = auto()
+    CONST = auto()
+    CALLBACK = auto()
     UNSIGNED = auto()
     ASYNC = auto()
     ATTRIBUTE = auto()
@@ -25,7 +33,9 @@ class TokenType(IntEnum):
     OPTIONAL = auto()
     INTERFACE = auto()
 
-    # literals
+    NUMBER = auto()
+    IDENTIFIER = auto()
+
     TERMINAL = auto()
     NONTERMINAL = auto()
 

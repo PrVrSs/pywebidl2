@@ -4,13 +4,19 @@ from more_itertools.recipes import first_true
 from .node import (
     Argument,
     Attribute,
+    Callback,
+    CallbackInterface,
+    Const,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
     IDLType,
     Interface,
     Iterable_,
+    Infinity,
+    Nan,
     Operation,
+    Value,
 )
 from .token_type import TokenType
 from ..errors import WebIDLParseError
@@ -60,6 +66,37 @@ class Parser(BaseParser):
 
         if self._match(TokenType.INTERFACE):
             return self.interface(extended_attrs)
+        elif self._match(TokenType.CALLBACK):
+            return self.callback(extended_attrs)
+
+    def callback(self, extended_attrs):
+        if self._match(TokenType.INTERFACE):
+            return self.callback_interface(extended_attrs)
+
+        name = self._consume(TokenType.IDENTIFIER, 'Expected callback name')
+        self._consume(TokenType.EQUAL, 'Expected "=" after callback name')
+
+        return Callback(
+            name=name,
+            idl_type=self.idl_type('return-type'),
+            arguments=list(self.argument()),
+            ext_attrs=extended_attrs,
+        )
+
+    def callback_interface(self, extended_attrs):
+        name = self._consume(TokenType.IDENTIFIER, 'Expected interface name')
+        self._consume(TokenType.LEFT_BRACE, 'Expected left brace')
+
+        members = []
+        while not self._match(TokenType.RIGHT_BRACE):
+            members.append(self.member())
+            self._consume(TokenType.SEMICOLON, 'Expected ";"')
+
+        return CallbackInterface(
+            name=name,
+            ext_attrs=extended_attrs,
+            members=members,
+        )
 
     def interface(self, extended_attrs):
         name = self._consume(TokenType.IDENTIFIER, 'Expected interface name')
@@ -84,12 +121,54 @@ class Parser(BaseParser):
             return self.attribute()
         elif self._match(TokenType.ITERABLE):
             return self.iterable(async_)
+        elif self._match(TokenType.CONST):
+            return self.const()
 
         return Operation(
             idl_type=self.idl_type('return-type'),
-            name=self._consume(TokenType.IDENTIFIER, 'Expected variable name'),
+            name=self._consume(TokenType.IDENTIFIER, 'Expected operation name'),
             arguments=list(self.argument()),
             ext_attrs=[],
+        )
+
+    def const(self):
+        idl_type = self.idl_type(type_='const-type')
+        name = self._consume(TokenType.IDENTIFIER, 'Expected constant name')
+
+        self._consume(TokenType.EQUAL, 'Expected "="')
+        value = self.value()
+
+        return Const(
+            idl_type=idl_type,
+            name=name,
+            ext_attrs=[],
+            value=value,
+        )
+
+    def value(self):
+        negative = self._match(TokenType.MINUS)
+
+        if self._match(TokenType.INFINITY):
+            return Infinity(negative=negative)
+
+        if self._match(TokenType.NAN):
+            return Nan()
+
+        value = self._advance()
+
+        if value.token_type in (TokenType.TRUE, TokenType.FALSE):
+            type_ = 'boolean'
+            value.lexeme = value.lexeme == 'true'
+        elif value.token_type is TokenType.NUMBER:
+            type_ = 'number'
+            if negative is True:
+                value.lexeme = '-' + value.lexeme
+        else:
+            type_ = 'unknown'
+
+        return Value(
+            type=type_,
+            value=value,
         )
 
     def attribute(self):

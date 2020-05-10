@@ -5,6 +5,9 @@ from .productions.node import (
     Node,
     Argument,
     Attribute,
+    Callback,
+    CallbackInterface,
+    Const,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
@@ -12,6 +15,9 @@ from .productions.node import (
     Iterable_,
     Interface,
     Operation,
+    Infinity,
+    Nan,
+    Value,
 )
 
 
@@ -48,6 +54,19 @@ class Walker(Visitor):
         return self._visit_children(node)
 
     def visit_attribute(self, node: Attribute) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_callback(self, node: Callback) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_callback_interface(
+            self, node: CallbackInterface) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_infinity(self, node: Infinity) -> Iterable[Node]:
+        return self._visit_children(node)
+
+    def visit_nan(self, node: Nan) -> Iterable[Node]:
         return self._visit_children(node)
 
 
@@ -133,3 +152,40 @@ class JsonView(Visitor):
             special=node.special,
             extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
         )
+
+    def visit_callback(self, node: Callback):
+        return dict(
+            type=node.type,
+            name=node.name.lexeme,
+            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
+            arguments=[argument.accept(self) for argument in node.arguments],
+            idlType=node.idl_type.accept(self),
+        )
+
+    def visit_callback_interface(self, node: CallbackInterface):
+        return dict(
+            type=node.type,
+            name=node.name.lexeme,
+            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
+            members=[member.accept(self) for member in node.members],
+            inheritance=node.inheritance,
+            partial=node.partial,
+        )
+
+    def visit_const(self, node: Const):
+        return dict(
+            type=node.type,
+            name=node.name.lexeme,
+            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
+            idlType=node.idl_type.accept(self),
+            value=node.value.accept(self),
+        )
+
+    def visit_value(self, node: Value):
+        return dict(type=node.type, value=node.value.lexeme)
+
+    def visit_infinity(self, node: Infinity):
+        return dict(type=node.type, negative=node.negative)
+
+    def visit_nan(self, node: Nan):
+        return dict(type=node.type)
