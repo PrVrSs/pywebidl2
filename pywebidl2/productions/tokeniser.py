@@ -40,6 +40,10 @@ class Scanner:
         'false': TokenType.FALSE,
         'true': TokenType.TRUE,
         'NaN': TokenType.NAN,
+        'constructor': TokenType.CONSTRUCTOR,
+        'readonly': TokenType.READONLY,
+        'sequence': TokenType.SEQUENCE,
+        'or': TokenType.OR,
     }
 
     def __init__(self, source: str = ''):
@@ -109,11 +113,7 @@ class Scanner:
 
         self._advance()
 
-        while self._match('"'):
-            pass
-
-        value = self.source[self._start + 1:self._current - 1]
-        self._add_token(TokenType.TERMINAL, value)
+        self._add_token(TokenType.STRING, self._current_string.strip('"'))
 
     def _identifier(self) -> None:
         while self._is_alpha(self._peek()):
@@ -141,7 +141,7 @@ class Scanner:
         self._complex_number()
         self._hex()
 
-        self._add_token(TokenType.NUMBER)
+        self._add_token(TokenType.NUMBER, self._current_string)
 
     def _hex(self):
         if self._peek() == 'x':

@@ -8,6 +8,7 @@ from .productions.node import (
     Callback,
     CallbackInterface,
     Const,
+    Constructor,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
@@ -69,6 +70,9 @@ class Walker(Visitor):
     def visit_nan(self, node: Nan) -> Iterable[Node]:
         return self._visit_children(node)
 
+    def visit_constructor(self, node: Constructor) -> Iterable[Node]:
+        return self._visit_children(node)
+
 
 class JsonView(Visitor):
 
@@ -93,11 +97,16 @@ class JsonView(Visitor):
         )
 
     def visit_argument(self, node):
+        if isinstance(node.idl_type, list):
+            idl_type = [idl_type.accept(self) for idl_type in node.idl_type]
+        else:
+            idl_type = node.idl_type.accept(self)
+
         return dict(
             name=node.name.lexeme,
             type=node.type,
-            idlType=node.idl_type.accept(self),
-            default=node.default,
+            idlType=idl_type,
+            default=node.default.accept(self) if node.default else None,
             optional=node.optional,
             variadic=node.variadic,
             extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
@@ -134,9 +143,14 @@ class JsonView(Visitor):
         }
 
     def visit_idl_type(self, node):
+        if isinstance(node.idl_type, list):
+            idl_type = [idl_type.accept(self) for idl_type in node.idl_type]
+        else:
+            idl_type = node.idl_type.lexeme
+
         return dict(
             type=node.type,
-            idlType=node.idl_type.lexeme,
+            idlType=idl_type,
             nullable=node.nullable,
             union=node.union,
             extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
@@ -182,10 +196,17 @@ class JsonView(Visitor):
         )
 
     def visit_value(self, node: Value):
-        return dict(type=node.type, value=node.value.lexeme)
+        return dict(type=node.type, value=node.value.literal)
 
     def visit_infinity(self, node: Infinity):
         return dict(type=node.type, negative=node.negative)
 
     def visit_nan(self, node: Nan):
         return dict(type=node.type)
+
+    def visit_constructor(self, node: Constructor):
+        return dict(
+            type=node.type,
+            extAttrs=[ext_attr.accept(self) for ext_attr in node.ext_attrs],
+            arguments=[argument.accept(self) for argument in node.arguments],
+        )

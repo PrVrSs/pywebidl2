@@ -21,6 +21,7 @@ __all__ = (
     'Const',
     'Infinity',
     'Nan',
+    'Constructor',
 )
 
 
@@ -91,6 +92,7 @@ class CallbackInterface(Node):
 
 
 class Callback(Node):
+
     name: Token
     idl_type: Any
     arguments: List[Any]
@@ -243,3 +245,14 @@ class Nan(Node):
 
     def accept(self, visitor):
         return visitor.visit_nan(self)
+
+
+class Constructor(Node):
+
+    arguments: List[Any]
+    ext_attrs: List[Any]
+
+    type: str = 'constructor'
+
+    def accept(self, visitor):
+        return visitor.visit_constructor(self)

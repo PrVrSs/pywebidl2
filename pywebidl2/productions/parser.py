@@ -7,6 +7,7 @@ from .node import (
     Callback,
     CallbackInterface,
     Const,
+    Constructor,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
@@ -51,7 +52,7 @@ class BaseParser:
         return self.tokens.peek().token_type == TokenType.EOF
 
 
-class Parser(BaseParser):
+class Parser(BaseParser):  # pylint: disable=too-many-public-methods
 
     def parse(self):
         return list(self.definitions())
@@ -116,19 +117,31 @@ class Parser(BaseParser):
 
     def member(self):
         async_ = self._match(TokenType.ASYNC)
+        readonly = self._match(TokenType.READONLY)
 
         if self._match(TokenType.ATTRIBUTE):
-            return self.attribute()
-        elif self._match(TokenType.ITERABLE):
+            return self.attribute(readonly)
+
+        if self._match(TokenType.ITERABLE):
             return self.iterable(async_)
-        elif self._match(TokenType.CONST):
+
+        if self._match(TokenType.CONST):
             return self.const()
+
+        if self._match(TokenType.CONSTRUCTOR):
+            return self.constructor()
 
         return Operation(
             idl_type=self.idl_type('return-type'),
             name=self._consume(TokenType.IDENTIFIER, 'Expected operation name'),
             arguments=list(self.argument()),
             ext_attrs=[],
+        )
+
+    def constructor(self):
+        return Constructor(
+            ext_attrs=list(self.extended_attributes()),
+            arguments=list(self.argument()),
         )
 
     def const(self):
@@ -158,11 +171,13 @@ class Parser(BaseParser):
 
         if value.token_type in (TokenType.TRUE, TokenType.FALSE):
             type_ = 'boolean'
-            value.lexeme = value.lexeme == 'true'
+            value.literal = value.lexeme == 'true'  # fix
         elif value.token_type is TokenType.NUMBER:
             type_ = 'number'
             if negative is True:
-                value.lexeme = '-' + value.lexeme
+                value.literal = '-' + value.literal
+        elif value.token_type is TokenType.STRING:
+            type_ = 'string'
         else:
             type_ = 'unknown'
 
@@ -171,29 +186,21 @@ class Parser(BaseParser):
             value=value,
         )
 
-    def attribute(self):
+    def attribute(self, readonly):
         return Attribute(
             idl_type=self.idl_type(type_='attribute-type'),
             name=self._advance(),  # self._consume(
             # TokenType.IDENTIFIER, 'Expected argument name')
             ext_attrs=[],
+            readonly=readonly,
         )
 
     def iterable(self, async_):
-        self._consume(TokenType.LEFT_ANGLE, 'Expected "<"')
-
-        idl_type = []
-        while not self._match(TokenType.RIGHT_ANGLE):
-            idl_type.append(self.idl_type())
-            self._match(TokenType.COMMA)
-
-        arguments = list(self.argument())
-
         return Iterable_(
             async_=async_,
-            idl_type=idl_type,
-            arguments=arguments,
-            ext_attrs=[]
+            idl_type=self.idl_type(),
+            arguments=list(self.argument()),
+            ext_attrs=[],
         )
 
     def argument(self):
@@ -207,17 +214,43 @@ class Parser(BaseParser):
                 idl_type=self.idl_type(type_='argument-type'),
                 name=self._advance(),  # self._consume(
                 # TokenType.IDENTIFIER, 'Expected argument name')
+                default=self.value() if self._match(TokenType.EQUAL) else None,
             )
 
             self._match(TokenType.COMMA)
 
-    def idl_type(self, type_=None):
+    def idl_type(self, type_=None, union=False):
+        if self._check(TokenType.LEFT_ANGLE):
+            return list(self.idl_type_list(type_, union))
+
+        return self.idl_type_once(type_)
+
+    def idl_type_once(self, type_):
+        ext_attrs = list(self.extended_attributes())
+        sequence = self._match(TokenType.SEQUENCE)
+        union = self._check(TokenType.LEFT_PAREN)
+
+        if sequence is True:
+            idl_type = list(self.idl_type_list('argument-type', union))
+        elif union is True:
+            idl_type = list(self.idl_type_list(None, union))
+        else:
+            idl_type = self._consume(TokenType.IDENTIFIER, 'Expected idl type')
+
         return IDLType(
             type=type_,
-            ext_attrs=list(self.extended_attributes()),
-            idl_type=self._consume(TokenType.IDENTIFIER, 'Expected idl type'),
-
+            ext_attrs=ext_attrs,
+            idl_type=idl_type,
+            generic='sequence' if sequence is True else '',
+            union=union,
         )
+
+    def idl_type_list(self, type_, union):
+        self._match(TokenType.LEFT_ANGLE, TokenType.LEFT_PAREN)
+
+        while not self._match(TokenType.RIGHT_ANGLE, TokenType.RIGHT_PAREN):
+            yield self.idl_type(type_, union)
+            self._match(TokenType.COMMA, TokenType.OR)
 
     def extended_attributes(self):
         if not self._match(TokenType.LEFT_SQUARE):

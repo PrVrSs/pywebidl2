@@ -19,6 +19,11 @@ class TokenType(IntEnum):
     NEW_LINE = auto()
     WHITESPACE = auto()
 
+    OR = auto()
+    STRING = auto()
+    SEQUENCE = auto()
+    READONLY = auto()
+    CONSTRUCTOR = auto()
     NAN = auto()
     FALSE = auto()
     TRUE = auto()

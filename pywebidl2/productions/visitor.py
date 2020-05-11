@@ -7,6 +7,7 @@ from .node import (
     Callback,
     CallbackInterface,
     Const,
+    Constructor,
     ExtendedAttribute,
     Identifier,
     IdentifierList,
@@ -23,7 +24,7 @@ from .node import (
 _TV = TypeVar('_TV')
 
 
-class Visitor(Generic[_TV]):
+class Visitor(Generic[_TV]):  # pragma: no cover
     def visit(self, node: Node) -> _TV:
         return node.accept(self)
 
@@ -70,4 +71,7 @@ class Visitor(Generic[_TV]):
         raise NotImplementedError
 
     def visit_nan(self, node: Nan) -> _TV:
+        raise NotImplementedError
+
+    def visit_constructor(self, node: Constructor) -> _TV:
         raise NotImplementedError

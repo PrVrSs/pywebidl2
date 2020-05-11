@@ -1,0 +1,193 @@
+[
+    {
+        "type": "interface",
+        "name": "Circle",
+        "inheritance": null,
+        "members": [
+            {
+                "type": "constructor",
+                "arguments": [],
+                "extAttrs": []
+            },
+            {
+                "type": "constructor",
+                "arguments": [
+                    {
+                        "type": "argument",
+                        "name": "radius",
+                        "extAttrs": [],
+                        "idlType": {
+                            "type": "argument-type",
+                            "extAttrs": [],
+                            "generic": "",
+                            "nullable": false,
+                            "union": false,
+                            "idlType": "float"
+                        },
+                        "default": null,
+                        "optional": false,
+                        "variadic": false
+                    }
+                ],
+                "extAttrs": []
+            },
+            {
+                "type": "constructor",
+                "arguments": [
+                    {
+                        "type": "argument",
+                        "name": "str",
+                        "extAttrs": [],
+                        "idlType": {
+                            "type": "argument-type",
+                            "extAttrs": [],
+                            "generic": "",
+                            "nullable": false,
+                            "union": false,
+                            "idlType": "string"
+                        },
+                        "default": {
+                            "type": "string",
+                            "value": ""
+                        },
+                        "optional": true,
+                        "variadic": false
+                    }
+                ],
+                "extAttrs": []
+            },
+            {
+                "type": "constructor",
+                "arguments": [
+                    {
+                        "type": "argument",
+                        "name": "seq",
+                        "extAttrs": [],
+                        "idlType": {
+                            "type": "argument-type",
+                            "extAttrs": [],
+                            "generic": "sequence",
+                            "nullable": false,
+                            "union": false,
+                            "idlType": [
+                                {
+                                    "type": "argument-type",
+                                    "extAttrs": [],
+                                    "generic": "",
+                                    "nullable": false,
+                                    "union": false,
+                                    "idlType": "string"
+                                }
+                            ]
+                        },
+                        "default": null,
+                        "optional": false,
+                        "variadic": false
+                    }
+                ],
+                "extAttrs": []
+            },
+            {
+                "type": "constructor",
+                "arguments": [
+                    {
+                        "type": "argument",
+                        "name": "union",
+                        "extAttrs": [],
+                        "idlType": {
+                            "type": "argument-type",
+                            "extAttrs": [],
+                            "generic": "",
+                            "nullable": false,
+                            "union": true,
+                            "idlType": [
+                                {
+                                    "type": null,
+                                    "extAttrs": [],
+                                    "generic": "",
+                                    "nullable": false,
+                                    "union": false,
+                                    "idlType": "Type1"
+                                },
+                                {
+                                    "type": null,
+                                    "extAttrs": [],
+                                    "generic": "",
+                                    "nullable": false,
+                                    "union": false,
+                                    "idlType": "Type2"
+                                }
+                            ]
+                        },
+                        "default": null,
+                        "optional": false,
+                        "variadic": false
+                    }
+                ],
+                "extAttrs": []
+            },
+            {
+                "type": "attribute",
+                "name": "r",
+                "idlType": {
+                    "type": "attribute-type",
+                    "extAttrs": [],
+                    "generic": "",
+                    "nullable": false,
+                    "union": false,
+                    "idlType": "float"
+                },
+                "extAttrs": [],
+                "special": "",
+                "readonly": false
+            },
+            {
+                "type": "attribute",
+                "name": "cx",
+                "idlType": {
+                    "type": "attribute-type",
+                    "extAttrs": [],
+                    "generic": "",
+                    "nullable": false,
+                    "union": false,
+                    "idlType": "float"
+                },
+                "extAttrs": [],
+                "special": "",
+                "readonly": false
+            },
+            {
+                "type": "attribute",
+                "name": "cy",
+                "idlType": {
+                    "type": "attribute-type",
+                    "extAttrs": [],
+                    "generic": "",
+                    "nullable": false,
+                    "union": false,
+                    "idlType": "float"
+                },
+                "extAttrs": [],
+                "special": "",
+                "readonly": false
+            },
+            {
+                "type": "attribute",
+                "name": "circumference",
+                "idlType": {
+                    "type": "attribute-type",
+                    "extAttrs": [],
+                    "generic": "",
+                    "nullable": false,
+                    "union": false,
+                    "idlType": "float"
+                },
+                "extAttrs": [],
+                "special": "",
+                "readonly": true
+            }
+        ],
+        "extAttrs": [],
+        "partial": false
+    }
+]
