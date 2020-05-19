@@ -44,11 +44,6 @@ class WebIDLParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by WebIDLParser#partialDefinition.
-    def visitPartialDefinition(self, ctx:WebIDLParser.PartialDefinitionContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by WebIDLParser#partialInterfaceOrPartialMixin.
     def visitPartialInterfaceOrPartialMixin(self, ctx:WebIDLParser.PartialInterfaceOrPartialMixinContext):
         return self.visitChildren(ctx)
@@ -311,11 +306,6 @@ class WebIDLParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by WebIDLParser#dictionaryMember.
     def visitDictionaryMember(self, ctx:WebIDLParser.DictionaryMemberContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#partialDictionary.
-    def visitPartialDictionary(self, ctx:WebIDLParser.PartialDictionaryContext):
         return self.visitChildren(ctx)
 
 

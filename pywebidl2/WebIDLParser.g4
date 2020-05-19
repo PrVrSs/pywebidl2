@@ -32,17 +32,11 @@ interfaceOrMixin
     ;
 
 interfaceRest
-    : IDENTIFIER_WEBIDL inheritance? LEFT_BRACE interfaceMembers RIGHT_BRACE SEMI
+    : IDENTIFIER_WEBIDL inheritance? LEFT_BRACE interfaceMembers* RIGHT_BRACE SEMI
     ;
 
 partial
-    : PARTIAL partialDefinition
-;
-
-partialDefinition
-    : INTERFACE partialInterfaceOrPartialMixin
-    | partialDictionary
-    | namespace
+    : PARTIAL INTERFACE partialInterfaceOrPartialMixin
     ;
 
 partialInterfaceOrPartialMixin
@@ -51,11 +45,11 @@ partialInterfaceOrPartialMixin
     ;
 
 partialInterfaceRest
-    : IDENTIFIER_WEBIDL LEFT_BRACE partialInterfaceMembers RIGHT_BRACE SEMI
+    : IDENTIFIER_WEBIDL LEFT_BRACE partialInterfaceMembers* RIGHT_BRACE SEMI
     ;
 
 interfaceMembers
-    : (extendedAttributeList? interfaceMember)*
+    : extendedAttributeList? interfaceMember
     ;
 
 interfaceMember
@@ -64,7 +58,7 @@ interfaceMember
     ;
 
 partialInterfaceMembers
-    : (extendedAttributeList? partialInterfaceMember)*
+    : extendedAttributeList? partialInterfaceMember
     ;
 
 partialInterfaceMember
@@ -85,11 +79,11 @@ inheritance
     ;
 
 mixinRest
-    : MIXIN IDENTIFIER_WEBIDL LEFT_BRACE mixinMembers RIGHT_BRACE SEMI
+    : MIXIN IDENTIFIER_WEBIDL LEFT_BRACE mixinMembers* RIGHT_BRACE SEMI
     ;
 
 mixinMembers
-    : (extendedAttributeList? mixinMember)*
+    : extendedAttributeList? mixinMember
     ;
 
 mixinMember
@@ -105,12 +99,12 @@ includesStatement
 
 callbackRestOrInterface
     : callbackRest
-    | INTERFACE IDENTIFIER_WEBIDL LEFT_BRACE callbackInterfaceMembers RIGHT_BRACE SEMI
+    | INTERFACE IDENTIFIER_WEBIDL LEFT_BRACE callbackInterfaceMembers* RIGHT_BRACE SEMI
     ;
 
 
 callbackInterfaceMembers
-    : (extendedAttributeList? callbackInterfaceMember)*
+    : extendedAttributeList? callbackInterfaceMember
     ;
 
 callbackInterfaceMember
@@ -167,7 +161,7 @@ defaultValue
     | STRING_WEBIDL
     | LEFT_BRACKET RIGHT_BRACKET
     | LEFT_BRACE RIGHT_BRACE
-    | null_
+    | NULL
     ;
 
 operation
@@ -270,11 +264,11 @@ setlikeRest
     ;
 
 namespace
-    : NAMESPACE IDENTIFIER_WEBIDL LEFT_BRACE namespaceMembers RIGHT_BRACE SEMI
+    : PARTIAL? NAMESPACE IDENTIFIER_WEBIDL LEFT_BRACE namespaceMembers* RIGHT_BRACE SEMI
     ;
 
 namespaceMembers
-    : (extendedAttributeList? namespaceMember)*
+    : extendedAttributeList? namespaceMember
     ;
 
 namespaceMember
@@ -283,20 +277,17 @@ namespaceMember
     ;
 
 dictionary
-    : DICTIONARY IDENTIFIER_WEBIDL inheritance? LEFT_BRACE dictionaryMembers RIGHT_BRACE SEMI
+    : DICTIONARY IDENTIFIER_WEBIDL inheritance? LEFT_BRACE dictionaryMembers* RIGHT_BRACE SEMI
+    | PARTIAL DICTIONARY IDENTIFIER_WEBIDL LEFT_BRACE dictionaryMembers* RIGHT_BRACE SEMI
 ;
 
 dictionaryMembers
-    : (extendedAttributeList? dictionaryMember)*
+    : extendedAttributeList? dictionaryMember
     ;
 
 dictionaryMember
     : REQUIRED typeWithExtendedAttributes IDENTIFIER_WEBIDL SEMI
     | type_ IDENTIFIER_WEBIDL default_? SEMI
-    ;
-
-partialDictionary
-    : dictionary IDENTIFIER_WEBIDL LEFT_BRACE dictionaryMembers RIGHT_BRACE SEMI
     ;
 
 default_

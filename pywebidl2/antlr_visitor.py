@@ -51,22 +51,21 @@ class Visitor(WebIDLParserVisitor):
     def visitDictionary(self, ctx: WebIDLParser.DictionaryContext):
         return Dictionary(
             name=ctx.IDENTIFIER_WEBIDL().getText(),
-            members=ctx.dictionaryMembers().accept(self),
+            members=[member.accept(self) for member in ctx.dictionaryMembers()],
+            inheritance=ctx.inheritance() and ctx.inheritance().accept(self),
         )
+
+    def visitInheritance(self, ctx: WebIDLParser.InheritanceContext):
+        return ctx.IDENTIFIER_WEBIDL().getText()
 
     def visitDictionaryMembers(
             self, ctx: WebIDLParser.DictionaryMembersContext):
-        callback_interface_members = []
-        for index, callback_member in enumerate(ctx.dictionaryMember()):
-            member = callback_member.accept(self)
+        member = ctx.dictionaryMember().accept(self)
 
-            if extended_attribute := ctx.extendedAttributeList(index):
-                extended_attribute = extended_attribute.accept(self)
+        if extended_attribute := ctx.extendedAttributeList():
+            member.ext_attrs = extended_attribute.accept(self)
 
-            member.ext_attrs = extended_attribute or []
-            callback_interface_members.append(member)
-
-        return callback_interface_members
+        return member
 
     def visitDictionaryMember(self, ctx: WebIDLParser.DictionaryMemberContext):
         if type_ := ctx.typeWithExtendedAttributes():
@@ -99,8 +98,11 @@ class Visitor(WebIDLParserVisitor):
 
         return CallbackInterface(
             name=ctx.IDENTIFIER_WEBIDL().getText(),
-            members=ctx.callbackInterfaceMembers().accept(self),
             inheritance=None,
+            members=[
+                member.accept(self)
+                for member in ctx.callbackInterfaceMembers()
+            ],
         )
 
     def visitInterfaceOrMixin(self, ctx: WebIDLParser.InterfaceOrMixinContext):
@@ -111,17 +113,12 @@ class Visitor(WebIDLParserVisitor):
 
     def visitCallbackInterfaceMembers(
             self, ctx: WebIDLParser.CallbackInterfaceMembersContext):
-        callback_interface_members = []
-        for index, callback_member in enumerate(ctx.callbackInterfaceMember()):
-            member = callback_member.accept(self)
+        member = ctx.callbackInterfaceMember().accept(self)
 
-            if extended_attribute := ctx.extendedAttributeList(index):
-                extended_attribute = extended_attribute.accept(self)
+        if extended_attribute := ctx.extendedAttributeList():
+            member.ext_attrs = extended_attribute.accept(self)
 
-            member.ext_attrs = extended_attribute or []
-            callback_interface_members.append(member)
-
-        return callback_interface_members
+        return member
 
     def _operation(self, regular_operation):
         return_type, (name, arguments) = regular_operation.accept(self)
@@ -200,22 +197,18 @@ class Visitor(WebIDLParserVisitor):
             type='interface',
             name=ctx.IDENTIFIER_WEBIDL().getText(),
             inheritance=None,
-            members=ctx.interfaceMembers().accept(self),
+            members=[member.accept(self) for member in ctx.interfaceMembers()],
             partial=False,
             ext_attrs=[],
         )
 
     def visitInterfaceMembers(self, ctx: WebIDLParser.InterfaceMembersContext):
-        extended_attribute_list = [
-            ext_attr.accept(self) for ext_attr in ctx.extendedAttributeList()
-        ]
+        member = ctx.interfaceMember().accept(self)
 
-        interface_members = [
-            interface_member.accept(self)
-            for interface_member in ctx.interfaceMember()
-        ]
+        if extended_attribute := ctx.extendedAttributeList():
+            member.ext_attrs = extended_attribute.accept(self)
 
-        return interface_members
+        return member
 
     def visitPartialInterfaceMember(
             self, ctx: WebIDLParser.PartialInterfaceMemberContext):
@@ -247,33 +240,24 @@ class Visitor(WebIDLParserVisitor):
 
     def visitDistinguishableType(
             self, ctx: WebIDLParser.DistinguishableTypeContext):
-        if null := ctx.null_():
-            null = null.accept(self)
+        null = ctx.null_() is not None
 
         if type_ := ctx.primitiveType():
-            return IdlType(
-                idl_type=type_.accept(self), nullable=null is not None)
+            return IdlType(idl_type=type_.accept(self), nullable=null)
 
         if type_ := ctx.stringType():
-            return IdlType(
-                idl_type=type_.accept(self), nullable=null is not None)
+            return IdlType(idl_type=type_.accept(self), nullable=null)
 
         if type_ := ctx.typeWithExtendedAttributes():
             generic = ctx.SEQUENCE() and ctx.SEQUENCE().getText() or ''
             idl_type = type_.accept(self)
             idl_type.type = 'argument-type'
-            return IdlType(
-                idl_type=[idl_type],
-                nullable=null is not None,
-                generic=generic,
-            )
+            return IdlType(idl_type=[idl_type], nullable=null, generic=generic)
 
         if type_ := ctx.bufferRelatedType():
-            return IdlType(
-                idl_type=type_.accept(self), nullable=null is not None)
+            return IdlType(idl_type=type_.accept(self), nullable=null)
 
-        return IdlType(
-            idl_type=ctx.getChild(0).getText(), nullable=null is not None)
+        return IdlType(idl_type=ctx.getChild(0).getText(), nullable=null)
 
     def visitPrimitiveType(self, ctx: WebIDLParser.PrimitiveTypeContext):
         if type_ := ctx.unsignedIntegerType():
@@ -315,16 +299,16 @@ class Visitor(WebIDLParserVisitor):
             self, ctx: WebIDLParser.ReadWriteAttributeContext):
         return ctx.getChild(0).accept(self)
 
-    def visitIterable(self, ctx: WebIDLParser.IterableContext):
-        idl_type = ctx.typeWithExtendedAttributes().accept(self)
-
-        return Iterable_(
-            idl_type=idl_type,
-            arguments=[],
-            ext_attrs=[],
-            async_=False,
-            readonly=False,
-        )
+    # def visitIterable(self, ctx: WebIDLParser.IterableContext):
+    #     idl_type = ctx.typeWithExtendedAttributes().accept(self)
+    #
+    #     return Iterable_(
+    #         idl_type=idl_type,
+    #         arguments=[],
+    #         ext_attrs=[],
+    #         async_=False,
+    #         readonly=False,
+    #     )
 
     def visitAsyncIterable(self, ctx: WebIDLParser.AsyncIterableContext):
         idl_types = []
@@ -352,8 +336,8 @@ class Visitor(WebIDLParserVisitor):
     def visitOperation(self, ctx: WebIDLParser.OperationContext):
         if regular_operation := ctx.regularOperation():
             return self._operation(regular_operation)
-        else:
-            operaton = ctx.specialOperation().accept(self)
+        # else:
+        #     operaton = ctx.specialOperation().accept(self)
 
     def visitRegularOperation(self, ctx: WebIDLParser.RegularOperationContext):
         return ctx.returnType().accept(self), ctx.operationRest().accept(self)
@@ -487,6 +471,9 @@ class Visitor(WebIDLParserVisitor):
 
         if ctx.LEFT_BRACE():
             return Literal(type='dictionary')
+
+        if ctx.NULL():
+            return Literal(type='null')
 
         return ctx.getText()
 
