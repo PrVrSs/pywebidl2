@@ -319,21 +319,6 @@ class WebIDLParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by WebIDLParser#enumValueList.
-    def visitEnumValueList(self, ctx:WebIDLParser.EnumValueListContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#enumValueListComma.
-    def visitEnumValueListComma(self, ctx:WebIDLParser.EnumValueListCommaContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#enumValueListString.
-    def visitEnumValueListString(self, ctx:WebIDLParser.EnumValueListStringContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by WebIDLParser#callbackRest.
     def visitCallbackRest(self, ctx:WebIDLParser.CallbackRestContext):
         return self.visitChildren(ctx)

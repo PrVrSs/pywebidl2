@@ -5,11 +5,11 @@ options { tokenVocab=WebIDLLexer; }
 
 webIDL
     : definitions? EOF
-;
+    ;
 
 definitions
     : definition+
-;
+    ;
 
 definition
     : extendedAttributeList? callbackOrInterfaceOrMixin
@@ -19,12 +19,12 @@ definition
     | extendedAttributeList? enum_
     | extendedAttributeList? typedef
     | extendedAttributeList? includesStatement
-;
+    ;
 
 callbackOrInterfaceOrMixin
     : CALLBACK callbackRestOrInterface
     | INTERFACE interfaceOrMixin
-;
+    ;
 
 interfaceOrMixin
     : interfaceRest
@@ -295,19 +295,7 @@ default_
     ;
 
 enum_
-    : ENUM IDENTIFIER_WEBIDL LEFT_BRACE enumValueList RIGHT_BRACE SEMI
-    ;
-
-enumValueList
-    : STRING_WEBIDL enumValueListComma?
-    ;
-
-enumValueListComma
-    : COMMA enumValueListString?
-    ;
-
-enumValueListString
-    : STRING_WEBIDL enumValueListComma?
+    : ENUM IDENTIFIER_WEBIDL LEFT_BRACE STRING_WEBIDL (COMMA STRING_WEBIDL?)* RIGHT_BRACE SEMI
     ;
 
 callbackRest

@@ -16,6 +16,19 @@ class Interface:
 
 
 @attr.s
+class Enum_:
+
+    name = attr.ib()
+
+    type = attr.ib(default='enum')
+    values = attr.ib(default=attr.Factory(list))
+    ext_attrs = attr.ib(default=attr.Factory(list))
+
+    def accept(self, visitor):
+        visitor.visit_enum(self)
+
+
+@attr.s
 class Operation:
 
     name = attr.ib()

@@ -12,6 +12,7 @@ from .expr import (
     Const,
     Constructor,
     Dictionary,
+    Enum_,
     ExtendedAttribute,
     Field,
     IdlType,
@@ -50,9 +51,19 @@ class Visitor(WebIDLParserVisitor):
 
     def visitDictionary(self, ctx: WebIDLParser.DictionaryContext):
         return Dictionary(
+            partial=ctx.PARTIAL() is not None,
             name=ctx.IDENTIFIER_WEBIDL().getText(),
             members=[member.accept(self) for member in ctx.dictionaryMembers()],
             inheritance=ctx.inheritance() and ctx.inheritance().accept(self),
+        )
+
+    def visitEnum_(self, ctx: WebIDLParser.Enum_Context):
+        return Enum_(
+            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            values=[
+                Value(type='enum-value', value=enum_value.getText().strip('"'))
+                for enum_value in ctx.STRING_WEBIDL()
+            ]
         )
 
     def visitInheritance(self, ctx: WebIDLParser.InheritanceContext):
@@ -67,6 +78,14 @@ class Visitor(WebIDLParserVisitor):
 
         return member
 
+    @staticmethod
+    def _setup_type(idl_type, _type):
+        idl_type.type = _type
+
+        if idl_type.generic == 'sequence':
+            for idl in idl_type.idl_type:
+                idl.type = _type
+
     def visitDictionaryMember(self, ctx: WebIDLParser.DictionaryMemberContext):
         if type_ := ctx.typeWithExtendedAttributes():
             idl_type = type_.accept(self)
@@ -76,9 +95,10 @@ class Visitor(WebIDLParserVisitor):
         if default := ctx.default_():
             default = default.accept(self)
 
-        idl_type.type = 'dictionary-type'
+        self._setup_type(idl_type, 'dictionary-type')
 
         return Field(
+            required=ctx.REQUIRED() is not None,
             name=ctx.IDENTIFIER_WEBIDL().getText(),
             default=default,
             idl_type=idl_type,
@@ -249,10 +269,11 @@ class Visitor(WebIDLParserVisitor):
             return IdlType(idl_type=type_.accept(self), nullable=null)
 
         if type_ := ctx.typeWithExtendedAttributes():
-            generic = ctx.SEQUENCE() and ctx.SEQUENCE().getText() or ''
-            idl_type = type_.accept(self)
-            idl_type.type = 'argument-type'
-            return IdlType(idl_type=[idl_type], nullable=null, generic=generic)
+            return IdlType(
+                idl_type=[type_.accept(self)],
+                nullable=null,
+                generic=ctx.SEQUENCE() and ctx.SEQUENCE().getText() or '',
+            )
 
         if type_ := ctx.bufferRelatedType():
             return IdlType(idl_type=type_.accept(self), nullable=null)
@@ -411,7 +432,8 @@ class Visitor(WebIDLParserVisitor):
             idl_type = ctx.type_().accept(self)
 
         arg_name = ctx.argumentName().accept(self)
-        idl_type.type = 'argument-type'
+
+        self._setup_type(idl_type, 'argument-type')
 
         return optional, arg_name, idl_type, default
 
@@ -475,7 +497,7 @@ class Visitor(WebIDLParserVisitor):
         if ctx.NULL():
             return Literal(type='null')
 
-        return ctx.getText()
+        return Value(type='sequence', value=[])
 
     def visitOperationName(self, ctx: WebIDLParser.OperationNameContext):
         return ctx.getText()

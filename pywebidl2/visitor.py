@@ -8,6 +8,7 @@ from .expr import (
     Const,
     Constructor,
     Dictionary,
+    Enum_,
     ExtendedAttribute,
     Field,
     IdlType,
@@ -78,4 +79,7 @@ class Visitor(Generic[_TV]):  # pragma: no cover
         raise NotImplementedError
 
     def visit_field(self, node: Field) -> _TV:
+        raise NotImplementedError
+
+    def visit_enum(self, node: Enum_) -> _TV:
         raise NotImplementedError
