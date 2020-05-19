@@ -1,44 +1,42 @@
 from typing import Generic, TypeVar
 
-from .node import (
-    Node,
+from .expr import (
     Argument,
     Attribute,
     Callback,
     CallbackInterface,
     Const,
     Constructor,
+    Dictionary,
     ExtendedAttribute,
-    Identifier,
-    IdentifierList,
-    IDLType,
-    Iterable_,
-    Interface,
-    Operation,
+    Field,
+    IdlType,
     Infinity,
-    Nan,
+    Interface,
+    Iterable_,
+    Literal,
+    Operation,
     Value,
 )
-
 
 _TV = TypeVar('_TV')
 
 
 class Visitor(Generic[_TV]):  # pragma: no cover
-    def visit(self, node: Node) -> _TV:
-        return node.accept(self)
+    def visit(self, expr) -> _TV:
+        return expr.accept(self)
 
-    def visit_interface_stmt(self, node: Interface) -> _TV:
+    def visit_interface(self, node: Interface) -> _TV:
         raise NotImplementedError
 
     def visit_ext_attr(self, node: ExtendedAttribute) -> _TV:
         raise NotImplementedError
 
-    def visit_identifier(self, node: Identifier) -> _TV:
-        raise NotImplementedError
-
-    def visit_identifier_list(self, node: IdentifierList) -> _TV:
-        raise NotImplementedError
+    # def visit_identifier(self, node: Identifier) -> _TV:
+    #     raise NotImplementedError
+    #
+    # def visit_identifier_list(self, node: IdentifierList) -> _TV:
+    #     raise NotImplementedError
 
     def visit_operation(self, node: Operation) -> _TV:
         raise NotImplementedError
@@ -49,7 +47,7 @@ class Visitor(Generic[_TV]):  # pragma: no cover
     def visit_iterable(self, node: Iterable_) -> _TV:
         raise NotImplementedError
 
-    def visit_idl_type(self, node: IDLType) -> _TV:
+    def visit_idl_type(self, node: IdlType) -> _TV:
         raise NotImplementedError
 
     def visit_attribute(self, node: Attribute) -> _TV:
@@ -70,8 +68,14 @@ class Visitor(Generic[_TV]):  # pragma: no cover
     def visit_infinity(self, node: Infinity) -> _TV:
         raise NotImplementedError
 
-    def visit_nan(self, node: Nan) -> _TV:
+    def visit_literal(self, node: Literal) -> _TV:
         raise NotImplementedError
 
     def visit_constructor(self, node: Constructor) -> _TV:
+        raise NotImplementedError
+
+    def visit_dictionary(self, node: Dictionary) -> _TV:
+        raise NotImplementedError
+
+    def visit_field(self, node: Field) -> _TV:
         raise NotImplementedError

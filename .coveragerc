@@ -6,6 +6,7 @@ branch = True
 # List of file name patterns, the files to leave out of measurement or reporting
 omit =
     */__main__.py
+    */generated/*
 
 [report]
 # Target coverage percentage

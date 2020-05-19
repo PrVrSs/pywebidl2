@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pywebidl2"
-version = "0.1.0"
+version = "0.1.1"
 description = "WebIDL tool"
 authors = ["Sergey Reshetnikov <resh.sersh@gmail.com>"]
 license = "MIT"
@@ -18,6 +18,8 @@ keywords = [
 [tool.poetry.dependencies]
 python = "^3.8"
 
+antlr4-python3-runtime = "^4.8"
+attrs = "^19.3.0"
 click = "^7.1.2"
 more-itertools = "^8.2.0"
 

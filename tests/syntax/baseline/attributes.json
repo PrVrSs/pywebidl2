@@ -7,35 +7,35 @@
             {
                 "type": "attribute",
                 "name": "age",
-                "idlType": {
+                "idl_type": {
                     "type": "attribute-type",
-                    "extAttrs": [],
+                    "ext_attrs": [],
                     "generic": "",
                     "nullable": false,
                     "union": false,
-                    "idlType": "unsigned short"
+                    "idl_type": "unsigned short"
                 },
-                "extAttrs": [],
+                "ext_attrs": [],
                 "special": "",
                 "readonly": false
             },
             {
                 "type": "attribute",
                 "name": "required",
-                "idlType": {
+                "idl_type": {
                     "type": "attribute-type",
-                    "extAttrs": [],
+                    "ext_attrs": [],
                     "generic": "",
                     "nullable": false,
                     "union": false,
-                    "idlType": "any"
+                    "idl_type": "any"
                 },
-                "extAttrs": [],
+                "ext_attrs": [],
                 "special": "",
                 "readonly": false
             }
         ],
-        "extAttrs": [],
+        "ext_attrs": [],
         "partial": false
     }
 ]

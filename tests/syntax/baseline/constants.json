@@ -7,15 +7,15 @@
             {
                 "type": "const",
                 "name": "DEBUG",
-                "idlType": {
+                "idl_type": {
                     "type": "const-type",
-                    "extAttrs": [],
+                    "ext_attrs": [],
                     "generic": "",
                     "nullable": false,
                     "union": false,
-                    "idlType": "boolean"
+                    "idl_type": "boolean"
                 },
-                "extAttrs": [],
+                "ext_attrs": [],
                 "value": {
                     "type": "boolean",
                     "value": false
@@ -24,15 +24,15 @@
             {
                 "type": "const",
                 "name": "negative",
-                "idlType": {
+                "idl_type": {
                     "type": "const-type",
-                    "extAttrs": [],
+                    "ext_attrs": [],
                     "generic": "",
                     "nullable": false,
                     "union": false,
-                    "idlType": "short"
+                    "idl_type": "short"
                 },
-                "extAttrs": [],
+                "ext_attrs": [],
                 "value": {
                     "type": "number",
                     "value": "-1"
@@ -41,15 +41,15 @@
             {
                 "type": "const",
                 "name": "LF",
-                "idlType": {
+                "idl_type": {
                     "type": "const-type",
-                    "extAttrs": [],
+                    "ext_attrs": [],
                     "generic": "",
                     "nullable": false,
                     "union": false,
-                    "idlType": "octet"
+                    "idl_type": "octet"
                 },
-                "extAttrs": [],
+                "ext_attrs": [],
                 "value": {
                     "type": "number",
                     "value": "10"
@@ -58,15 +58,15 @@
             {
                 "type": "const",
                 "name": "BIT_MASK",
-                "idlType": {
+                "idl_type": {
                     "type": "const-type",
-                    "extAttrs": [],
+                    "ext_attrs": [],
                     "generic": "",
                     "nullable": false,
                     "union": false,
-                    "idlType": "unsigned long"
+                    "idl_type": "unsigned long"
                 },
-                "extAttrs": [],
+                "ext_attrs": [],
                 "value": {
                     "type": "number",
                     "value": "0x0000fc00"
@@ -75,15 +75,15 @@
             {
                 "type": "const",
                 "name": "AVOGADRO",
-                "idlType": {
+                "idl_type": {
                     "type": "const-type",
-                    "extAttrs": [],
+                    "ext_attrs": [],
                     "generic": "",
                     "nullable": false,
                     "union": false,
-                    "idlType": "float"
+                    "idl_type": "float"
                 },
-                "extAttrs": [],
+                "ext_attrs": [],
                 "value": {
                     "type": "number",
                     "value": "6.022e23"
@@ -92,15 +92,15 @@
             {
                 "type": "const",
                 "name": "sobig",
-                "idlType": {
+                "idl_type": {
                     "type": "const-type",
-                    "extAttrs": [],
+                    "ext_attrs": [],
                     "generic": "",
                     "nullable": false,
                     "union": false,
-                    "idlType": "unrestricted float"
+                    "idl_type": "unrestricted float"
                 },
-                "extAttrs": [],
+                "ext_attrs": [],
                 "value": {
                     "type": "Infinity",
                     "negative": false
@@ -109,15 +109,15 @@
             {
                 "type": "const",
                 "name": "minusonedividedbyzero",
-                "idlType": {
+                "idl_type": {
                     "type": "const-type",
-                    "extAttrs": [],
+                    "ext_attrs": [],
                     "generic": "",
                     "nullable": false,
                     "union": false,
-                    "idlType": "unrestricted double"
+                    "idl_type": "unrestricted double"
                 },
-                "extAttrs": [],
+                "ext_attrs": [],
                 "value": {
                     "type": "Infinity",
                     "negative": true
@@ -126,15 +126,15 @@
             {
                 "type": "const",
                 "name": "notanumber",
-                "idlType": {
+                "idl_type": {
                     "type": "const-type",
-                    "extAttrs": [],
+                    "ext_attrs": [],
                     "generic": "",
                     "nullable": false,
                     "union": false,
-                    "idlType": "short"
+                    "idl_type": "short"
                 },
-                "extAttrs": [],
+                "ext_attrs": [],
                 "value": {
                     "type": "NaN"
                 }
@@ -142,22 +142,22 @@
             {
                 "type": "const",
                 "name": "_const",
-                "idlType": {
+                "idl_type": {
                     "type": "const-type",
-                    "extAttrs": [],
+                    "ext_attrs": [],
                     "generic": "",
                     "nullable": false,
                     "union": false,
-                    "idlType": "boolean"
+                    "idl_type": "boolean"
                 },
-                "extAttrs": [],
+                "ext_attrs": [],
                 "value": {
                     "type": "boolean",
                     "value": true
                 }
             }
         ],
-        "extAttrs": [],
+        "ext_attrs": [],
         "partial": false
     }
 ]

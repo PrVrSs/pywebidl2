@@ -6,31 +6,31 @@
         "members": [
             {
                 "type": "iterable",
-                "idlType": [
+                "idl_type": [
                     {
                         "type": null,
-                        "extAttrs": [],
+                        "ext_attrs": [],
                         "generic": "",
                         "nullable": false,
                         "union": false,
-                        "idlType": "long"
+                        "idl_type": "long"
                     },
                     {
                         "type": null,
-                        "extAttrs": [],
+                        "ext_attrs": [],
                         "generic": "",
                         "nullable": false,
                         "union": false,
-                        "idlType": "float"
+                        "idl_type": "float"
                     }
                 ],
                 "arguments": [],
-                "extAttrs": [],
+                "ext_attrs": [],
                 "readonly": false,
-                "async": true
+                "async_": true
             }
         ],
-        "extAttrs": [],
+        "ext_attrs": [],
         "partial": false
     },
     {
@@ -40,10 +40,10 @@
         "members": [
             {
                 "type": "iterable",
-                "idlType": [
+                "idl_type": [
                     {
                         "type": null,
-                        "extAttrs": [
+                        "ext_attrs": [
                             {
                                 "type": "extended-attribute",
                                 "name": "XAttr2",
@@ -54,11 +54,11 @@
                         "generic": "",
                         "nullable": false,
                         "union": false,
-                        "idlType": "DOMString"
+                        "idl_type": "DOMString"
                     },
                     {
                         "type": null,
-                        "extAttrs": [
+                        "ext_attrs": [
                             {
                                 "type": "extended-attribute",
                                 "name": "XAttr3",
@@ -69,16 +69,16 @@
                         "generic": "",
                         "nullable": false,
                         "union": false,
-                        "idlType": "long"
+                        "idl_type": "long"
                     }
                 ],
                 "arguments": [],
-                "extAttrs": [],
+                "ext_attrs": [],
                 "readonly": false,
-                "async": true
+                "async_": true
             }
         ],
-        "extAttrs": [],
+        "ext_attrs": [],
         "partial": false
     },
     {
@@ -88,31 +88,31 @@
         "members": [
             {
                 "type": "iterable",
-                "idlType": [
+                "idl_type": [
                     {
                         "type": null,
-                        "extAttrs": [],
+                        "ext_attrs": [],
                         "generic": "",
                         "nullable": false,
                         "union": false,
-                        "idlType": "float"
+                        "idl_type": "float"
                     },
                     {
                         "type": null,
-                        "extAttrs": [],
+                        "ext_attrs": [],
                         "generic": "",
                         "nullable": false,
                         "union": false,
-                        "idlType": "ByteString"
+                        "idl_type": "ByteString"
                     }
                 ],
                 "arguments": [],
-                "extAttrs": [],
+                "ext_attrs": [],
                 "readonly": false,
-                "async": true
+                "async_": true
             }
         ],
-        "extAttrs": [],
+        "ext_attrs": [],
         "partial": false
     },
     {
@@ -122,48 +122,48 @@
         "members": [
             {
                 "type": "iterable",
-                "idlType": [
+                "idl_type": [
                     {
                         "type": null,
-                        "extAttrs": [],
+                        "ext_attrs": [],
                         "generic": "",
                         "nullable": false,
                         "union": false,
-                        "idlType": "float"
+                        "idl_type": "float"
                     },
                     {
                         "type": null,
-                        "extAttrs": [],
+                        "ext_attrs": [],
                         "generic": "",
                         "nullable": false,
                         "union": false,
-                        "idlType": "ByteString"
+                        "idl_type": "ByteString"
                     }
                 ],
                 "arguments": [
                     {
                         "type": "argument",
                         "name": "str",
-                        "extAttrs": [],
-                        "idlType": {
+                        "ext_attrs": [],
+                        "idl_type": {
                             "type": "argument-type",
-                            "extAttrs": [],
+                            "ext_attrs": [],
                             "generic": "",
                             "nullable": false,
                             "union": false,
-                            "idlType": "USVString"
+                            "idl_type": "USVString"
                         },
                         "default": null,
                         "optional": false,
                         "variadic": false
                     }
                 ],
-                "extAttrs": [],
+                "ext_attrs": [],
                 "readonly": false,
-                "async": true
+                "async_": true
             }
         ],
-        "extAttrs": [],
+        "ext_attrs": [],
         "partial": false
     },
     {
@@ -173,23 +173,23 @@
         "members": [
             {
                 "type": "iterable",
-                "idlType": [
+                "idl_type": [
                     {
                         "type": null,
-                        "extAttrs": [],
+                        "ext_attrs": [],
                         "generic": "",
                         "nullable": false,
                         "union": false,
-                        "idlType": "float"
+                        "idl_type": "float"
                     }
                 ],
                 "arguments": [],
-                "extAttrs": [],
+                "ext_attrs": [],
                 "readonly": false,
-                "async": true
+                "async_": true
             }
         ],
-        "extAttrs": [],
+        "ext_attrs": [],
         "partial": false
     },
     {
@@ -199,23 +199,23 @@
         "members": [
             {
                 "type": "iterable",
-                "idlType": [
+                "idl_type": [
                     {
                         "type": null,
-                        "extAttrs": [],
+                        "ext_attrs": [],
                         "generic": "",
                         "nullable": false,
                         "union": false,
-                        "idlType": "float"
+                        "idl_type": "float"
                     }
                 ],
                 "arguments": [],
-                "extAttrs": [],
+                "ext_attrs": [],
                 "readonly": false,
-                "async": true
+                "async_": true
             }
         ],
-        "extAttrs": [],
+        "ext_attrs": [],
         "partial": false
     },
     {
@@ -225,28 +225,28 @@
         "members": [
             {
                 "type": "iterable",
-                "idlType": [
+                "idl_type": [
                     {
                         "type": null,
-                        "extAttrs": [],
+                        "ext_attrs": [],
                         "generic": "",
                         "nullable": false,
                         "union": false,
-                        "idlType": "float"
+                        "idl_type": "float"
                     }
                 ],
                 "arguments": [
                     {
                         "type": "argument",
                         "name": "str",
-                        "extAttrs": [],
-                        "idlType": {
+                        "ext_attrs": [],
+                        "idl_type": {
                             "type": "argument-type",
-                            "extAttrs": [],
+                            "ext_attrs": [],
                             "generic": "",
                             "nullable": false,
                             "union": false,
-                            "idlType": "DOMString"
+                            "idl_type": "DOMString"
                         },
                         "default": null,
                         "optional": false,
@@ -255,26 +255,26 @@
                     {
                         "type": "argument",
                         "name": "s",
-                        "extAttrs": [],
-                        "idlType": {
+                        "ext_attrs": [],
+                        "idl_type": {
                             "type": "argument-type",
-                            "extAttrs": [],
+                            "ext_attrs": [],
                             "generic": "",
                             "nullable": false,
                             "union": false,
-                            "idlType": "short"
+                            "idl_type": "short"
                         },
                         "default": null,
                         "optional": false,
                         "variadic": false
                     }
                 ],
-                "extAttrs": [],
+                "ext_attrs": [],
                 "readonly": false,
-                "async": true
+                "async_": true
             }
         ],
-        "extAttrs": [],
+        "ext_attrs": [],
         "partial": false
     }
 ]

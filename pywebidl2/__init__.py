@@ -1,14 +1,10 @@
-from .main import parse, pretty_parse, validate, walk
-from .productions import Parser, Scanner
-from .visitors import JsonView
-
+from .main import validate, pretty_parse
+from .visitor import Visitor
+from .antlr_visitor import parse
 
 __all__ = (
-    'JsonView',
-    'Parser',
-    'Scanner',
     'validate',
     'parse',
     'pretty_parse',
-    'walk',
+    'Visitor',
 )
