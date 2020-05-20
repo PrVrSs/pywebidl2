@@ -1,10 +1,10 @@
+from .idl import Idl
 from .main import validate, pretty_parse
 from .visitor import Visitor
-from .antlr_visitor import parse
 
 __all__ = (
     'validate',
-    'parse',
+    'Idl',
     'pretty_parse',
     'Visitor',
 )

@@ -1,9 +1,3 @@
-from typing import Any
-from functools import reduce
-
-from antlr4 import CommonTokenStream, InputStream
-from antlr4.ParserRuleContext import ParserRuleContext
-
 from .expr import (
     Argument,
     Attribute,
@@ -23,7 +17,7 @@ from .expr import (
     Operation,
     Value,
 )
-from .generated import WebIDLLexer, WebIDLParser, WebIDLParserVisitor
+from .generated import WebIDLParser, WebIDLParserVisitor
 
 
 class Visitor(WebIDLParserVisitor):
@@ -504,18 +498,3 @@ class Visitor(WebIDLParserVisitor):
 
     def visitReturnType(self, ctx: WebIDLParser.ReturnTypeContext):
         return ctx.getText()
-
-
-def _build_parser(data: str) -> Any:
-    functions = (
-        InputStream,
-        WebIDLLexer,
-        CommonTokenStream,
-        WebIDLParser,
-    )
-
-    return reduce(lambda acc, func: func(acc), functions, data)
-
-
-def parse(data: str) -> ParserRuleContext:
-    return _build_parser(data).webIDL()

@@ -1,20 +1,23 @@
 import pprint
-from pathlib import Path
 
 import attr
 import click
 
-from .antlr_visitor import Visitor, parse
+from .antlr_visitor import Visitor
+from .idl import Idl
 
 
-def validate(_: str) -> bool:
-    pass
+def validate(file: str):
+    if errors := Idl(file).validate():
+        return errors
+
+    return 'Ok'
 
 
-def pretty_parse(text: str):
+def pretty_parse(file: str):
     return [
         attr.asdict(definition)
-        for definition in Visitor(parse(text)).run()
+        for definition in Visitor(Idl(file).parse()).run()
     ]
 
 
@@ -32,4 +35,4 @@ _actions = {
               required=True,
               type=click.Path(exists=True, dir_okay=False, resolve_path=True))
 def cli(action, file):
-    pprint.pprint(_actions[action](Path(file).read_text()))
+    pprint.pprint(_actions[action](file))
