@@ -134,13 +134,14 @@ class Visitor(WebIDLParserVisitor):
 
         return member
 
-    def _operation(self, regular_operation):
+    def _operation(self, regular_operation, special=''):
         return_type, (name, arguments) = regular_operation.accept(self)
 
         return Operation(
             name=name,
             arguments=arguments,
             idl_type=IdlType(type='return-type', idl_type=return_type),
+            special=special,
         )
 
     def visitCallbackInterfaceMember(
@@ -351,8 +352,11 @@ class Visitor(WebIDLParserVisitor):
     def visitOperation(self, ctx: WebIDLParser.OperationContext):
         if regular_operation := ctx.regularOperation():
             return self._operation(regular_operation)
-        # else:
-        #     operaton = ctx.specialOperation().accept(self)
+
+        return ctx.specialOperation().accept(self)
+
+    def visitSpecialOperation(self, ctx: WebIDLParser.SpecialOperationContext):
+        return self._operation(ctx.regularOperation(), ctx.special.text)
 
     def visitRegularOperation(self, ctx: WebIDLParser.RegularOperationContext):
         return ctx.returnType().accept(self), ctx.operationRest().accept(self)
@@ -364,7 +368,7 @@ class Visitor(WebIDLParserVisitor):
         if arguments := ctx.argumentList():
             arguments = arguments.accept(self)
 
-        return name, arguments or []
+        return name or '', arguments or []
 
     def visitArgumentList(self, ctx: WebIDLParser.ArgumentListContext):
         return [argument.accept(self) for argument in ctx.argument()]

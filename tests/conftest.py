@@ -4,11 +4,12 @@ from pathlib import Path
 import pytest
 
 
+IdlFixtures = namedtuple('IdlFixtures', 'idl baseline')
+
+
 SYNTAX_FIXTURES = (Path(__file__).parent / 'syntax').resolve()
 SYNTAX_IDL_FIXTURES = SYNTAX_FIXTURES / 'idl'
 SYNTAX_BASELINE_FIXTURES = SYNTAX_FIXTURES / 'baseline'
-
-IdlFixtures = namedtuple('IdlFixtures', 'idl baseline')
 
 
 @pytest.fixture(params=[
@@ -32,5 +33,5 @@ INVALID_BASELINE_FIXTURES = INVALID_FIXTURES / 'baseline'
 def invalid_fixture(request):
     return IdlFixtures(
         idl=INVALID_IDL_FIXTURES / request.param,
-        baseline=(INVALID_BASELINE_FIXTURES / request.param).with_suffix('.txt')
+        baseline=(INVALID_BASELINE_FIXTURES / request.param).with_suffix('.json')
     )

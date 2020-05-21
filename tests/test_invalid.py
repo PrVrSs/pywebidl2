@@ -1,8 +1,11 @@
+import json
+
 from pywebidl2 import validate
 
 
 def test_syntax(invalid_fixture):
-    actual = list(map(str, validate(invalid_fixture.idl)))
-    expected = invalid_fixture.baseline.read_text().splitlines()
-
-    assert actual == expected
+    with invalid_fixture.baseline.open() as expected:
+        assert [
+            error._asdict()
+            for error in validate(invalid_fixture.idl)
+        ] == json.load(expected)
