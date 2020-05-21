@@ -165,16 +165,11 @@ defaultValue
     ;
 
 operation
-    : regularOperation
-    | specialOperation
+    : special=(GETTER | SETTER | DELETER)? regularOperation
     ;
 
 regularOperation
     : returnType operationRest
-    ;
-
-specialOperation
-    : special=(GETTER | SETTER | DELETER) regularOperation
     ;
 
 operationRest

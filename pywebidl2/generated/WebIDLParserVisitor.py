@@ -174,11 +174,6 @@ class WebIDLParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by WebIDLParser#specialOperation.
-    def visitSpecialOperation(self, ctx:WebIDLParser.SpecialOperationContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by WebIDLParser#operationRest.
     def visitOperationRest(self, ctx:WebIDLParser.OperationRestContext):
         return self.visitChildren(ctx)

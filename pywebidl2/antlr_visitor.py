@@ -350,13 +350,8 @@ class Visitor(WebIDLParserVisitor):
         return arg_list or []
 
     def visitOperation(self, ctx: WebIDLParser.OperationContext):
-        if regular_operation := ctx.regularOperation():
-            return self._operation(regular_operation)
-
-        return ctx.specialOperation().accept(self)
-
-    def visitSpecialOperation(self, ctx: WebIDLParser.SpecialOperationContext):
-        return self._operation(ctx.regularOperation(), ctx.special.text)
+        return self._operation(
+            ctx.regularOperation(), ctx.special and ctx.special.text or '')
 
     def visitRegularOperation(self, ctx: WebIDLParser.RegularOperationContext):
         return ctx.returnType().accept(self), ctx.operationRest().accept(self)
