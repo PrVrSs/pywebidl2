@@ -1,38 +1,55 @@
+from typing import Any, List, Optional
+
 import attr
+
+from .utils import escaped_name
 
 
 @attr.s
 class Interface:
 
-    type = attr.ib()
-    name = attr.ib()
-    inheritance = attr.ib()
-    members = attr.ib()
-    ext_attrs = attr.ib()
-    partial = attr.ib()
+    members: List[Any] = attr.ib()
+    name: str = attr.ib(converter=escaped_name)
+    partial: bool = attr.ib()
+    inheritance: Optional[str] = attr.ib(converter=escaped_name)
+    type: str = attr.ib(default='interface')
+    ext_attrs: List[Any] = attr.ib(default=attr.Factory(list))
 
     def accept(self, visitor):
         visitor.visit_interface(self)
 
 
 @attr.s
-class Enum_:
+class Enum:
 
-    name = attr.ib()
-
-    type = attr.ib(default='enum')
-    values = attr.ib(default=attr.Factory(list))
-    ext_attrs = attr.ib(default=attr.Factory(list))
+    name: str = attr.ib()
+    type: str = attr.ib(default='enum')
+    values: List[Any] = attr.ib(default=attr.Factory(list))
+    ext_attrs: List[Any] = attr.ib(default=attr.Factory(list))
 
     def accept(self, visitor):
         visitor.visit_enum(self)
 
 
 @attr.s
+class IdlType:
+
+    idl_type: Any = attr.ib(converter=escaped_name)
+    type: Optional[str] = attr.ib(default=None)
+    ext_attrs: List[Any] = attr.ib(default=attr.Factory(list))
+    nullable: bool = attr.ib(default=False)
+    union: bool = attr.ib(default=False)
+    generic: str = attr.ib(default='')
+
+    def accept(self, visitor):
+        visitor.visit_idl_type(self)
+
+
+@attr.s
 class Operation:
 
-    name = attr.ib()
-    idl_type = attr.ib()
+    name: str = attr.ib()
+    idl_type: IdlType = attr.ib()
 
     arguments = attr.ib(default=attr.Factory(list))
     ext_attrs = attr.ib(default=attr.Factory(list))
@@ -57,21 +74,6 @@ class Argument:
 
     def accept(self, visitor):
         visitor.visit_argument(self)
-
-
-@attr.s
-class IdlType:
-
-    idl_type = attr.ib()
-
-    type = attr.ib(default=None)
-    ext_attrs = attr.ib(default=attr.Factory(list))
-    nullable: bool = attr.ib(default=False)
-    union: bool = attr.ib(default=False)
-    generic: str = attr.ib(default='')
-
-    def accept(self, visitor):
-        visitor.visit_idl_type(self)
 
 
 @attr.s
@@ -227,3 +229,27 @@ class Field:
 
     def accept(self, visitor):
         return visitor.visit_field(self)
+
+
+@attr.s
+class Includes:
+
+    target: str = attr.ib(converter=escaped_name)
+    includes: str = attr.ib(converter=escaped_name)
+    type: str = attr.ib(default='includes')
+    ext_attrs: List[Any] = attr.ib(default=attr.Factory(list))
+
+    def accept(self, visitor):
+        return visitor.visit_includes(self)
+
+
+@attr.s
+class Typedef:
+
+    idl_type: Any = attr.ib()
+    name: str = attr.ib()
+    type: str = attr.ib(default='typedef')
+    ext_attrs: List[Any] = attr.ib(default=attr.Factory(list))
+
+    def accept(self, visitor):
+        return visitor.visit_typedef(self)

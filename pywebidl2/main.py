@@ -35,4 +35,4 @@ _actions = {
               required=True,
               type=click.Path(exists=True, dir_okay=False, resolve_path=True))
 def cli(action, file):
-    pprint.pprint(_actions[action](file))
+    pprint.pprint(_actions[action](file))  # pragma: no cover

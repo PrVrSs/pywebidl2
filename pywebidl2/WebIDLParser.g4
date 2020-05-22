@@ -8,17 +8,21 @@ webIDL
     ;
 
 definitions
-    : definition+
+    : extendedDefinition+
+    ;
+
+extendedDefinition
+    : extendedAttributeList? definition
     ;
 
 definition
-    : extendedAttributeList? callbackOrInterfaceOrMixin
-    | extendedAttributeList? namespace
-    | extendedAttributeList? partial
-    | extendedAttributeList? dictionary
-    | extendedAttributeList? enum_
-    | extendedAttributeList? typedef
-    | extendedAttributeList? includesStatement
+    : callbackOrInterfaceOrMixin
+    | namespace
+    | partial
+    | dictionary
+    | enum_
+    | typedef
+    | includesStatement
     ;
 
 callbackOrInterfaceOrMixin
@@ -94,7 +98,7 @@ mixinMember
     ;
 
 includesStatement
-    : IDENTIFIER_WEBIDL INCLUDES IDENTIFIER_WEBIDL SEMI
+    : target=IDENTIFIER_WEBIDL INCLUDES includes=IDENTIFIER_WEBIDL SEMI
     ;
 
 callbackRestOrInterface

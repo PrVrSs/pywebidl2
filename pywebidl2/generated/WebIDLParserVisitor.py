@@ -19,6 +19,11 @@ class WebIDLParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by WebIDLParser#extendedDefinition.
+    def visitExtendedDefinition(self, ctx:WebIDLParser.ExtendedDefinitionContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by WebIDLParser#definition.
     def visitDefinition(self, ctx:WebIDLParser.DefinitionContext):
         return self.visitChildren(ctx)

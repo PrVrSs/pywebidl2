@@ -23,6 +23,14 @@ disable=
     too-few-public-methods,
 
 
+[CLASSES]
+
+# List of member names, which should be excluded from the protected access
+# warning.
+exclude-protected=
+    _errHandler,
+
+
 [DESIGN]
 
 # Maximum number of arguments for function / method.

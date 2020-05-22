@@ -6,21 +6,23 @@ from .expr import (
     Const,
     Constructor,
     Dictionary,
-    Enum_,
+    Enum,
     ExtendedAttribute,
     Field,
+    Includes,
     IdlType,
     Infinity,
     Interface,
     Iterable_,
     Literal,
     Operation,
+    Typedef,
     Value,
 )
 from .generated import WebIDLParser, WebIDLParserVisitor
 
 
-class Visitor(WebIDLParserVisitor):
+class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
     def __init__(self, tree):
         self._tree = tree
@@ -32,14 +34,16 @@ class Visitor(WebIDLParserVisitor):
         return ctx.definitions().accept(self)
 
     def visitDefinitions(self, ctx: WebIDLParser.DefinitionsContext):
-        return [definition.accept(self) for definition in ctx.definition()]
+        return [
+            definition.accept(self) for definition in ctx.extendedDefinition()
+        ]
 
-    def visitDefinition(self, ctx: WebIDLParser.DefinitionContext):
-        if ctx.getChildCount() == 1:
-            return ctx.getChild(0).accept(self)
+    def visitExtendedDefinition(
+            self, ctx: WebIDLParser.ExtendedDefinitionContext):
+        definition = ctx.definition().accept(self)
 
-        definition = ctx.getChild(1).accept(self)
-        definition.ext_attrs = ctx.extendedAttributeList().accept(self)
+        if extended_attribute := ctx.extendedAttributeList():
+            definition.ext_attrs = extended_attribute.accept(self)
 
         return definition
 
@@ -51,8 +55,22 @@ class Visitor(WebIDLParserVisitor):
             inheritance=ctx.inheritance() and ctx.inheritance().accept(self),
         )
 
+    def visitTypedef(self, ctx: WebIDLParser.TypedefContext):
+        self._setup_type(
+            idl_type := ctx.typeWithExtendedAttributes().accept(self),
+            _type='typedef-type',
+        )
+
+        return Typedef(
+            idl_type=idl_type, name=ctx.IDENTIFIER_WEBIDL().getText())
+
+    def visitIncludesStatement(
+            self, ctx: WebIDLParser.IncludesStatementContext):
+        return Includes(
+            target=ctx.target.text, includes=ctx.includes.text)  # type: ignore
+
     def visitEnum_(self, ctx: WebIDLParser.Enum_Context):
-        return Enum_(
+        return Enum(
             name=ctx.IDENTIFIER_WEBIDL().getText(),
             values=[
                 Value(type='enum-value', value=enum_value.getText().strip('"'))
@@ -209,12 +227,10 @@ class Visitor(WebIDLParserVisitor):
 
     def visitInterfaceRest(self, ctx: WebIDLParser.InterfaceRestContext):
         return Interface(
-            type='interface',
             name=ctx.IDENTIFIER_WEBIDL().getText(),
-            inheritance=None,
+            inheritance=ctx.inheritance() and ctx.inheritance().accept(self),
             members=[member.accept(self) for member in ctx.interfaceMembers()],
             partial=False,
-            ext_attrs=[],
         )
 
     def visitInterfaceMembers(self, ctx: WebIDLParser.InterfaceMembersContext):
