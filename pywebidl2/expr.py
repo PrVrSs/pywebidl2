@@ -22,8 +22,8 @@ class Interface:
 
     members: List[Any] = attr.ib()
     name: str = attr.ib(converter=escaped_name)
-    partial: bool = attr.ib()
-    inheritance: Optional[str] = attr.ib(converter=escaped_name)
+    inheritance: Optional[str] = attr.ib(default=None, converter=escaped_name)
+    partial: bool = attr.ib(default=False)
     type: str = attr.ib(default='interface')
     ext_attrs: List[ExtendedAttribute] = attr.ib(default=attr.Factory(list))
 
@@ -84,7 +84,7 @@ class Value:
 @attr.s
 class Argument:
 
-    name: str = attr.ib()
+    name: str = attr.ib(converter=escaped_name)
     idl_type: IdlType = attr.ib()
     ext_attrs: List[ExtendedAttribute] = attr.ib()
     default: Optional[Any] = attr.ib(default=None)
@@ -113,7 +113,7 @@ class Iterable_:  # pylint: disable=invalid-name
 @attr.s
 class Attribute:
 
-    name: str = attr.ib()
+    name: str = attr.ib(converter=escaped_name)
     idl_type: IdlType = attr.ib()
     ext_attrs: List[ExtendedAttribute] = attr.ib(default=attr.Factory(list))
     type: str = attr.ib(default='attribute')
