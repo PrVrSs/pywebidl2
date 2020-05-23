@@ -315,9 +315,10 @@ typeWithExtendedAttributes
     ;
 
 singleType
-    : distinguishableType
-    | ANY
+    : distinguishableType null_?
+    | genericType null_?
     | promiseType
+    | ANY
     ;
 
 unionType
@@ -325,21 +326,23 @@ unionType
     ;
 
 unionMemberType
-    : extendedAttributeList? distinguishableType
+    : extendedAttributeList? distinguishableType null_?
+    | extendedAttributeList? genericType null_?
     | unionType null_?
     ;
 
+genericType
+    : generic=(SEQUENCE | FROZEN_ARRAY | OBSERVABLE_ARRAY) LEFT_ANGLE typeWithExtendedAttributes RIGHT_ANGLE
+    ;
+
 distinguishableType
-    : primitiveType null_?
-    | stringType null_?
-    | IDENTIFIER_WEBIDL null_?
-    | SEQUENCE LEFT_ANGLE typeWithExtendedAttributes RIGHT_ANGLE null_?
-    | OBJECT null_?
-    | SYMBOL null_?
-    | bufferRelatedType null_?
-    | FROZEN_ARRAY LEFT_ANGLE typeWithExtendedAttributes RIGHT_ANGLE null_?
-    | OBSERVABLE_ARRAY LEFT_ANGLE typeWithExtendedAttributes RIGHT_ANGLE null_?
-    | recordType null_?
+    : primitiveType
+    | stringType
+    | bufferRelatedType
+    | recordType
+    | IDENTIFIER_WEBIDL
+    | OBJECT
+    | SYMBOL
     ;
 
 primitiveType
@@ -365,11 +368,7 @@ unsignedIntegerType
 
 integerType
     : SHORT
-    | LONG optionalLong?
-    ;
-
-optionalLong
-    : LONG
+    | LONG LONG?
     ;
 
 stringType

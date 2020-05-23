@@ -354,6 +354,11 @@ class WebIDLParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by WebIDLParser#genericType.
+    def visitGenericType(self, ctx:WebIDLParser.GenericTypeContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by WebIDLParser#distinguishableType.
     def visitDistinguishableType(self, ctx:WebIDLParser.DistinguishableTypeContext):
         return self.visitChildren(ctx)
@@ -381,11 +386,6 @@ class WebIDLParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by WebIDLParser#integerType.
     def visitIntegerType(self, ctx:WebIDLParser.IntegerTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#optionalLong.
-    def visitOptionalLong(self, ctx:WebIDLParser.OptionalLongContext):
         return self.visitChildren(ctx)
 
 

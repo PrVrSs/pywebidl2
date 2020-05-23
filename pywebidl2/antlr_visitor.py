@@ -20,6 +20,7 @@ from .expr import (
     Value,
 )
 from .generated import WebIDLParser, WebIDLParserVisitor
+from .utils import setup_type
 
 
 class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
@@ -56,9 +57,9 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         )
 
     def visitTypedef(self, ctx: WebIDLParser.TypedefContext):
-        self._setup_type(
+        setup_type(
             idl_type := ctx.typeWithExtendedAttributes().accept(self),
-            _type='typedef-type',
+            'typedef-type',
         )
 
         return Typedef(
@@ -90,14 +91,6 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
         return member
 
-    @staticmethod
-    def _setup_type(idl_type, _type):
-        idl_type.type = _type
-
-        if idl_type.generic == 'sequence':
-            for idl in idl_type.idl_type:
-                idl.type = _type
-
     def visitDictionaryMember(self, ctx: WebIDLParser.DictionaryMemberContext):
         if type_ := ctx.typeWithExtendedAttributes():
             idl_type = type_.accept(self)
@@ -107,7 +100,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         if default := ctx.default_():
             default = default.accept(self)
 
-        self._setup_type(idl_type, 'dictionary-type')
+        setup_type(idl_type, 'dictionary-type')
 
         return Field(
             required=ctx.REQUIRED() is not None,
@@ -155,10 +148,12 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
     def _operation(self, regular_operation, special=''):
         return_type, (name, arguments) = regular_operation.accept(self)
 
+        setup_type(return_type, 'return-type')
+
         return Operation(
             name=name,
             arguments=arguments,
-            idl_type=IdlType(type='return-type', idl_type=return_type),
+            idl_type=return_type,
             special=special,
         )
 
@@ -200,23 +195,11 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             name=ctx.IDENTIFIER_WEBIDL().getText(),
         )
 
-    def visitConstType(self, ctx: WebIDLParser.ConstTypeContext):
-        if idl_type := ctx.primitiveType():
-            idl_type = idl_type.accept(self)
-
-        return IdlType(
-            type='const-type',
-            idl_type=idl_type or ctx.IDENTIFIER_WEBIDL().getText(),
-        )
-
     def visitCallbackRest(self, ctx: WebIDLParser.CallbackRestContext):
         if arguments := ctx.argumentList():
             arguments = arguments.accept(self)
 
-        idl_type = IdlType(
-            type='return-type',
-            idl_type=ctx.returnType().accept(self),
-        )
+        setup_type(idl_type := ctx.returnType().accept(self), 'return-type')
 
         return Callback(
             name=ctx.IDENTIFIER_WEBIDL().getText(),
@@ -251,70 +234,11 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
         return Constructor(arguments=arguments or [])
 
-    def visitIntegerType(self, ctx: WebIDLParser.IntegerTypeContext):
-        return ctx.getText()
-
-    def visitUnsignedIntegerType(
-            self, ctx: WebIDLParser.UnsignedIntegerTypeContext):
-        integer_type = ctx.integerType().accept(self)
-
-        if ctx.UNSIGNED():
-            integer_type = f'unsigned {integer_type}'
-
-        return integer_type
-
-    def visitSingleType(self, ctx: WebIDLParser.SingleTypeContext):
-        if any_ := ctx.ANY():
-            return IdlType(idl_type=any_.getText())
-
-        return ctx.getChild(0).accept(self)
-
-    def visitDistinguishableType(
-            self, ctx: WebIDLParser.DistinguishableTypeContext):
-        null = ctx.null_() is not None
-
-        if type_ := ctx.primitiveType():
-            return IdlType(idl_type=type_.accept(self), nullable=null)
-
-        if type_ := ctx.stringType():
-            return IdlType(idl_type=type_.accept(self), nullable=null)
-
-        if type_ := ctx.typeWithExtendedAttributes():
-            return IdlType(
-                idl_type=[type_.accept(self)],
-                nullable=null,
-                generic=ctx.SEQUENCE() and ctx.SEQUENCE().getText() or '',
-            )
-
-        if type_ := ctx.bufferRelatedType():
-            return IdlType(idl_type=type_.accept(self), nullable=null)
-
-        return IdlType(idl_type=ctx.getChild(0).getText(), nullable=null)
-
-    def visitPrimitiveType(self, ctx: WebIDLParser.PrimitiveTypeContext):
-        if type_ := ctx.unsignedIntegerType():
-            return type_.accept(self)
-
-        if type_ := ctx.unrestrictedFloatType():
-            return type_.accept(self)
-
-        return ctx.getChild(0).getText()
-
-    def visitUnrestrictedFloatType(
-            self, ctx: WebIDLParser.UnrestrictedFloatTypeContext):
-        float_type = ctx.floatType().accept(self)
-
-        if ctx.UNRESTRICTED():
-            float_type = f'unrestricted {float_type}'
-
-        return float_type
-
-    def visitFloatType(self, ctx: WebIDLParser.FloatTypeContext):
-        return ctx.getText()
-
     def visitAttributeRest(self, ctx: WebIDLParser.AttributeRestContext):
-        idl_type = ctx.typeWithExtendedAttributes().accept(self)
-        idl_type.type = 'attribute-type'
+        setup_type(
+            idl_type := ctx.typeWithExtendedAttributes().accept(self),
+            'attribute-type',
+        )
 
         return Attribute(
             name=ctx.attributeName().accept(self),
@@ -442,12 +366,9 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
         arg_name = ctx.argumentName().accept(self)
 
-        self._setup_type(idl_type, 'argument-type')
+        setup_type(idl_type, 'argument-type')
 
         return optional, arg_name, idl_type, default
-
-    def visitStringType(self, ctx: WebIDLParser.StringTypeContext):
-        return ctx.getText()
 
     def visitTypeWithExtendedAttributes(
             self, ctx: WebIDLParser.TypeWithExtendedAttributesContext):
@@ -460,35 +381,6 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
     def visitArgumentName(self, ctx: WebIDLParser.ArgumentNameContext):
         return ctx.getText()
-
-    def visitType_(self, ctx: WebIDLParser.Type_Context):
-        if single_type := ctx.singleType():
-            return single_type.accept(self)
-
-        return IdlType(
-            idl_type=ctx.unionType().accept(self),
-            nullable=ctx.null_() is not None,
-            union=True,
-        )
-
-    def visitUnionType(self, ctx: WebIDLParser.UnionTypeContext):
-        return [
-            member_type.accept(self) for member_type in ctx.unionMemberType()
-        ]
-
-    def visitUnionMemberType(self, ctx: WebIDLParser.UnionMemberTypeContext):
-        if ext_attrs := ctx.extendedAttributeList():
-            ext_attrs = ext_attrs.accept(self)
-
-        if distinguishable_type := ctx.distinguishableType():
-            idl_type = distinguishable_type.accept(self)
-            idl_type.ext_attrs = ext_attrs or []
-            return idl_type
-
-        return IdlType(
-            idl_type=ctx.unionType().accept(self),
-            nullable=ctx.null_() is not None,
-        )
 
     def visitDefault_(self, ctx: WebIDLParser.Default_Context):
         return ctx.defaultValue().accept(self)
@@ -511,5 +403,129 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
     def visitOperationName(self, ctx: WebIDLParser.OperationNameContext):
         return ctx.getText()
 
+    def visitType_(self, ctx: WebIDLParser.Type_Context):
+        if single_type := ctx.singleType():
+            return single_type.accept(self)
+
+        return IdlType(
+            idl_type=ctx.unionType().accept(self),
+            nullable=ctx.null_() is not None,
+            union=True,
+        )
+
+    def visitUnionType(self, ctx: WebIDLParser.UnionTypeContext):
+        return [
+            member_type.accept(self) for member_type in ctx.unionMemberType()
+        ]
+
+    def visitUnionMemberType(self, ctx: WebIDLParser.UnionMemberTypeContext):
+        nullable = ctx.null_() is not None
+
+        if ext_attrs := ctx.extendedAttributeList():
+            ext_attrs = ext_attrs.accept(self)
+
+        if distinguishable_type := ctx.distinguishableType():
+            return IdlType(
+                idl_type=distinguishable_type.accept(self),
+                ext_attrs=ext_attrs or [],
+                nullable=nullable,
+            )
+
+        if generic := ctx.genericType():
+            return IdlType(
+                idl_type=[generic.accept(self)],
+                ext_attrs=ext_attrs or [],
+                nullable=nullable
+            )
+
+        return IdlType(
+            idl_type=ctx.unionType().accept(self), nullable=nullable)
+
+    def visitPromiseType(self, ctx: WebIDLParser.PromiseTypeContext):
+        return ctx.returnType().accept(self)
+
     def visitReturnType(self, ctx: WebIDLParser.ReturnTypeContext):
+        if void := ctx.VOID():
+            return IdlType(idl_type=void.getText())
+
+        return ctx.type_().accept(self)
+
+    def visitUnsignedIntegerType(
+            self, ctx: WebIDLParser.UnsignedIntegerTypeContext):
+        integer_type = ctx.integerType().accept(self)
+
+        if ctx.UNSIGNED():
+            integer_type = f'unsigned {integer_type}'
+
+        return integer_type
+
+    def visitSingleType(self, ctx: WebIDLParser.SingleTypeContext):
+        nullable = ctx.null_() is not None
+
+        if any_ := ctx.ANY():
+            return IdlType(idl_type=any_.getText())
+
+        if promise := ctx.promiseType():
+            return IdlType(idl_type=[promise.accept(self)], generic='Promise')
+
+        if generic := ctx.genericType():
+            return IdlType(
+                idl_type=[generic.accept(self)],
+                generic='sequence',
+                nullable=nullable,
+            )
+
+        return IdlType(
+            idl_type=ctx.distinguishableType().accept(self), nullable=nullable)
+
+    def visitGenericType(self, ctx: WebIDLParser.GenericTypeContext):
+        return ctx.typeWithExtendedAttributes().accept(self)
+
+    def visitDistinguishableType(
+            self, ctx: WebIDLParser.DistinguishableTypeContext):
+        if type_ := ctx.primitiveType():
+            return type_.accept(self)
+
+        if type_ := ctx.stringType():
+            return type_.accept(self)
+
+        if type_ := ctx.bufferRelatedType():
+            return type_.accept(self)
+
+        return ctx.getChild(0).getText()
+
+    def visitConstType(self, ctx: WebIDLParser.ConstTypeContext):
+        if idl_type := ctx.primitiveType():
+            idl_type = idl_type.accept(self)
+
+        return IdlType(
+            type='const-type',
+            idl_type=idl_type or ctx.IDENTIFIER_WEBIDL().getText(),
+        )
+
+    def visitPrimitiveType(self, ctx: WebIDLParser.PrimitiveTypeContext):
+        if type_ := ctx.unsignedIntegerType():
+            return type_.accept(self)
+
+        if type_ := ctx.unrestrictedFloatType():
+            return type_.accept(self)
+
+        return ctx.getChild(0).getText()
+
+    def visitUnrestrictedFloatType(
+            self, ctx: WebIDLParser.UnrestrictedFloatTypeContext):
+        float_type = ctx.floatType().accept(self)
+
+        if ctx.UNRESTRICTED():
+            float_type = f'unrestricted {float_type}'
+
+        return float_type
+
+    def visitIntegerType(self, ctx: WebIDLParser.IntegerTypeContext):
+        return ctx.getText()
+
+    def visitFloatType(self, ctx: WebIDLParser.FloatTypeContext):
+        return ctx.getText()
+
+    def visitStringType(self, ctx: WebIDLParser.StringTypeContext):
         return ctx.getText()
