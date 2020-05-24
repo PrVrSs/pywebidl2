@@ -15,6 +15,7 @@ from .expr import (
     Interface,
     Iterable_,
     Literal,
+    MapLike,
     Operation,
     Typedef,
     Value,
@@ -79,6 +80,13 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             ]
         )
 
+    def visitPartial(self, ctx: WebIDLParser.PartialContext):
+        interface_or_mixin = ctx.partialInterfaceOrPartialMixin().accept(self)
+
+        interface_or_mixin.partial = True
+
+        return interface_or_mixin
+
     def visitInterfaceRest(self, ctx: WebIDLParser.InterfaceRestContext):
         return Interface(
             name=ctx.IDENTIFIER_WEBIDL().getText(),
@@ -86,18 +94,13 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             members=[member.accept(self) for member in ctx.interfaceMembers()],
         )
 
-    def visitPartial(self, ctx: WebIDLParser.PartialContext):
-        interface = ctx.partialInterfaceOrPartialMixin().accept(self)
-        interface.partial = True
-
-        return interface
-
     def visitPartialInterfaceRest(
             self, ctx: WebIDLParser.PartialInterfaceRestContext):
         return Interface(
             name=ctx.IDENTIFIER_WEBIDL().getText(),
             members=[
-                member.accept(self) for member in ctx.partialInterfaceMembers()]
+                member.accept(self) for member in ctx.partialInterfaceMembers()
+            ],
         )
 
     def visitPartialInterfaceMembers(
@@ -192,6 +195,15 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             special=special,
         )
 
+    def visitMaplikeRest(self, ctx: WebIDLParser.MaplikeRestContext):
+        return MapLike(
+            idl_type=[
+                type_with_extended_attr.accept(self)
+                for type_with_extended_attr in ctx.typeWithExtendedAttributes()
+            ],
+            readonly=ctx.READONLY() is not None,
+        )
+
     def visitCallbackInterfaceMember(
             self, ctx: WebIDLParser.CallbackInterfaceMemberContext):
         if regular_operation := ctx.regularOperation():
@@ -243,10 +255,6 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             ext_attrs=[]
         )
 
-    def visitPartialInterfaceMember(
-            self, ctx: WebIDLParser.PartialInterfaceMemberContext):
-        return ctx.getChild(0).accept(self)
-
     def visitConstructor(self, ctx: WebIDLParser.ConstructorContext):
         if arguments := ctx.argumentList():
             arguments = arguments.accept(self)
@@ -267,35 +275,17 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             special=''
         )
 
-    def visitReadWriteAttribute(
-            self, ctx: WebIDLParser.ReadWriteAttributeContext):
-        return ctx.getChild(0).accept(self)
-
-    # def visitIterable(self, ctx: WebIDLParser.IterableContext):
-    #     idl_type = ctx.typeWithExtendedAttributes().accept(self)
-    #
-    #     return Iterable_(
-    #         idl_type=idl_type,
-    #         arguments=[],
-    #         ext_attrs=[],
-    #         async_=False,
-    #         readonly=False,
-    #     )
-
-    def visitAsyncIterable(self, ctx: WebIDLParser.AsyncIterableContext):
-        idl_types = []
-        for type_with_extended_attr in ctx.typeWithExtendedAttributes():
-            idl_types.append(type_with_extended_attr.accept(self))
-
+    def visitIterable(self, ctx: WebIDLParser.IterableContext):
         if arg_list := ctx.optionalArgumentList():
             arg_list = arg_list.accept(self)
 
         return Iterable_(
-            idl_type=idl_types,
             arguments=arg_list or [],
-            ext_attrs=[],
-            async_=True,
-            readonly=False,
+            async_=ctx.ASYNC() is not None,
+            idl_type=[
+                type_with_extended_attr.accept(self)
+                for type_with_extended_attr in ctx.typeWithExtendedAttributes()
+            ],
         )
 
     def visitOptionalArgumentList(
@@ -325,18 +315,12 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         return [argument.accept(self) for argument in ctx.argument()]
 
     def visitArgument(self, ctx: WebIDLParser.ArgumentContext):
+        argument = ctx.argumentRest().accept(self)
+
         if ext_attrs := ctx.extendedAttributeList():
-            ext_attrs = ext_attrs.accept(self)
+            argument.ext_attrs = ext_attrs.accept(self)
 
-        optional, arg_name, idl_type, default = ctx.argumentRest().accept(self)
-
-        return Argument(
-            ext_attrs=ext_attrs or [],
-            idl_type=idl_type,
-            name=arg_name,
-            optional=optional,
-            default=default,
-        )
+        return argument
 
     def visitExtendedAttributeList(
             self, ctx: WebIDLParser.ExtendedAttributeListContext):
@@ -367,18 +351,25 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         if default := ctx.default_():
             default = default.accept(self)
 
-        if ctx.getChild(0).getText() == 'optional':
-            optional = True
+        if optional := ctx.OPTIONAL():
             idl_type = ctx.typeWithExtendedAttributes().accept(self)
         else:
-            optional = False
             idl_type = ctx.type_().accept(self)
-
-        arg_name = ctx.argumentName().accept(self)
 
         setup_type(idl_type, 'argument-type')
 
-        return optional, arg_name, idl_type, default
+        return Argument(
+            idl_type=idl_type,
+            name=ctx.argumentName().accept(self),
+            optional=optional is not None,
+            default=default,
+        )
+
+    def visitInheritAttribute(self, ctx: WebIDLParser.InheritAttributeContext):
+        attribute = ctx.attributeRest().accept(self)
+        attribute.special = 'inherit'
+
+        return attribute
 
     def visitTypeWithExtendedAttributes(
             self, ctx: WebIDLParser.TypeWithExtendedAttributesContext):

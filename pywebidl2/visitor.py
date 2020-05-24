@@ -11,12 +11,15 @@ from .expr import (
     Enum,
     ExtendedAttribute,
     Field,
+    Includes,
     IdlType,
     Infinity,
     Interface,
     Iterable_,
     Literal,
+    MapLike,
     Operation,
+    Typedef,
     Value,
 )
 
@@ -76,4 +79,13 @@ class Visitor(Generic[_U]):  # pragma: no cover
         raise NotImplementedError
 
     def visit_enum(self, node: Enum) -> _U:
+        raise NotImplementedError
+
+    def visit_includes(self, node: Includes) -> _U:
+        raise NotImplementedError
+
+    def visit_maplike(self, node: MapLike) -> _U:
+        raise NotImplementedError
+
+    def visit_typedef(self, node: Typedef) -> _U:
         raise NotImplementedError

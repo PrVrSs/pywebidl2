@@ -71,7 +71,6 @@ partialInterfaceMember
     | stringifier
     | staticMember
     | iterable
-    | asyncIterable
     | readWriteAttribute
     | readWriteMaplike
     | readWriteSetlike
@@ -236,10 +235,7 @@ staticMemberRest
 
 iterable
     : ITERABLE LEFT_ANGLE typeWithExtendedAttributes (COMMA typeWithExtendedAttributes)? RIGHT_ANGLE SEMI
-    ;
-
-asyncIterable
-    : ASYNC ITERABLE LEFT_ANGLE typeWithExtendedAttributes (COMMA typeWithExtendedAttributes)? RIGHT_ANGLE optionalArgumentList? SEMI
+    | ASYNC ITERABLE LEFT_ANGLE typeWithExtendedAttributes (COMMA typeWithExtendedAttributes)? RIGHT_ANGLE optionalArgumentList? SEMI
     ;
 
 optionalArgumentList

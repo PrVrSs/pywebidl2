@@ -249,11 +249,6 @@ class WebIDLParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by WebIDLParser#asyncIterable.
-    def visitAsyncIterable(self, ctx:WebIDLParser.AsyncIterableContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by WebIDLParser#optionalArgumentList.
     def visitOptionalArgumentList(self, ctx:WebIDLParser.OptionalArgumentListContext):
         return self.visitChildren(ctx)

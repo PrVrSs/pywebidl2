@@ -86,7 +86,7 @@ class Argument:
 
     name: str = attr.ib(converter=escaped_name)
     idl_type: IdlType = attr.ib()
-    ext_attrs: List[ExtendedAttribute] = attr.ib()
+    ext_attrs: List[ExtendedAttribute] = attr.ib(default=attr.Factory(list))
     default: Optional[Any] = attr.ib(default=None)
     type: str = attr.ib(default='argument')
     optional: bool = attr.ib(default=False)
@@ -101,9 +101,9 @@ class Iterable_:  # pylint: disable=invalid-name
 
     idl_type: List[IdlType] = attr.ib()
     arguments: List[Any] = attr.ib()
-    ext_attrs: List[ExtendedAttribute] = attr.ib()
+    async_: bool = attr.ib()
+    ext_attrs: List[ExtendedAttribute] = attr.ib(default=attr.Factory(list))
     type: str = attr.ib(default='iterable')
-    async_: bool = attr.ib(default=False)
     readonly: bool = attr.ib(default=False)
 
     def accept(self, visitor):
@@ -246,3 +246,17 @@ class Typedef:
 
     def accept(self, visitor):
         return visitor.visit_typedef(self)
+
+
+@attr.s
+class MapLike:
+
+    readonly: bool = attr.ib()
+    idl_type: List[IdlType] = attr.ib()
+    arguments: List[Any] = attr.ib(default=attr.Factory(list))
+    ext_attrs: List[ExtendedAttribute] = attr.ib(default=attr.Factory(list))
+    type: str = attr.ib(default='maplike')
+    async_: bool = attr.ib(default=False)
+
+    def accept(self, visitor):
+        visitor.visit_maplike(self)
