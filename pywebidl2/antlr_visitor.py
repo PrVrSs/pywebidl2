@@ -129,6 +129,15 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
         return member
 
+    def visitCallbackInterfaceMembers(
+            self, ctx: WebIDLParser.CallbackInterfaceMembersContext):
+        member = ctx.callbackInterfaceMember().accept(self)
+
+        if extended_attribute := ctx.extendedAttributeList():
+            member.ext_attrs = extended_attribute.accept(self)
+
+        return member
+
     def visitDictionaryMember(self, ctx: WebIDLParser.DictionaryMemberContext):
         if type_ := ctx.typeWithExtendedAttributes():
             idl_type = type_.accept(self)
@@ -173,15 +182,6 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             return interface_rest.accept(self)
 
         return ctx.mixinRest().accept(self)
-
-    def visitCallbackInterfaceMembers(
-            self, ctx: WebIDLParser.CallbackInterfaceMembersContext):
-        member = ctx.callbackInterfaceMember().accept(self)
-
-        if extended_attribute := ctx.extendedAttributeList():
-            member.ext_attrs = extended_attribute.accept(self)
-
-        return member
 
     def _operation(self, regular_operation, special=''):
         return_type, (name, arguments) = regular_operation.accept(self)

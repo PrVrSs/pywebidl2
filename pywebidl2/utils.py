@@ -1,6 +1,9 @@
 from collections import deque
 from contextlib import suppress
-from typing import Any
+from typing import Optional, TypeVar, Union
+
+
+_U = TypeVar('_U')
 
 
 def setup_type(idl_type, type_):
@@ -14,7 +17,7 @@ def setup_type(idl_type, type_):
                 todo.extend(idl_type.idl_type)
 
 
-def escaped_name(string: Any) -> Any:
+def escaped_name(string: Optional[_U]) -> Union[Optional[_U], str]:
     if isinstance(string, str):
         return string.lstrip('_')
 

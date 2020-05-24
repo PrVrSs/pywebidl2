@@ -27,6 +27,7 @@ _U = TypeVar('_U')
 
 
 class Visitor(Generic[_U]):  # pragma: no cover
+    # pylint: disable=too-many-public-methods
     def visit(self, expr) -> _U:
         return expr.accept(self)
 
