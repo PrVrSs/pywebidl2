@@ -21,6 +21,7 @@ from .expr import (
     Iterable_,
     Literal,
     MapLike,
+    Namespace,
     Operation,
     Typedef,
     Value,
@@ -117,6 +118,23 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             ],
         )
 
+    def visitNamespace(self, ctx: WebIDLParser.NamespaceContext):
+        return Namespace(
+            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            members=[
+                member.accept(self) for member in ctx.namespaceMembers()
+            ],
+            partial=ctx.PARTIAL() is not None,
+        )
+
+    def visitNamespaceMembers(self, ctx: WebIDLParser.NamespaceMembersContext):
+        member = ctx.namespaceMember().accept(self)
+
+        if extended_attribute := ctx.extendedAttributeList():
+            member.ext_attrs = extended_attribute.accept(self)
+
+        return member
+
     def visitMixinMembers(self, ctx: WebIDLParser.MixinMembersContext):
         member = ctx.mixinMember().accept(self)
 
@@ -186,6 +204,15 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             default=default,
             idl_type=idl_type,
         )
+
+    def visitNamespaceMember(self, ctx: WebIDLParser.NamespaceMemberContext):
+        if regular_operation := ctx.regularOperation():
+            return self._operation(regular_operation)
+
+        attribute = ctx.attributeRest().accept(self)
+        attribute.readonly = True
+
+        return attribute
 
     def visitCallbackOrInterfaceOrMixin(
             self, ctx: WebIDLParser.CallbackOrInterfaceOrMixinContext):
@@ -299,12 +326,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         )
 
         return Attribute(
-            name=ctx.attributeName().accept(self),
-            idl_type=idl_type,
-            ext_attrs=[],
-            readonly=ctx.READONLY() is not None,
-            special=''
-        )
+            name=ctx.attributeName().accept(self), idl_type=idl_type)
 
     def visitIterable(self, ctx: WebIDLParser.IterableContext):
         if arg_list := ctx.optionalArgumentList():
@@ -418,6 +440,12 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             optional=optional is not None,
             default=default,
         )
+
+    def visitReadOnlyMember(self, ctx: WebIDLParser.ReadOnlyMemberContext):
+        member = ctx.readOnlyMemberRest().accept(self)
+        member.readonly = True
+
+        return member
 
     def visitInheritAttribute(self, ctx: WebIDLParser.InheritAttributeContext):
         attribute = ctx.attributeRest().accept(self)

@@ -319,3 +319,20 @@ class MapLike:
 
     def accept(self, visitor):
         visitor.visit_maplike(self)
+
+
+@attr.s
+class Namespace:
+
+    members: List[Any] = attr.ib()
+    name: str = attr.ib()
+    inheritance: Optional[str] = attr.ib(default=None)
+    partial: bool = attr.ib(default=False)
+    type: str = attr.ib(default='namespace')
+    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
+
+    def __attrs_post_init__(self):
+        self.name = escaped_name(self.name)
+
+    def accept(self, visitor):
+        visitor.visit_namespace(self)

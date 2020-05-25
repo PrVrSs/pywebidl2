@@ -71,6 +71,7 @@ partialInterfaceMember
     | stringifier
     | staticMember
     | iterable
+    | readOnlyMember
     | readWriteAttribute
     | readWriteMaplike
     | readWriteSetlike
@@ -125,6 +126,16 @@ constValue
     | INTEGER_WEBIDL
     ;
 
+readOnlyMember
+    : READONLY readOnlyMemberRest
+    ;
+
+readOnlyMemberRest
+    : attributeRest
+    | maplikeRest
+    | setlikeRest
+    ;
+
 readWriteAttribute
     : attributeRest
     ;
@@ -134,7 +145,7 @@ inheritAttribute
     ;
 
 attributeRest
-    : READONLY? ATTRIBUTE typeWithExtendedAttributes attributeName SEMI
+    : ATTRIBUTE typeWithExtendedAttributes attributeName SEMI
     ;
 
 attributeName

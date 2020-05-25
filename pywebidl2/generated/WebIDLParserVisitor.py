@@ -129,6 +129,16 @@ class WebIDLParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by WebIDLParser#readOnlyMember.
+    def visitReadOnlyMember(self, ctx:WebIDLParser.ReadOnlyMemberContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#readOnlyMemberRest.
+    def visitReadOnlyMemberRest(self, ctx:WebIDLParser.ReadOnlyMemberRestContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by WebIDLParser#readWriteAttribute.
     def visitReadWriteAttribute(self, ctx:WebIDLParser.ReadWriteAttributeContext):
         return self.visitChildren(ctx)
