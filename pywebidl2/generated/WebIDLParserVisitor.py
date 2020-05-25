@@ -129,21 +129,6 @@ class WebIDLParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by WebIDLParser#booleanLiteral.
-    def visitBooleanLiteral(self, ctx:WebIDLParser.BooleanLiteralContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#floatLiteral.
-    def visitFloatLiteral(self, ctx:WebIDLParser.FloatLiteralContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#constType.
-    def visitConstType(self, ctx:WebIDLParser.ConstTypeContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by WebIDLParser#readWriteAttribute.
     def visitReadWriteAttribute(self, ctx:WebIDLParser.ReadWriteAttributeContext):
         return self.visitChildren(ctx)
@@ -211,11 +196,6 @@ class WebIDLParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by WebIDLParser#argumentName.
     def visitArgumentName(self, ctx:WebIDLParser.ArgumentNameContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#returnType.
-    def visitReturnType(self, ctx:WebIDLParser.ReturnTypeContext):
         return self.visitChildren(ctx)
 
 
@@ -334,81 +314,6 @@ class WebIDLParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by WebIDLParser#singleType.
-    def visitSingleType(self, ctx:WebIDLParser.SingleTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#unionType.
-    def visitUnionType(self, ctx:WebIDLParser.UnionTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#unionMemberType.
-    def visitUnionMemberType(self, ctx:WebIDLParser.UnionMemberTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#genericType.
-    def visitGenericType(self, ctx:WebIDLParser.GenericTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#distinguishableType.
-    def visitDistinguishableType(self, ctx:WebIDLParser.DistinguishableTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#primitiveType.
-    def visitPrimitiveType(self, ctx:WebIDLParser.PrimitiveTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#unrestrictedFloatType.
-    def visitUnrestrictedFloatType(self, ctx:WebIDLParser.UnrestrictedFloatTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#floatType.
-    def visitFloatType(self, ctx:WebIDLParser.FloatTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#unsignedIntegerType.
-    def visitUnsignedIntegerType(self, ctx:WebIDLParser.UnsignedIntegerTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#integerType.
-    def visitIntegerType(self, ctx:WebIDLParser.IntegerTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#stringType.
-    def visitStringType(self, ctx:WebIDLParser.StringTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#promiseType.
-    def visitPromiseType(self, ctx:WebIDLParser.PromiseTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#recordType.
-    def visitRecordType(self, ctx:WebIDLParser.RecordTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#null_.
-    def visitNull_(self, ctx:WebIDLParser.Null_Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#bufferRelatedType.
-    def visitBufferRelatedType(self, ctx:WebIDLParser.BufferRelatedTypeContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by WebIDLParser#extendedAttributeList.
     def visitExtendedAttributeList(self, ctx:WebIDLParser.ExtendedAttributeListContext):
         return self.visitChildren(ctx)
@@ -446,6 +351,101 @@ class WebIDLParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by WebIDLParser#identifier.
     def visitIdentifier(self, ctx:WebIDLParser.IdentifierContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#returnType.
+    def visitReturnType(self, ctx:WebIDLParser.ReturnTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#singleType.
+    def visitSingleType(self, ctx:WebIDLParser.SingleTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#unionType.
+    def visitUnionType(self, ctx:WebIDLParser.UnionTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#unionMemberType.
+    def visitUnionMemberType(self, ctx:WebIDLParser.UnionMemberTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#genericType.
+    def visitGenericType(self, ctx:WebIDLParser.GenericTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#distinguishableType.
+    def visitDistinguishableType(self, ctx:WebIDLParser.DistinguishableTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#primitiveType.
+    def visitPrimitiveType(self, ctx:WebIDLParser.PrimitiveTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#constType.
+    def visitConstType(self, ctx:WebIDLParser.ConstTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#promiseType.
+    def visitPromiseType(self, ctx:WebIDLParser.PromiseTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#recordType.
+    def visitRecordType(self, ctx:WebIDLParser.RecordTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#unrestrictedFloatType.
+    def visitUnrestrictedFloatType(self, ctx:WebIDLParser.UnrestrictedFloatTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#floatType.
+    def visitFloatType(self, ctx:WebIDLParser.FloatTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#unsignedIntegerType.
+    def visitUnsignedIntegerType(self, ctx:WebIDLParser.UnsignedIntegerTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#integerType.
+    def visitIntegerType(self, ctx:WebIDLParser.IntegerTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#stringType.
+    def visitStringType(self, ctx:WebIDLParser.StringTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#bufferRelatedType.
+    def visitBufferRelatedType(self, ctx:WebIDLParser.BufferRelatedTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#booleanLiteral.
+    def visitBooleanLiteral(self, ctx:WebIDLParser.BooleanLiteralContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#floatLiteral.
+    def visitFloatLiteral(self, ctx:WebIDLParser.FloatLiteralContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#null_.
+    def visitNull_(self, ctx:WebIDLParser.Null_Context):
         return self.visitChildren(ctx)
 
 

@@ -125,23 +125,6 @@ constValue
     | INTEGER_WEBIDL
     ;
 
-booleanLiteral
-    : TRUE
-    | FALSE
-    ;
-
-floatLiteral
-    : DECIMAL_WEBIDL
-    | MINUS_INFINITY
-    | INFINITY
-    | NAN
-    ;
-
-constType
-    : primitiveType
-    | IDENTIFIER_WEBIDL
-    ;
-
 readWriteAttribute
     : attributeRest
     ;
@@ -204,11 +187,6 @@ argumentRest
 argumentName
     : argumentNameKeyword
     | IDENTIFIER_WEBIDL
-    ;
-
-returnType
-    : type_
-    | VOID
     ;
 
 constructor
@@ -310,6 +288,31 @@ typeWithExtendedAttributes
     : extendedAttributeList? type_
     ;
 
+extendedAttributeList
+    : LEFT_BRACKET extendedAttribute (COMMA extendedAttribute)* RIGHT_BRACKET
+    ;
+
+extendedAttribute
+    : name=IDENTIFIER_WEBIDL                                                                          #extendedAttributeNoArgs
+    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL LEFT_PAREN identifierList RIGHT_PAREN                       #extendedAttributeIdentList
+    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL rhs=IDENTIFIER_WEBIDL  LEFT_PAREN argumentList RIGHT_PAREN  #extendedAttributeNamedArgList
+    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL rhs=identifier                                              #extendedAttributeIdent
+    | name=IDENTIFIER_WEBIDL LEFT_PAREN argumentList RIGHT_PAREN                                      #extendedAttributeArgList
+    ;
+
+identifierList
+    : identifier (COMMA identifier)*
+    ;
+
+identifier
+    : other
+    ;
+
+returnType
+    : type_
+    | VOID
+    ;
+
 singleType
     : distinguishableType null_?
     | genericType null_?
@@ -349,6 +352,19 @@ primitiveType
     | OCTET
     ;
 
+constType
+    : primitiveType
+    | IDENTIFIER_WEBIDL
+    ;
+
+promiseType
+    : PROMISE LEFT_ANGLE returnType RIGHT_ANGLE
+    ;
+
+recordType
+    : RECORD LEFT_ANGLE stringType COMMA typeWithExtendedAttributes RIGHT_ANGLE
+    ;
+
 unrestrictedFloatType
     : UNRESTRICTED? floatType
     ;
@@ -373,18 +389,6 @@ stringType
     | USV_STRING
     ;
 
-promiseType
-    : PROMISE LEFT_ANGLE returnType RIGHT_ANGLE
-    ;
-
-recordType
-    : RECORD LEFT_ANGLE stringType COMMA typeWithExtendedAttributes RIGHT_ANGLE
-    ;
-
-null_
-    : QUESTION_SYMBOL
-    ;
-
 bufferRelatedType
     : ARRAY_BUFFER
     | DATA_VIEW
@@ -399,24 +403,20 @@ bufferRelatedType
     | FLOAT_64_ARRAY
     ;
 
-extendedAttributeList
-    : LEFT_BRACKET extendedAttribute (COMMA extendedAttribute)* RIGHT_BRACKET
+booleanLiteral
+    : TRUE
+    | FALSE
     ;
 
-extendedAttribute
-    : name=IDENTIFIER_WEBIDL                                                                          #extendedAttributeNoArgs
-    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL LEFT_PAREN identifierList RIGHT_PAREN                       #extendedAttributeIdentList
-    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL rhs=IDENTIFIER_WEBIDL  LEFT_PAREN argumentList RIGHT_PAREN  #extendedAttributeNamedArgList
-    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL rhs=identifier                                              #extendedAttributeIdent
-    | name=IDENTIFIER_WEBIDL LEFT_PAREN argumentList RIGHT_PAREN                                      #extendedAttributeArgList
+floatLiteral
+    : DECIMAL_WEBIDL
+    | MINUS_INFINITY
+    | INFINITY
+    | NAN
     ;
 
-identifierList
-    : identifier (COMMA identifier)*
-    ;
-
-identifier
-    : other
+null_
+    : QUESTION_SYMBOL
     ;
 
 other
