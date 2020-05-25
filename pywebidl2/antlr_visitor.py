@@ -1,3 +1,5 @@
+from more_itertools.more import first
+
 from .expr import (
     Argument,
     Attribute,
@@ -9,10 +11,13 @@ from .expr import (
     Enum,
     ExtendedAttribute,
     Field,
+    Identifier,
+    IdentifierList,
     Includes,
     IdlType,
     Infinity,
     Interface,
+    InterfaceMixin,
     Iterable_,
     Literal,
     MapLike,
@@ -75,7 +80,8 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         return Enum(
             name=ctx.IDENTIFIER_WEBIDL().getText(),
             values=[
-                Value(type='enum-value', value=enum_value.getText().strip('"'))
+                Identifier(
+                    type='enum-value', value=enum_value.getText().strip('"'))
                 for enum_value in ctx.STRING_WEBIDL()
             ]
         )
@@ -102,6 +108,22 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
                 member.accept(self) for member in ctx.partialInterfaceMembers()
             ],
         )
+
+    def visitMixinRest(self, ctx: WebIDLParser.MixinRestContext):
+        return InterfaceMixin(
+            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            members=[
+                member.accept(self) for member in ctx.mixinMembers()
+            ],
+        )
+
+    def visitMixinMembers(self, ctx: WebIDLParser.MixinMembersContext):
+        member = ctx.mixinMember().accept(self)
+
+        if extended_attribute := ctx.extendedAttributeList():
+            member.ext_attrs = extended_attribute.accept(self)
+
+        return member
 
     def visitPartialInterfaceMembers(
             self, ctx: WebIDLParser.PartialInterfaceMembersContext):
@@ -137,6 +159,15 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             member.ext_attrs = extended_attribute.accept(self)
 
         return member
+
+    def visitMixinMember(self, ctx: WebIDLParser.MixinMemberContext):
+        if ctx.READONLY() is None:
+            return ctx.getChild(0).accept(self)
+
+        attribute = ctx.attributeRest().accept(self)
+        attribute.readonly = True
+
+        return attribute
 
     def visitDictionaryMember(self, ctx: WebIDLParser.DictionaryMemberContext):
         if type_ := ctx.typeWithExtendedAttributes():
@@ -218,7 +249,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         if float_literal := ctx.floatLiteral():
             return float_literal.accept(self)
 
-        return Value(type='number', value=ctx.INTEGER_WEBIDL().getText())
+        return Identifier(type='number', value=ctx.INTEGER_WEBIDL().getText())
 
     def visitFloatLiteral(self, ctx: WebIDLParser.FloatLiteralContext):
         if ctx.NAN():
@@ -230,10 +261,10 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         if ctx.MINUS_INFINITY():
             return Infinity(negative=True)
 
-        return Value(type='number', value=ctx.DECIMAL_WEBIDL().getText())
+        return Identifier(type='number', value=ctx.DECIMAL_WEBIDL().getText())
 
     def visitBooleanLiteral(self, ctx: WebIDLParser.BooleanLiteralContext):
-        return Value(type='boolean', value=ctx.getText() == 'true')
+        return Identifier(type='boolean', value=ctx.getText() == 'true')
 
     def visitConst_(self, ctx: WebIDLParser.Const_Context):
         return Const(
@@ -329,22 +360,45 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             for extendedAttribute in ctx.extendedAttribute()
         ]
 
-    def visitExtendedAttribute(
-            self, ctx: WebIDLParser.ExtendedAttributeContext):
-        if name := ctx.other():
-            name = name.accept(self)
+    @staticmethod
+    def _extended_attribute(name, rhs=None, arguments=None):
+        return ExtendedAttribute(name=name, rhs=rhs, arguments=arguments or [])
 
-        if name == '=':
-            return Value(
-                type='identifier', value=ctx.extendedAttribute().getText())
+    def visitExtendedAttributeNoArgs(
+            self, ctx: WebIDLParser.ExtendedAttributeNoArgsContext):
+        return self._extended_attribute(ctx.IDENTIFIER_WEBIDL().getText())
 
-        if rhs := ctx.extendedAttribute():
-            rhs = rhs.accept(self)
+    def visitExtendedAttributeNamedArgList(
+            self, ctx: WebIDLParser.ExtendedAttributeNamedArgListContext):
+        return self._extended_attribute(
+            name=ctx.name.text,
+            arguments=ctx.argumentList().accept(self),
+            rhs=Identifier(type='identifier', value=ctx.rhs.text),
+        )
 
-        return ExtendedAttribute(
-            name=name,
-            rhs=rhs,
-            arguments=[],
+    def visitExtendedAttributeArgList(
+            self, ctx: WebIDLParser.ExtendedAttributeArgListContext):
+        return self._extended_attribute(
+            name=ctx.name.text, arguments=ctx.argumentList().accept(self))
+
+    def visitExtendedAttributeIdentList(
+            self, ctx: WebIDLParser.ExtendedAttributeIdentListContext):
+        return self._extended_attribute(
+            name=ctx.name.text, rhs=ctx.identifierList().accept(self))
+
+    def visitExtendedAttributeIdent(
+            self, ctx: WebIDLParser.ExtendedAttributeIdentContext):
+        return self._extended_attribute(
+            name=ctx.name.text, rhs=ctx.rhs.accept(self))
+
+    def visitIdentifierList(self, ctx: WebIDLParser.IdentifierListContext):
+        identifiers = [
+            identifier.accept(self) for identifier in ctx.identifier()
+        ]
+
+        return IdentifierList(
+            value=[Value(value=identifier.value) for identifier in identifiers],
+            type=f'{first(identifiers).type}-list',
         )
 
     def visitArgumentRest(self, ctx: WebIDLParser.ArgumentRestContext):
@@ -385,7 +439,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
     def visitDefaultValue(self, ctx: WebIDLParser.DefaultValueContext):
         if _str := ctx.STRING_WEBIDL():
-            return Value(type='string', value=_str.getText().strip('"'))
+            return Identifier(type='string', value=_str.getText().strip('"'))
 
         if const_value := ctx.constValue():
             return const_value.accept(self)
@@ -396,7 +450,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         if ctx.NULL():
             return Literal(type='null')
 
-        return Value(type='sequence', value=[])
+        return Identifier(type='sequence', value=[])
 
     def visitType_(self, ctx: WebIDLParser.Type_Context):
         if single_type := ctx.singleType():
@@ -534,11 +588,17 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
     def visitAttributeName(self, ctx: WebIDLParser.AttributeNameContext):
         return ctx.getText()
 
-    def visitOther(self, ctx: WebIDLParser.OtherContext):
-        return ctx.getText()
-
-    def visitOtherOrComma(self, ctx: WebIDLParser.OtherOrCommaContext):
-        return ctx.getText()
-
     def visitInheritance(self, ctx: WebIDLParser.InheritanceContext):
         return ctx.IDENTIFIER_WEBIDL().getText()
+
+    def visitOther(self, ctx: WebIDLParser.OtherContext):
+        if ctx.INTEGER_WEBIDL():
+            type_ = 'integer'
+        elif ctx.DECIMAL_WEBIDL():
+            type_ = 'decimal'
+        elif ctx.STRING_WEBIDL():
+            type_ = 'string'
+        else:
+            type_ = 'identifier'
+
+        return Identifier(type=type_, value=ctx.getText())

@@ -11,10 +11,13 @@ from .expr import (
     Enum,
     ExtendedAttribute,
     Field,
+    Identifier,
+    IdentifierList,
     Includes,
     IdlType,
     Infinity,
     Interface,
+    InterfaceMixin,
     Iterable_,
     Literal,
     MapLike,
@@ -61,7 +64,7 @@ class Visitor(Generic[_U]):  # pragma: no cover
     def visit_const(self, node: Const) -> _U:
         raise NotImplementedError
 
-    def visit_value(self, node: Value) -> _U:
+    def visit_identifier(self, node: Identifier) -> _U:
         raise NotImplementedError
 
     def visit_infinity(self, node: Infinity) -> _U:
@@ -89,4 +92,13 @@ class Visitor(Generic[_U]):  # pragma: no cover
         raise NotImplementedError
 
     def visit_typedef(self, node: Typedef) -> _U:
+        raise NotImplementedError
+
+    def visit_interface_mixin(self, node: InterfaceMixin) -> _U:
+        raise NotImplementedError
+
+    def visit_identifier_list(self, node: IdentifierList) -> _U:
+        raise NotImplementedError
+
+    def visit_value(self, node: Value) -> _U:
         raise NotImplementedError

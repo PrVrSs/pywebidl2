@@ -36,6 +36,24 @@ class Interface:
 
 
 @attr.s
+class InterfaceMixin:
+
+    members: List[Any] = attr.ib()
+    name: str = attr.ib()
+    inheritance: Optional[str] = attr.ib(default=None)
+    partial: bool = attr.ib(default=False)
+    type: str = attr.ib(default='interface mixin')
+    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
+
+    def __attrs_post_init__(self):
+        self.name = escaped_name(self.name)
+        self.inheritance = escaped_name(self.inheritance)
+
+    def accept(self, visitor):
+        visitor.visit_interface_mixin(self)
+
+
+@attr.s
 class Enum:
 
     name: str = attr.ib()
@@ -79,10 +97,35 @@ class Operation:
 
 
 @attr.s
+class Identifier:
+
+    type: Optional[str] = attr.ib()
+    value = attr.ib()
+
+    def __attrs_post_init__(self):
+        self.value = escaped_name(self.value)
+
+    def accept(self, visitor):
+        return visitor.visit_identifier(self)
+
+
+@attr.s
+class IdentifierList:
+
+    type: str = attr.ib()
+    value: List[Any] = attr.ib(factory=list)
+
+    def accept(self, visitor):
+        return visitor.visit_identifier_list(self)
+
+
+@attr.s
 class Value:
 
-    type = attr.ib()
     value = attr.ib()
+
+    def __attrs_post_init__(self):
+        self.value = escaped_name(self.value)
 
     def accept(self, visitor):
         return visitor.visit_value(self)
@@ -171,7 +214,6 @@ class Const:
     name: str = attr.ib()
     value: Any = attr.ib()
     idl_type: IdlType = attr.ib()
-
     ext_attrs = attr.ib(factory=list)
     type: str = attr.ib(default='const')
 
@@ -228,7 +270,7 @@ class Field:
 
     idl_type: IdlType = attr.ib()
     name: str = attr.ib()
-    default: Optional[Value] = attr.ib()
+    default: Optional[Identifier] = attr.ib()
     required: bool = attr.ib(default=False)
     type: str = attr.ib(default='field')
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)

@@ -414,23 +414,43 @@ class WebIDLParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by WebIDLParser#extendedAttribute.
-    def visitExtendedAttribute(self, ctx:WebIDLParser.ExtendedAttributeContext):
+    # Visit a parse tree produced by WebIDLParser#extendedAttributeNoArgs.
+    def visitExtendedAttributeNoArgs(self, ctx:WebIDLParser.ExtendedAttributeNoArgsContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by WebIDLParser#extendedAttributeInner.
-    def visitExtendedAttributeInner(self, ctx:WebIDLParser.ExtendedAttributeInnerContext):
+    # Visit a parse tree produced by WebIDLParser#extendedAttributeIdentList.
+    def visitExtendedAttributeIdentList(self, ctx:WebIDLParser.ExtendedAttributeIdentListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#extendedAttributeNamedArgList.
+    def visitExtendedAttributeNamedArgList(self, ctx:WebIDLParser.ExtendedAttributeNamedArgListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#extendedAttributeIdent.
+    def visitExtendedAttributeIdent(self, ctx:WebIDLParser.ExtendedAttributeIdentContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#extendedAttributeArgList.
+    def visitExtendedAttributeArgList(self, ctx:WebIDLParser.ExtendedAttributeArgListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#identifierList.
+    def visitIdentifierList(self, ctx:WebIDLParser.IdentifierListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by WebIDLParser#identifier.
+    def visitIdentifier(self, ctx:WebIDLParser.IdentifierContext):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by WebIDLParser#other.
     def visitOther(self, ctx:WebIDLParser.OtherContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by WebIDLParser#otherOrComma.
-    def visitOtherOrComma(self, ctx:WebIDLParser.OtherOrCommaContext):
         return self.visitChildren(ctx)
 
 

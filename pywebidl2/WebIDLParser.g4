@@ -404,17 +404,19 @@ extendedAttributeList
     ;
 
 extendedAttribute
-    : LEFT_PAREN extendedAttributeInner? RIGHT_PAREN extendedAttribute?
-    | LEFT_BRACKET extendedAttributeInner? RIGHT_BRACKET extendedAttribute?
-    | LEFT_BRACE extendedAttributeInner? RIGHT_BRACE extendedAttribute?
-    | other extendedAttribute?
+    : name=IDENTIFIER_WEBIDL                                                                          #extendedAttributeNoArgs
+    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL LEFT_PAREN identifierList RIGHT_PAREN                       #extendedAttributeIdentList
+    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL rhs=IDENTIFIER_WEBIDL  LEFT_PAREN argumentList RIGHT_PAREN  #extendedAttributeNamedArgList
+    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL rhs=identifier                                              #extendedAttributeIdent
+    | name=IDENTIFIER_WEBIDL LEFT_PAREN argumentList RIGHT_PAREN                                      #extendedAttributeArgList
     ;
 
-extendedAttributeInner
-    : LEFT_PAREN extendedAttributeInner? RIGHT_PAREN extendedAttributeInner?
-    | LEFT_BRACKET extendedAttributeInner? RIGHT_BRACKET extendedAttributeInner?
-    | LEFT_BRACE extendedAttributeInner? RIGHT_BRACE extendedAttributeInner?
-    | otherOrComma extendedAttributeInner?
+identifierList
+    : identifier (COMMA identifier)*
+    ;
+
+identifier
+    : other
     ;
 
 other
@@ -462,11 +464,6 @@ other
     | VOID
     | argumentNameKeyword
     | bufferRelatedType
-    ;
-
-otherOrComma
-    : other
-    | COMMA
     ;
 
 argumentNameKeyword
