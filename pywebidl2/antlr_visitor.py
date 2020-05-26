@@ -439,6 +439,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             name=ctx.argumentName().accept(self),
             optional=optional is not None,
             default=default,
+            variadic=ctx.ELLIPSIS() is not None,
         )
 
     def visitReadOnlyMember(self, ctx: WebIDLParser.ReadOnlyMemberContext):
@@ -599,6 +600,9 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         return ctx.returnType().accept(self)
 
     def visitIntegerType(self, ctx: WebIDLParser.IntegerTypeContext):
+        if long := ' '.join(long.getText() for long in ctx.LONG()):
+            return long
+
         return ctx.getText()
 
     def visitFloatType(self, ctx: WebIDLParser.FloatTypeContext):
