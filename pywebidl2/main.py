@@ -8,10 +8,7 @@ from .idl import Idl
 
 
 def validate(file: str):
-    if errors := Idl(file).validate():
-        return errors
-
-    return 'Ok'
+    return Idl(file).validate()
 
 
 def pretty_parse(file: str):

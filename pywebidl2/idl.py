@@ -13,7 +13,7 @@ class SyntaxErrorInfo(NamedTuple):
     column: int
     message: str
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return f'{self.line}:{self.column} {self.message}'
 
 

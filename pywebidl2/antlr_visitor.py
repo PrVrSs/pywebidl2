@@ -215,6 +215,36 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
         return attribute
 
+    def visitStringifier(self, ctx: WebIDLParser.StringifierContext):
+        member = ctx.stringifierRest().accept(self)
+        member.special = 'stringifier'
+
+        return member
+
+    def visitStringifierRest(self, ctx:WebIDLParser.StringifierRestContext):
+        if regular_operation := ctx.regularOperation():
+            return self._operation(regular_operation)
+
+        attribute = ctx.attributeRest().accept(self)
+        attribute.readonly = ctx.READONLY() is not None
+
+        return attribute
+
+    def visitStaticMember(self, ctx: WebIDLParser.StaticMemberContext):
+        member = ctx.staticMemberRest().accept(self)
+        member.special = 'static'
+
+        return member
+
+    def visitStaticMemberRest(self, ctx: WebIDLParser.StaticMemberRestContext):
+        if regular_operation := ctx.regularOperation():
+            return self._operation(regular_operation)
+
+        attribute = ctx.attributeRest().accept(self)
+        attribute.readonly = ctx.READONLY() is not None
+
+        return attribute
+
     def visitCallbackOrInterfaceOrMixin(
             self, ctx: WebIDLParser.CallbackOrInterfaceOrMixinContext):
         if callback := ctx.callbackRestOrInterface():
