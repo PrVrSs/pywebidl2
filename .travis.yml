@@ -1,6 +1,6 @@
 language : python
 
-dist: xenial
+dist: bionic
 
 python:
     - "3.8"
@@ -9,7 +9,7 @@ before_install:
   - curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
   - source "$HOME/.poetry/env"
   - wget https://www.antlr.org/download/antlr-4.8-complete.jar
-  - java -jar antlr-4.8-complete.jar -no-listener -visitor -Dlanguage=Python3  $TRAVIS_BUILD_DIR/pywebidl2/WebIDLParser.g4 $TRAVIS_BUILD_DIR/pywebidl2/WebIDLLexer.g4 -o $TRAVIS_BUILD_DIR/pywebidl2/generated
+  - java -jar antlr-4.8-complete.jar -no-listener -visitor -Dlanguage=Python3  $TRAVIS_BUILD_DIR/grammar/WebIDLParser.g4 $TRAVIS_BUILD_DIR/grammar/WebIDLLexer.g4 -o $TRAVIS_BUILD_DIR/pywebidl2/generated
 
 install: poetry install
 
