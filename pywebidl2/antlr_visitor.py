@@ -23,6 +23,7 @@ from .expr import (
     MapLike,
     Namespace,
     Operation,
+    SetLike,
     Typedef,
     Value,
 )
@@ -259,6 +260,12 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
                 type_with_extended_attr.accept(self)
                 for type_with_extended_attr in ctx.typeWithExtendedAttributes()
             ],
+            readonly=ctx.READONLY() is not None,
+        )
+
+    def visitSetlikeRest(self, ctx: WebIDLParser.SetlikeRestContext):
+        return SetLike(
+            idl_type=[ctx.typeWithExtendedAttributes().accept(self)],
             readonly=ctx.READONLY() is not None,
         )
 
@@ -550,8 +557,13 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
                 nullable=nullable,
             )
 
+        distinguishable_type = ctx.distinguishableType().accept(self)
+
+        if isinstance(distinguishable_type, IdlType):
+            return distinguishable_type
+
         return IdlType(
-            idl_type=ctx.distinguishableType().accept(self), nullable=nullable)
+            idl_type=distinguishable_type, nullable=nullable)
 
     def visitGenericType(self, ctx: WebIDLParser.GenericTypeContext):
         return ctx.typeWithExtendedAttributes().accept(self)
@@ -567,7 +579,19 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         if type_ := ctx.bufferRelatedType():
             return type_.accept(self)
 
+        if type_ := ctx.recordType():
+            return type_.accept(self)
+
         return ctx.getChild(0).getText()
+
+    def visitRecordType(self, ctx: WebIDLParser.RecordTypeContext):
+        return IdlType(
+            generic='record',
+            idl_type=[
+                IdlType(idl_type=ctx.stringType().accept(self)),
+                ctx.typeWithExtendedAttributes().accept(self),
+            ]
+        )
 
     def visitConstType(self, ctx: WebIDLParser.ConstTypeContext):
         if idl_type := ctx.primitiveType():

@@ -336,3 +336,17 @@ class Namespace:
 
     def accept(self, visitor):
         visitor.visit_namespace(self)
+
+
+@attr.s
+class SetLike:
+
+    readonly: bool = attr.ib()
+    idl_type: List[IdlType] = attr.ib()
+    arguments: List[Any] = attr.ib(factory=list)
+    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
+    type: str = attr.ib(default='setlike')
+    async_: bool = attr.ib(default=False)
+
+    def accept(self, visitor):
+        visitor.visit_setlike(self)
