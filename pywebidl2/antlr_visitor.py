@@ -59,7 +59,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
     def visitDictionary(self, ctx: WebIDLParser.DictionaryContext):
         return Dictionary(
             partial=ctx.PARTIAL() is not None,
-            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            name=ctx.IDENTIFIER().getText(),
             members=[member.accept(self) for member in ctx.dictionaryMembers()],
             inheritance=ctx.inheritance() and ctx.inheritance().accept(self),
         )
@@ -70,8 +70,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             'typedef-type',
         )
 
-        return Typedef(
-            idl_type=idl_type, name=ctx.IDENTIFIER_WEBIDL().getText())
+        return Typedef(idl_type=idl_type, name=ctx.IDENTIFIER().getText())
 
     def visitIncludesStatement(
             self, ctx: WebIDLParser.IncludesStatementContext):
@@ -80,11 +79,11 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
     def visitEnum_(self, ctx: WebIDLParser.Enum_Context):
         return Enum(
-            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            name=ctx.IDENTIFIER().getText(),
             values=[
                 Identifier(
                     type='enum-value', value=enum_value.getText().strip('"'))
-                for enum_value in ctx.STRING_WEBIDL()
+                for enum_value in ctx.StringLiteral()
             ]
         )
 
@@ -97,7 +96,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
     def visitInterfaceRest(self, ctx: WebIDLParser.InterfaceRestContext):
         return Interface(
-            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            name=ctx.IDENTIFIER().getText(),
             inheritance=ctx.inheritance() and ctx.inheritance().accept(self),
             members=[member.accept(self) for member in ctx.interfaceMembers()],
         )
@@ -105,7 +104,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
     def visitPartialInterfaceRest(
             self, ctx: WebIDLParser.PartialInterfaceRestContext):
         return Interface(
-            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            name=ctx.IDENTIFIER().getText(),
             members=[
                 member.accept(self) for member in ctx.partialInterfaceMembers()
             ],
@@ -113,7 +112,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
     def visitMixinRest(self, ctx: WebIDLParser.MixinRestContext):
         return InterfaceMixin(
-            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            name=ctx.IDENTIFIER().getText(),
             members=[
                 member.accept(self) for member in ctx.mixinMembers()
             ],
@@ -121,7 +120,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
     def visitNamespace(self, ctx: WebIDLParser.NamespaceContext):
         return Namespace(
-            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            name=ctx.IDENTIFIER().getText(),
             members=[
                 member.accept(self) for member in ctx.namespaceMembers()
             ],
@@ -201,7 +200,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
         return Field(
             required=ctx.REQUIRED() is not None,
-            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            name=ctx.IDENTIFIER().getText(),
             default=default,
             idl_type=idl_type,
         )
@@ -261,7 +260,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             return callback_rest.accept(self)
 
         return CallbackInterface(
-            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            name=ctx.IDENTIFIER().getText(),
             inheritance=None,
             members=[
                 member.accept(self)
@@ -316,7 +315,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         if float_literal := ctx.floatLiteral():
             return float_literal.accept(self)
 
-        return Identifier(type='number', value=ctx.INTEGER_WEBIDL().getText())
+        return Identifier(type='number', value=ctx.IntegerLiteral().getText())
 
     def visitFloatLiteral(self, ctx: WebIDLParser.FloatLiteralContext):
         if ctx.NAN():
@@ -328,7 +327,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         if ctx.MINUS_INFINITY():
             return Infinity(negative=True)
 
-        return Identifier(type='number', value=ctx.DECIMAL_WEBIDL().getText())
+        return Identifier(type='number', value=ctx.DecimalLiteral().getText())
 
     def visitBooleanLiteral(self, ctx: WebIDLParser.BooleanLiteralContext):
         return Identifier(type='boolean', value=ctx.getText() == 'true')
@@ -337,7 +336,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         return Const(
             idl_type=ctx.constType().accept(self),
             value=ctx.constValue().accept(self),
-            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            name=ctx.IDENTIFIER().getText(),
         )
 
     def visitCallbackRest(self, ctx: WebIDLParser.CallbackRestContext):
@@ -347,10 +346,10 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         setup_type(idl_type := ctx.returnType().accept(self), 'return-type')
 
         return Callback(
-            name=ctx.IDENTIFIER_WEBIDL().getText(),
+            name=ctx.IDENTIFIER().getText(),
             idl_type=idl_type,
             arguments=arguments or [],
-            ext_attrs=[]
+            ext_attrs=[],
         )
 
     def visitConstructor(self, ctx: WebIDLParser.ConstructorContext):
@@ -428,7 +427,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
     def visitExtendedAttributeNoArgs(
             self, ctx: WebIDLParser.ExtendedAttributeNoArgsContext):
-        return self._extended_attribute(ctx.IDENTIFIER_WEBIDL().getText())
+        return self._extended_attribute(ctx.IDENTIFIER().getText())
 
     def visitExtendedAttributeNamedArgList(
             self, ctx: WebIDLParser.ExtendedAttributeNamedArgListContext):
@@ -507,7 +506,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         return ctx.defaultValue().accept(self)
 
     def visitDefaultValue(self, ctx: WebIDLParser.DefaultValueContext):
-        if _str := ctx.STRING_WEBIDL():
+        if _str := ctx.StringLiteral():
             return Identifier(type='string', value=_str.getText().strip('"'))
 
         if const_value := ctx.constValue():
@@ -634,9 +633,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             idl_type = idl_type.accept(self)
 
         return IdlType(
-            type='const-type',
-            idl_type=idl_type or ctx.IDENTIFIER_WEBIDL().getText(),
-        )
+            type='const-type', idl_type=idl_type or ctx.IDENTIFIER().getText())
 
     def visitPrimitiveType(self, ctx: WebIDLParser.PrimitiveTypeContext):
         if type_ := ctx.unsignedIntegerType():
@@ -681,14 +678,14 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         return ctx.getText()
 
     def visitInheritance(self, ctx: WebIDLParser.InheritanceContext):
-        return ctx.IDENTIFIER_WEBIDL().getText()
+        return ctx.IDENTIFIER().getText()
 
     def visitOther(self, ctx: WebIDLParser.OtherContext):
-        if ctx.INTEGER_WEBIDL():
+        if ctx.IntegerLiteral():
             type_ = 'integer'
-        elif ctx.DECIMAL_WEBIDL():
+        elif ctx.DecimalLiteral():
             type_ = 'decimal'
-        elif ctx.STRING_WEBIDL():
+        elif ctx.StringLiteral():
             type_ = 'string'
         else:
             type_ = 'identifier'

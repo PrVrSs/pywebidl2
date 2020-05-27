@@ -9,7 +9,7 @@ from .utils import escaped_name
 class ExtendedAttribute:
 
     name: str = attr.ib()
-    arguments: List[Any] = attr.ib(factory=list)
+    arguments: List[str] = attr.ib(factory=list)
     rhs: Optional[Any] = attr.ib(default=None)
     type: str = attr.ib(default='extended-attribute')
 

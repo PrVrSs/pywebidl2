@@ -36,7 +36,7 @@ interfaceOrMixin
     ;
 
 interfaceRest
-    : IDENTIFIER_WEBIDL inheritance? LEFT_BRACE interfaceMembers* RIGHT_BRACE SEMI
+    : IDENTIFIER inheritance? LEFT_BRACE interfaceMembers* RIGHT_BRACE SEMI
     ;
 
 partial
@@ -49,7 +49,7 @@ partialInterfaceOrPartialMixin
     ;
 
 partialInterfaceRest
-    : IDENTIFIER_WEBIDL LEFT_BRACE partialInterfaceMembers* RIGHT_BRACE SEMI
+    : IDENTIFIER LEFT_BRACE partialInterfaceMembers* RIGHT_BRACE SEMI
     ;
 
 interfaceMembers
@@ -79,11 +79,11 @@ partialInterfaceMember
     ;
 
 inheritance
-    : COLON IDENTIFIER_WEBIDL
+    : COLON IDENTIFIER
     ;
 
 mixinRest
-    : MIXIN IDENTIFIER_WEBIDL LEFT_BRACE mixinMembers* RIGHT_BRACE SEMI
+    : MIXIN IDENTIFIER LEFT_BRACE mixinMembers* RIGHT_BRACE SEMI
     ;
 
 mixinMembers
@@ -98,12 +98,12 @@ mixinMember
     ;
 
 includesStatement
-    : target=IDENTIFIER_WEBIDL INCLUDES includes=IDENTIFIER_WEBIDL SEMI
+    : target=IDENTIFIER INCLUDES includes=IDENTIFIER SEMI
     ;
 
 callbackRestOrInterface
     : callbackRest
-    | INTERFACE IDENTIFIER_WEBIDL LEFT_BRACE callbackInterfaceMembers* RIGHT_BRACE SEMI
+    | INTERFACE IDENTIFIER LEFT_BRACE callbackInterfaceMembers* RIGHT_BRACE SEMI
     ;
 
 
@@ -117,13 +117,13 @@ callbackInterfaceMember
     ;
 
 const_
-    : CONST constType IDENTIFIER_WEBIDL EQUAL_SYMBOL constValue SEMI
+    : CONST constType IDENTIFIER EQUAL_SYMBOL constValue SEMI
     ;
 
 constValue
     : booleanLiteral
     | floatLiteral
-    | INTEGER_WEBIDL
+    | IntegerLiteral
     ;
 
 readOnlyMember
@@ -150,12 +150,12 @@ attributeRest
 
 attributeName
     : attributeNameKeyword=(ASYNC | REQUIRED)
-    | IDENTIFIER_WEBIDL
+    | IDENTIFIER
     ;
 
 defaultValue
     : constValue
-    | STRING_WEBIDL
+    | StringLiteral
     | LEFT_BRACKET RIGHT_BRACKET
     | LEFT_BRACE RIGHT_BRACE
     | NULL
@@ -175,7 +175,7 @@ operationRest
 
 operationName
     : operationNameKeyword
-    | IDENTIFIER_WEBIDL
+    | IDENTIFIER
     ;
 
 operationNameKeyword
@@ -197,7 +197,7 @@ argumentRest
 
 argumentName
     : argumentNameKeyword
-    | IDENTIFIER_WEBIDL
+    | IDENTIFIER
     ;
 
 constructor
@@ -248,7 +248,7 @@ setlikeRest
     ;
 
 namespace
-    : PARTIAL? NAMESPACE IDENTIFIER_WEBIDL LEFT_BRACE namespaceMembers* RIGHT_BRACE SEMI
+    : PARTIAL? NAMESPACE IDENTIFIER LEFT_BRACE namespaceMembers* RIGHT_BRACE SEMI
     ;
 
 namespaceMembers
@@ -261,8 +261,8 @@ namespaceMember
     ;
 
 dictionary
-    : DICTIONARY IDENTIFIER_WEBIDL inheritance? LEFT_BRACE dictionaryMembers* RIGHT_BRACE SEMI
-    | PARTIAL DICTIONARY IDENTIFIER_WEBIDL LEFT_BRACE dictionaryMembers* RIGHT_BRACE SEMI
+    : DICTIONARY IDENTIFIER inheritance? LEFT_BRACE dictionaryMembers* RIGHT_BRACE SEMI
+    | PARTIAL DICTIONARY IDENTIFIER LEFT_BRACE dictionaryMembers* RIGHT_BRACE SEMI
 ;
 
 dictionaryMembers
@@ -270,8 +270,8 @@ dictionaryMembers
     ;
 
 dictionaryMember
-    : REQUIRED typeWithExtendedAttributes IDENTIFIER_WEBIDL SEMI
-    | type_ IDENTIFIER_WEBIDL default_? SEMI
+    : REQUIRED typeWithExtendedAttributes IDENTIFIER SEMI
+    | type_ IDENTIFIER default_? SEMI
     ;
 
 default_
@@ -279,15 +279,15 @@ default_
     ;
 
 enum_
-    : ENUM IDENTIFIER_WEBIDL LEFT_BRACE STRING_WEBIDL (COMMA STRING_WEBIDL?)* RIGHT_BRACE SEMI
+    : ENUM IDENTIFIER LEFT_BRACE StringLiteral (COMMA StringLiteral?)* RIGHT_BRACE SEMI
     ;
 
 callbackRest
-    : IDENTIFIER_WEBIDL EQUAL_SYMBOL returnType LEFT_PAREN argumentList? RIGHT_PAREN SEMI
+    : IDENTIFIER EQUAL_SYMBOL returnType LEFT_PAREN argumentList? RIGHT_PAREN SEMI
     ;
 
 typedef
-    : TYPEDEF typeWithExtendedAttributes IDENTIFIER_WEBIDL SEMI
+    : TYPEDEF typeWithExtendedAttributes IDENTIFIER SEMI
     ;
 
 type_
@@ -304,11 +304,11 @@ extendedAttributeList
     ;
 
 extendedAttribute
-    : name=IDENTIFIER_WEBIDL                                                                          #extendedAttributeNoArgs
-    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL LEFT_PAREN identifierList RIGHT_PAREN                       #extendedAttributeIdentList
-    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL rhs=IDENTIFIER_WEBIDL  LEFT_PAREN argumentList RIGHT_PAREN  #extendedAttributeNamedArgList
-    | name=IDENTIFIER_WEBIDL EQUAL_SYMBOL rhs=identifier                                              #extendedAttributeIdent
-    | name=IDENTIFIER_WEBIDL LEFT_PAREN argumentList RIGHT_PAREN                                      #extendedAttributeArgList
+    : name=IDENTIFIER                                                                          #extendedAttributeNoArgs
+    | name=IDENTIFIER EQUAL_SYMBOL LEFT_PAREN identifierList RIGHT_PAREN                       #extendedAttributeIdentList
+    | name=IDENTIFIER EQUAL_SYMBOL rhs=IDENTIFIER  LEFT_PAREN argumentList RIGHT_PAREN  #extendedAttributeNamedArgList
+    | name=IDENTIFIER EQUAL_SYMBOL rhs=identifier                                              #extendedAttributeIdent
+    | name=IDENTIFIER LEFT_PAREN argumentList RIGHT_PAREN                                      #extendedAttributeArgList
     ;
 
 identifierList
@@ -350,7 +350,7 @@ distinguishableType
     | stringType
     | bufferRelatedType
     | recordType
-    | IDENTIFIER_WEBIDL
+    | IDENTIFIER
     | OBJECT
     | SYMBOL
     ;
@@ -365,7 +365,7 @@ primitiveType
 
 constType
     : primitiveType
-    | IDENTIFIER_WEBIDL
+    | IDENTIFIER
     ;
 
 promiseType
@@ -420,7 +420,7 @@ booleanLiteral
     ;
 
 floatLiteral
-    : DECIMAL_WEBIDL
+    : DecimalLiteral
     | MINUS_INFINITY
     | INFINITY
     | NAN
@@ -431,11 +431,11 @@ null_
     ;
 
 other
-    : INTEGER_WEBIDL
-    | DECIMAL_WEBIDL
-    | IDENTIFIER_WEBIDL
-    | STRING_WEBIDL
-    | OTHER_WEBIDL
+    : IntegerLiteral
+    | DecimalLiteral
+    | IDENTIFIER
+    | StringLiteral
+    | OTHER
     | MINUS
     | MINUS_INFINITY
     | DOT

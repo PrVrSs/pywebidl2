@@ -65,8 +65,11 @@ class Parser:
 
         return reduce(lambda acc, func: func(acc), functions, file)
 
-    def parse(self):
+    def _setup_parser_strategy(self):
         self._parser._errHandler = BailErrorStrategy()
+
+    def parse(self):
+        self._setup_parser_strategy()
         return self._parser.webIDL()
 
     def validate(self):

@@ -2,6 +2,6 @@
     {
         "line": 1,
         "column": 10,
-        "message": "mismatched input 'any' expecting {'mixin', IDENTIFIER_WEBIDL}"
+        "message": "mismatched input 'any' expecting {'mixin', IDENTIFIER}"
     }
 ]

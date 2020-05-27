@@ -1,5 +1,9 @@
 lexer grammar WebIDLLexer;
 
+channels { ERROR }
+
+WHITESPACE:                          [\t\n\r ]+                         -> channel(HIDDEN);
+COMMENT:                             ('//'~[\n\r]*|'/*'(.|'\n')*?'*/')+ -> channel(HIDDEN);
 
 EQUAL_SYMBOL:                        '=';
 QUESTION_SYMBOL:                     '?';
@@ -17,6 +21,8 @@ COLON:                               ':';
 MINUS:                               '-';
 ELLIPSIS:                            '...';
 DOT:                                 '.';
+
+/// Keywords
 
 ANY:                                 'any';
 ASYNC:                               'async';
@@ -72,7 +78,7 @@ UNSIGNED:                            'unsigned';
 USV_STRING:                          'USVString';
 VOID:                                'void';
 
-// bufferRelatedType
+/// bufferRelatedType
 
 ARRAY_BUFFER:                        'ArrayBuffer';
 DATA_VIEW:                           'DataView';
@@ -86,30 +92,46 @@ UINT_8_CLAMPED_ARRAY:                'Uint8ClampedArray';
 FLOAT_32_ARRAY:                      'Float32Array';
 FLOAT_64_ARRAY:                      'Float64Array';
 
-INTEGER_WEBIDL
-    : '-'?('0'([Xx][0-9A-Fa-f]+|[0-7]*)|[1-9][0-9]*)
+IntegerLiteral
+    :                                '-'? HexIntegerLiteral
+    |                                '-'? OctalIntegerLiteral
+    |                                '-'? DecimalIntegerLiteral
     ;
 
-DECIMAL_WEBIDL
-    : '-'?(([0-9]+'.'[0-9]*|[0-9]*'.'[0-9]+)([Ee][+\-]?[0-9]+)?|[0-9]+[Ee][+\-]?[0-9]+)
+DecimalLiteral
+    :                                '-'? [0-9]+ '.' [0-9]* ExponentPart?
+    |                                '-'? [0-9]* '.' [0-9]+ ExponentPart?
+    |                                '-'? [0-9]+ '.' [0-9]* [0-9]+ ExponentPart
+    |                                '-'? [0-9]* '.' [0-9]+ [0-9]+ ExponentPart
     ;
 
-IDENTIFIER_WEBIDL
+StringLiteral:                       '"' DoubleStringCharacter* '"';
+
+HexIntegerLiteral:                   '0' [xX] HexDigit+;
+OctalIntegerLiteral:                 '0' [0-7]+;
+DecimalIntegerLiteral
+    :                                '0'
+    |                                [1-9] [0-9]*
+    ;
+
+IDENTIFIER
     : [_-]?[A-Za-z][0-9A-Z_a-z-]*
     ;
 
-STRING_WEBIDL
-    : '"' ~["]* '"'
-    ;
-
-WHITESPACE_WEBIDL
-    : [\t\n\r ]+ -> channel(HIDDEN)
-    ;
-
-COMMENT_WEBIDL
-    : ('//'~[\n\r]*|'/*'(.|'\n')*?'*/')+ -> channel(HIDDEN)
-    ;
-
-OTHER_WEBIDL
+OTHER
     : ~[\t\n\r 0-9A-Z_a-z]
+    ;
+
+// Fragment rules
+
+fragment DoubleStringCharacter
+    : ~["\\\r\n]
+    ;
+
+fragment HexDigit
+    : [0-9a-fA-F]
+    ;
+
+fragment ExponentPart
+    : [eE] [+-]? [0-9]+
     ;
