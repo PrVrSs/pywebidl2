@@ -303,6 +303,9 @@ class Typedef:
     type: str = attr.ib(default='typedef')
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
 
+    def __attrs_post_init__(self):
+        self.name = escaped_name(self.name)
+
     def accept(self, visitor):
         return visitor.visit_typedef(self)
 

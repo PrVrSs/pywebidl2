@@ -205,7 +205,7 @@ constructor
     ;
 
 stringifier
-    : STRINGIFIER stringifierRest
+    : STRINGIFIER (stringifierRest | SEMI)
     ;
 
 stringifierRest

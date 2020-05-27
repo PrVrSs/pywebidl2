@@ -216,10 +216,13 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         return attribute
 
     def visitStringifier(self, ctx: WebIDLParser.StringifierContext):
-        member = ctx.stringifierRest().accept(self)
-        member.special = 'stringifier'
+        if stringifier := ctx.stringifierRest():
+            stringifier = stringifier.accept(self)
+            stringifier.special = 'stringifier'
 
-        return member
+            return stringifier
+
+        return Operation(name='', idl_type=None, special='stringifier')
 
     def visitStringifierRest(self, ctx:WebIDLParser.StringifierRestContext):
         if regular_operation := ctx.regularOperation():
@@ -554,7 +557,10 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             )
 
         return IdlType(
-            idl_type=ctx.unionType().accept(self), nullable=nullable)
+            idl_type=ctx.unionType().accept(self),
+            nullable=nullable,
+            union=True,
+        )
 
     def visitReturnType(self, ctx: WebIDLParser.ReturnTypeContext):
         if void := ctx.VOID():
