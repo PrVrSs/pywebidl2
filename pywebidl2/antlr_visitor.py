@@ -87,13 +87,6 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             ]
         )
 
-    def visitPartial(self, ctx: WebIDLParser.PartialContext):
-        interface_or_mixin = ctx.partialInterfaceOrPartialMixin().accept(self)
-
-        interface_or_mixin.partial = True
-
-        return interface_or_mixin
-
     def visitInterfaceRest(self, ctx: WebIDLParser.InterfaceRestContext):
         return Interface(
             name=ctx.IDENTIFIER().getText(),
@@ -127,56 +120,47 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             partial=ctx.PARTIAL() is not None,
         )
 
-    def visitNamespaceMembers(self, ctx: WebIDLParser.NamespaceMembersContext):
-        member = ctx.namespaceMember().accept(self)
+    def visitPartial(self, ctx: WebIDLParser.PartialContext):
+        interface_or_mixin = ctx.partialInterfaceOrPartialMixin().accept(self)
 
-        if extended_attribute := ctx.extendedAttributeList():
+        interface_or_mixin.partial = True
+
+        return interface_or_mixin
+
+    def _member_with_extended_attribute(self, member, extended_attribute):
+        member = member.accept(self)
+
+        if extended_attribute is not None:
             member.ext_attrs = extended_attribute.accept(self)
 
         return member
+
+    def visitNamespaceMembers(self, ctx: WebIDLParser.NamespaceMembersContext):
+        return self._member_with_extended_attribute(
+            ctx.namespaceMember(), ctx.extendedAttributeList())
 
     def visitMixinMembers(self, ctx: WebIDLParser.MixinMembersContext):
-        member = ctx.mixinMember().accept(self)
-
-        if extended_attribute := ctx.extendedAttributeList():
-            member.ext_attrs = extended_attribute.accept(self)
-
-        return member
+        return self._member_with_extended_attribute(
+            ctx.mixinMember(), ctx.extendedAttributeList())
 
     def visitPartialInterfaceMembers(
             self, ctx: WebIDLParser.PartialInterfaceMembersContext):
-        member = ctx.partialInterfaceMember().accept(self)
-
-        if extended_attribute := ctx.extendedAttributeList():
-            member.ext_attrs = extended_attribute.accept(self)
-
-        return member
+        return self._member_with_extended_attribute(
+            ctx.partialInterfaceMember(), ctx.extendedAttributeList())
 
     def visitInterfaceMembers(self, ctx: WebIDLParser.InterfaceMembersContext):
-        member = ctx.interfaceMember().accept(self)
-
-        if extended_attribute := ctx.extendedAttributeList():
-            member.ext_attrs = extended_attribute.accept(self)
-
-        return member
+        return self._member_with_extended_attribute(
+            ctx.interfaceMember(), ctx.extendedAttributeList())
 
     def visitDictionaryMembers(
             self, ctx: WebIDLParser.DictionaryMembersContext):
-        member = ctx.dictionaryMember().accept(self)
-
-        if extended_attribute := ctx.extendedAttributeList():
-            member.ext_attrs = extended_attribute.accept(self)
-
-        return member
+        return self._member_with_extended_attribute(
+            ctx.dictionaryMember(), ctx.extendedAttributeList())
 
     def visitCallbackInterfaceMembers(
             self, ctx: WebIDLParser.CallbackInterfaceMembersContext):
-        member = ctx.callbackInterfaceMember().accept(self)
-
-        if extended_attribute := ctx.extendedAttributeList():
-            member.ext_attrs = extended_attribute.accept(self)
-
-        return member
+        return self._member_with_extended_attribute(
+            ctx.callbackInterfaceMember(), ctx.extendedAttributeList())
 
     def visitMixinMember(self, ctx: WebIDLParser.MixinMemberContext):
         if ctx.READONLY() is None:
@@ -223,7 +207,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
         return Operation(name='', idl_type=None, special='stringifier')
 
-    def visitStringifierRest(self, ctx:WebIDLParser.StringifierRestContext):
+    def visitStringifierRest(self, ctx: WebIDLParser.StringifierRestContext):
         if regular_operation := ctx.regularOperation():
             return self._operation(regular_operation)
 
@@ -349,7 +333,6 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             name=ctx.IDENTIFIER().getText(),
             idl_type=idl_type,
             arguments=arguments or [],
-            ext_attrs=[],
         )
 
     def visitConstructor(self, ctx: WebIDLParser.ConstructorContext):

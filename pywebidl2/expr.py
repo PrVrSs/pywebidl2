@@ -86,7 +86,7 @@ class IdlType:
 class Operation:
 
     name: str = attr.ib()
-    idl_type: IdlType = attr.ib()
+    idl_type: Optional[IdlType] = attr.ib()
     arguments: List[Any] = attr.ib(factory=list)
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
     type: str = attr.ib(default='operation')
