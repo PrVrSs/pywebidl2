@@ -1,8 +1,10 @@
-from functools import reduce
-from typing import Any, NamedTuple
+from functools import reduce, update_wrapper
+from typing import Dict, ClassVar, List, NamedTuple, cast
 
 from antlr4 import CommonTokenStream, FileStream, BailErrorStrategy
 from antlr4.error.ErrorListener import ErrorListener
+from antlr4.error.ErrorStrategy import DefaultErrorStrategy, ErrorStrategy
+from antlr4.Parser import ParserRuleContext
 
 from .generated import WebIDLLexer, WebIDLParser
 
@@ -19,43 +21,63 @@ class SyntaxErrorInfo(NamedTuple):
 
 class Idl:
 
-    def __init__(self, file):
-        self._parser = Parser(file)
+    def __init__(self, file: str):
+        self._parser = Parser(file=file)
 
-    def parse(self):
+    def parse(self) -> ParserRuleContext:
         return self._parser.parse()
 
-    def validate(self):
+    def validate(self) -> List[SyntaxErrorInfo]:
         return self._parser.validate()
 
 
 class WebIDLErrorListener(ErrorListener):
     def __init__(self):
-        self._errors = []
+        self._errors: List[SyntaxErrorInfo] = []
 
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         self._errors.append(SyntaxErrorInfo(line, column, msg))
 
     @property
-    def errors(self):
+    def errors(self) -> List[SyntaxErrorInfo]:
         return self._errors
+
+
+def setup_strategy(strategy):
+    def decorating_function(parser_function):
+        wrapper = setup_strategy_wrapper(parser_function, strategy)
+        return update_wrapper(wrapper, parser_function)
+
+    return decorating_function
+
+
+def setup_strategy_wrapper(parser_function, strategy):
+    def wrapper(self, *args, **kwargs):
+        self.setup_parser_strategy(strategy)
+        return parser_function(self, *args, **kwargs)
+
+    return wrapper
 
 
 class Parser:
 
-    def __init__(self, file):
+    _error_strategies: ClassVar[Dict[str, ErrorStrategy]] = {
+        'default': DefaultErrorStrategy(),
+        'bail': BailErrorStrategy(),
+    }
 
+    def __init__(self, file: str):
         self._parser = self._build_parser(file)
         self._error_listener = self._setup_listener()
 
-    def _setup_listener(self):
+    def _setup_listener(self) -> WebIDLErrorListener:
         self._parser.removeErrorListeners()
         self._parser.addErrorListener(error_listener := WebIDLErrorListener())
 
         return error_listener
 
     @staticmethod
-    def _build_parser(file: str) -> Any:
+    def _build_parser(file: str) -> WebIDLParser:
         functions = (
             FileStream,
             WebIDLLexer,
@@ -63,15 +85,17 @@ class Parser:
             WebIDLParser,
         )
 
-        return reduce(lambda acc, func: func(acc), functions, file)
+        return cast(
+            WebIDLParser, reduce(lambda acc, func: func(acc), functions, file))
 
-    def _setup_parser_strategy(self):
-        self._parser._errHandler = BailErrorStrategy()
+    def setup_parser_strategy(self, strategy):
+        self._parser._errHandler = self._error_strategies[strategy]
 
-    def parse(self):
-        self._setup_parser_strategy()
+    @setup_strategy('bail')
+    def parse(self) -> ParserRuleContext:
         return self._parser.webIDL()
 
-    def validate(self):
+    @setup_strategy('default')
+    def validate(self) -> List[SyntaxErrorInfo]:
         self._parser.webIDL()
         return self._error_listener.errors
