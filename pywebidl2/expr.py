@@ -1,16 +1,108 @@
-from typing import Any, List, Optional
+import abc
+from typing import List, Optional, Union
 
 import attr
 
 from .utils import escaped_name
 
 
+class AST(abc.ABC):
+
+    @abc.abstractmethod
+    def accept(self, visitor):
+        ...
+
+
+class Definition(AST):
+
+    @abc.abstractmethod
+    def accept(self, visitor):
+        ...
+
+
+class Member(AST):
+
+    @abc.abstractmethod
+    def accept(self, visitor):
+        ...
+
+
+class Expression(AST):
+
+    @abc.abstractmethod
+    def accept(self, visitor):
+        ...
+
+
 @attr.s
-class ExtendedAttribute:
+class Null(Expression):
+
+    type: str = attr.ib(default='null')
+
+    def accept(self, visitor):
+        return visitor.visit_null(self)
+
+
+@attr.s
+class NaN(Expression):
+
+    type: str = attr.ib(default='NaN')
+
+    def accept(self, visitor):
+        return visitor.visit_nan(self)
+
+
+@attr.s
+class Infinity(Expression):
+
+    negative: bool = attr.ib()
+    type: str = attr.ib(default='Infinity')
+
+    def accept(self, visitor):
+        return visitor.visit_infinity(self)
+
+
+@attr.s
+class Literal(Expression):
+
+    type: Optional[str] = attr.ib()
+    value: Union[str, list] = attr.ib()
+
+    def __attrs_post_init__(self):
+        self.value = escaped_name(self.value)
+
+    def accept(self, visitor):
+        return visitor.visit_literal(self)
+
+
+@attr.s
+class Value(Expression):
+
+    value: str = attr.ib()
+
+    def __attrs_post_init__(self):
+        self.value = escaped_name(self.value)
+
+    def accept(self, visitor):
+        return visitor.visit_value(self)
+
+
+@attr.s
+class LiteralList(Expression):
+
+    type: str = attr.ib()
+    value: List[Value] = attr.ib(factory=list)
+
+    def accept(self, visitor):
+        return visitor.visit_literal_list(self)
+
+
+@attr.s
+class ExtendedAttribute(AST):
 
     name: str = attr.ib()
     arguments: List[str] = attr.ib(factory=list)
-    rhs: Optional[Any] = attr.ib(default=None)
+    rhs: Optional[Union[Literal, LiteralList]] = attr.ib(default=None)
     type: str = attr.ib(default='extended-attribute')
 
     def accept(self, visitor):
@@ -18,57 +110,9 @@ class ExtendedAttribute:
 
 
 @attr.s
-class Interface:
+class IdlType(AST):
 
-    members: List[Any] = attr.ib()
-    name: str = attr.ib()
-    inheritance: Optional[str] = attr.ib(default=None)
-    partial: bool = attr.ib(default=False)
-    type: str = attr.ib(default='interface')
-    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
-
-    def __attrs_post_init__(self):
-        self.name = escaped_name(self.name)
-        self.inheritance = escaped_name(self.inheritance)
-
-    def accept(self, visitor):
-        visitor.visit_interface(self)
-
-
-@attr.s
-class InterfaceMixin:
-
-    members: List[Any] = attr.ib()
-    name: str = attr.ib()
-    inheritance: Optional[str] = attr.ib(default=None)
-    partial: bool = attr.ib(default=False)
-    type: str = attr.ib(default='interface mixin')
-    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
-
-    def __attrs_post_init__(self):
-        self.name = escaped_name(self.name)
-        self.inheritance = escaped_name(self.inheritance)
-
-    def accept(self, visitor):
-        visitor.visit_interface_mixin(self)
-
-
-@attr.s
-class Enum:
-
-    name: str = attr.ib()
-    type: str = attr.ib(default='enum')
-    values: List[Any] = attr.ib(factory=list)
-    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
-
-    def accept(self, visitor):
-        visitor.visit_enum(self)
-
-
-@attr.s
-class IdlType:
-
-    idl_type: Any = attr.ib()
+    idl_type: Union[List['IdlType'], 'IdlType', str] = attr.ib()
     type: Optional[str] = attr.ib(default=None)
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
     nullable: bool = attr.ib(default=False)
@@ -83,61 +127,12 @@ class IdlType:
 
 
 @attr.s
-class Operation:
-
-    name: str = attr.ib()
-    idl_type: Optional[IdlType] = attr.ib()
-    arguments: List[Any] = attr.ib(factory=list)
-    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
-    type: str = attr.ib(default='operation')
-    special: str = attr.ib(default='')
-
-    def accept(self, visitor):
-        visitor.visit_operation(self)
-
-
-@attr.s
-class Identifier:
-
-    type: Optional[str] = attr.ib()
-    value = attr.ib()
-
-    def __attrs_post_init__(self):
-        self.value = escaped_name(self.value)
-
-    def accept(self, visitor):
-        return visitor.visit_identifier(self)
-
-
-@attr.s
-class IdentifierList:
-
-    type: str = attr.ib()
-    value: List[Any] = attr.ib(factory=list)
-
-    def accept(self, visitor):
-        return visitor.visit_identifier_list(self)
-
-
-@attr.s
-class Value:
-
-    value = attr.ib()
-
-    def __attrs_post_init__(self):
-        self.value = escaped_name(self.value)
-
-    def accept(self, visitor):
-        return visitor.visit_value(self)
-
-
-@attr.s
-class Argument:
+class Argument(AST):
 
     name: str = attr.ib()
     idl_type: IdlType = attr.ib()
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
-    default: Optional[Any] = attr.ib(default=None)
+    default: Optional[Union[Literal, Value]] = attr.ib(default=None)
     type: str = attr.ib(default='argument')
     optional: bool = attr.ib(default=False)
     variadic: bool = attr.ib(default=False)
@@ -150,10 +145,24 @@ class Argument:
 
 
 @attr.s
-class Iterable_:  # pylint: disable=invalid-name
+class Operation(Member):
+
+    name: str = attr.ib()
+    idl_type: Optional[IdlType] = attr.ib()
+    arguments: List[Argument] = attr.ib(factory=list)
+    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
+    type: str = attr.ib(default='operation')
+    special: str = attr.ib(default='')
+
+    def accept(self, visitor):
+        visitor.visit_operation(self)
+
+
+@attr.s
+class Iterable_(Member):  # pylint: disable=invalid-name
 
     idl_type: List[IdlType] = attr.ib()
-    arguments: List[Any] = attr.ib()
+    arguments: List[Argument] = attr.ib()
     async_: bool = attr.ib()
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
     type: str = attr.ib(default='iterable')
@@ -164,7 +173,7 @@ class Iterable_:  # pylint: disable=invalid-name
 
 
 @attr.s
-class Attribute:
+class Attribute(Member):
 
     idl_type: IdlType = attr.ib()
     name: str = attr.ib()
@@ -181,10 +190,76 @@ class Attribute:
 
 
 @attr.s
-class CallbackInterface:
+class Const(Member):
 
     name: str = attr.ib()
-    members: List[ExtendedAttribute] = attr.ib()
+    value: Expression = attr.ib()
+    idl_type: IdlType = attr.ib()
+    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
+    type: str = attr.ib(default='const')
+
+    def accept(self, visitor):
+        return visitor.visit_const(self)
+
+
+@attr.s
+class Constructor(Member):
+
+    arguments: List[Argument] = attr.ib(factory=list)
+    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
+    type: str = attr.ib(default='constructor')
+
+    def accept(self, visitor):
+        return visitor.visit_constructor(self)
+
+
+@attr.s
+class MapLike(Member):
+
+    readonly: bool = attr.ib()
+    idl_type: List[IdlType] = attr.ib()
+    arguments: List[Argument] = attr.ib(factory=list)
+    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
+    type: str = attr.ib(default='maplike')
+    async_: bool = attr.ib(default=False)
+
+    def accept(self, visitor):
+        visitor.visit_maplike(self)
+
+
+@attr.s
+class SetLike(Member):
+
+    readonly: bool = attr.ib()
+    idl_type: List[IdlType] = attr.ib()
+    arguments: List[Argument] = attr.ib(factory=list)
+    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
+    type: str = attr.ib(default='setlike')
+    async_: bool = attr.ib(default=False)
+
+    def accept(self, visitor):
+        visitor.visit_setlike(self)
+
+
+@attr.s
+class Field(Member):
+
+    idl_type: IdlType = attr.ib()
+    name: str = attr.ib()
+    default: Optional[Literal] = attr.ib()
+    required: bool = attr.ib(default=False)
+    type: str = attr.ib(default='field')
+    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
+
+    def accept(self, visitor):
+        return visitor.visit_field(self)
+
+
+@attr.s
+class CallbackInterface(Definition):
+
+    name: str = attr.ib()
+    members: List[Member] = attr.ib()
     inheritance: Optional[str] = attr.ib()
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
     type: str = attr.ib(default='callback interface')
@@ -195,13 +270,12 @@ class CallbackInterface:
 
 
 @attr.s
-class Callback:
+class Callback(Definition):
 
     name: str = attr.ib()
     idl_type: IdlType = attr.ib()
-    arguments: List[Any] = attr.ib(factory=list)
+    arguments: List[Argument] = attr.ib(factory=list)
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
-
     type: str = attr.ib(default='callback')
 
     def accept(self, visitor):
@@ -209,78 +283,72 @@ class Callback:
 
 
 @attr.s
-class Const:
+class Interface(Definition):
+
+    members: List[Member] = attr.ib()
+    name: str = attr.ib()
+    inheritance: Optional[str] = attr.ib(default=None)
+    partial: bool = attr.ib(default=False)
+    type: str = attr.ib(default='interface')
+    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
+
+    def __attrs_post_init__(self):
+        self.name = escaped_name(self.name)
+        self.inheritance = escaped_name(self.inheritance)
+
+    def accept(self, visitor):
+        visitor.visit_interface(self)
+
+
+@attr.s
+class InterfaceMixin(Definition):
+
+    members: List[Member] = attr.ib()
+    name: str = attr.ib()
+    inheritance: Optional[str] = attr.ib(default=None)
+    partial: bool = attr.ib(default=False)
+    type: str = attr.ib(default='interface mixin')
+    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
+
+    def __attrs_post_init__(self):
+        self.name = escaped_name(self.name)
+        self.inheritance = escaped_name(self.inheritance)
+
+    def accept(self, visitor):
+        visitor.visit_interface_mixin(self)
+
+
+@attr.s
+class Enum(Definition):
 
     name: str = attr.ib()
-    value: Any = attr.ib()
-    idl_type: IdlType = attr.ib()
-    ext_attrs = attr.ib(factory=list)
-    type: str = attr.ib(default='const')
-
-    def accept(self, visitor):
-        return visitor.visit_const(self)
-
-
-@attr.s
-class Infinity:
-
-    negative: bool = attr.ib()
-    type: str = attr.ib(default='Infinity')
-
-    def accept(self, visitor):
-        return visitor.visit_infinity(self)
-
-
-@attr.s
-class Literal:
-
-    type: str = attr.ib()
-
-    def accept(self, visitor):
-        return visitor.visit_literal(self)
-
-
-@attr.s
-class Constructor:
-
-    arguments: List[Any] = attr.ib(factory=list)
+    type: str = attr.ib(default='enum')
+    values: List[Literal] = attr.ib(factory=list)
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
-    type: str = attr.ib(default='constructor')
 
     def accept(self, visitor):
-        return visitor.visit_constructor(self)
+        visitor.visit_enum(self)
 
 
 @attr.s
-class Dictionary:
+class Dictionary(Definition):
 
     name: str = attr.ib()
     inheritance: Optional[str] = attr.ib(default=None)
-    members: List[Any] = attr.ib(factory=list)
+    members: List[Member] = attr.ib(factory=list)
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
     type: str = attr.ib(default='dictionary')
     partial: bool = attr.ib(default=False)
+
+    def __attrs_post_init__(self):
+        self.name = escaped_name(self.name)
 
     def accept(self, visitor):
         return visitor.visit_dictionary(self)
 
 
 @attr.s
-class Field:
-
-    idl_type: IdlType = attr.ib()
-    name: str = attr.ib()
-    default: Optional[Identifier] = attr.ib()
-    required: bool = attr.ib(default=False)
-    type: str = attr.ib(default='field')
-    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
-
-    def accept(self, visitor):
-        return visitor.visit_field(self)
-
-
-@attr.s
-class Includes:
+class Includes(Definition):
 
     target: str = attr.ib()
     includes: str = attr.ib()
@@ -296,7 +364,7 @@ class Includes:
 
 
 @attr.s
-class Typedef:
+class Typedef(Definition):
 
     idl_type: IdlType = attr.ib()
     name: str = attr.ib()
@@ -311,23 +379,9 @@ class Typedef:
 
 
 @attr.s
-class MapLike:
+class Namespace(Definition):
 
-    readonly: bool = attr.ib()
-    idl_type: List[IdlType] = attr.ib()
-    arguments: List[Any] = attr.ib(factory=list)
-    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
-    type: str = attr.ib(default='maplike')
-    async_: bool = attr.ib(default=False)
-
-    def accept(self, visitor):
-        visitor.visit_maplike(self)
-
-
-@attr.s
-class Namespace:
-
-    members: List[Any] = attr.ib()
+    members: List[Member] = attr.ib()
     name: str = attr.ib()
     inheritance: Optional[str] = attr.ib(default=None)
     partial: bool = attr.ib(default=False)
@@ -339,17 +393,3 @@ class Namespace:
 
     def accept(self, visitor):
         visitor.visit_namespace(self)
-
-
-@attr.s
-class SetLike:
-
-    readonly: bool = attr.ib()
-    idl_type: List[IdlType] = attr.ib()
-    arguments: List[Any] = attr.ib(factory=list)
-    ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
-    type: str = attr.ib(default='setlike')
-    async_: bool = attr.ib(default=False)
-
-    def accept(self, visitor):
-        visitor.visit_setlike(self)

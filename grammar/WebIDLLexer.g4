@@ -22,7 +22,7 @@ MINUS:                               '-';
 ELLIPSIS:                            '...';
 DOT:                                 '.';
 
-/// Keywords
+// Keywords
 
 ANY:                                 'any';
 ASYNC:                               'async';
@@ -78,7 +78,7 @@ UNSIGNED:                            'unsigned';
 USV_STRING:                          'USVString';
 VOID:                                'void';
 
-/// bufferRelatedType
+// bufferRelatedType
 
 ARRAY_BUFFER:                        'ArrayBuffer';
 DATA_VIEW:                           'DataView';
@@ -100,9 +100,8 @@ IntegerLiteral
 
 DecimalLiteral
     :                                '-'? [0-9]+ '.' [0-9]* ExponentPart?
-    |                                '-'? [0-9]* '.' [0-9]+ ExponentPart?
-    |                                '-'? [0-9]+ '.' [0-9]* [0-9]+ ExponentPart
-    |                                '-'? [0-9]* '.' [0-9]+ [0-9]+ ExponentPart
+    |                                '-'? '.' [0-9]+ ExponentPart?
+    |                                '-'? [0-9]+ ExponentPart
     ;
 
 StringLiteral:                       '"' DoubleStringCharacter* '"';

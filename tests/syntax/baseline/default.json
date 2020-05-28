@@ -72,7 +72,8 @@
                             "idl_type": "LookupOptions"
                         },
                         "default": {
-                            "type": "dictionary"
+                            "type": "dictionary",
+                            "value": []
                         },
                         "optional": true,
                         "variadic": false

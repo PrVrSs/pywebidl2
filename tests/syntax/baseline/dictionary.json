@@ -109,7 +109,8 @@
                     "idl_type": "Dictionary"
                 },
                 "default": {
-                    "type": "dictionary"
+                    "type": "dictionary",
+                    "value": []
                 },
                 "required": false
             }
@@ -119,7 +120,7 @@
     },
     {
         "type": "dictionary",
-        "name": "_A",
+        "name": "A",
         "inheritance": null,
         "members": [
             {
