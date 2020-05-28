@@ -304,11 +304,11 @@ extendedAttributeList
     ;
 
 extendedAttribute
-    : name=IDENTIFIER                                                                          #extendedAttributeNoArgs
-    | name=IDENTIFIER EQUAL_SYMBOL LEFT_PAREN identifierList RIGHT_PAREN                       #extendedAttributeIdentList
+    : name=IDENTIFIER                                                                   #extendedAttributeNoArgs
+    | name=IDENTIFIER EQUAL_SYMBOL LEFT_PAREN identifierList RIGHT_PAREN                #extendedAttributeIdentList
     | name=IDENTIFIER EQUAL_SYMBOL rhs=IDENTIFIER  LEFT_PAREN argumentList RIGHT_PAREN  #extendedAttributeNamedArgList
-    | name=IDENTIFIER EQUAL_SYMBOL rhs=identifier                                              #extendedAttributeIdent
-    | name=IDENTIFIER LEFT_PAREN argumentList RIGHT_PAREN                                      #extendedAttributeArgList
+    | name=IDENTIFIER EQUAL_SYMBOL rhs=identifier                                       #extendedAttributeIdent
+    | name=IDENTIFIER LEFT_PAREN argumentList RIGHT_PAREN                               #extendedAttributeArgList
     ;
 
 identifierList
