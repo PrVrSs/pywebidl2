@@ -1,23 +1,28 @@
 SHELL := /usr/bin/env bash
-PROJECT_NAME := pywebidl2
-PROJECT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))/$(PROJECT_NAME)
 
+PROJECT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+ANTLR4 := java -jar /usr/local/lib/antlr-4.8-complete.jar
 
 .PHONY: unit
 unit:
-	pytest -v \
+	poetry run pytest -v \
 		-vv \
-		--cov=$(PROJECT_DIR) \
+		--cov=pywebidl2 \
 		--capture=no \
 		--cov-report=term-missing \
  		--cov-config=.coveragerc \
 
 .PHONY: mypy
 mypy:
-	mypy $(PROJECT_DIR)
+	poetry run mypy pywebidl2
 
 .PHONY: lint
 lint:
-	pylint $(PROJECT_DIR)
+	poetry run pylint pywebidl2
 
-test: unit
+test: lint mypy unit
+
+.PHONY: grammar
+grammar:
+	$(ANTLR4) -no-listener -visitor -Dlanguage=Python3 $(PROJECT_DIR)/grammar/WebIDLParser.g4 $(PROJECT_DIR)/grammar/WebIDLLexer.g4 -o $(PROJECT_DIR)/pywebidl2/generated
+

@@ -34,8 +34,8 @@ _U = TypeVar('_U')
 
 class Visitor(Generic[_U]):  # pragma: no cover
     # pylint: disable=too-many-public-methods
-    def visit(self, expr) -> _U:
-        return expr.accept(self)
+    def visit(self, node) -> _U:
+        return node.accept(self)
 
     def visit_interface(self, node: Interface) -> _U:
         raise NotImplementedError
