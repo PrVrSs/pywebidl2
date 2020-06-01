@@ -22,6 +22,9 @@ lint:
 
 .PHONY: grammar
 grammar:
-	$(ANTLR4) -no-listener -visitor -Dlanguage=Python3 $(PROJECT_DIR)/grammar/WebIDLParser.g4 $(PROJECT_DIR)/grammar/WebIDLLexer.g4 -o $(PROJECT_DIR)/pywebidl2/generated
+	$(ANTLR4) -no-listener \
+		-visitor -Dlanguage=Python3 \
+		-o $(PROJECT_DIR)/pywebidl2/generated \
+		$(PROJECT_DIR)/grammar/WebIDLParser.g4 $(PROJECT_DIR)/grammar/WebIDLLexer.g4
 
 test: lint mypy unit
