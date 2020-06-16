@@ -35,6 +35,15 @@ class Expression(AST):
 
 
 @attr.s
+class Definitions(Definition):
+
+    definitions: List[Definition] = attr.ib(factory=list)
+
+    def accept(self, visitor):
+        visitor.visit_definitions(self)
+
+
+@attr.s
 class Null(Expression):
 
     type: str = attr.ib(default='null')
@@ -123,7 +132,7 @@ class IdlType(AST):
         self.idl_type = escaped_name(self.idl_type)
 
     def accept(self, visitor):
-        visitor.visit_idl_type(self)
+        return visitor.visit_idl_type(self)
 
 
 @attr.s
@@ -141,7 +150,7 @@ class Argument(AST):
         self.name = escaped_name(self.name)
 
     def accept(self, visitor):
-        visitor.visit_argument(self)
+        return visitor.visit_argument(self)
 
 
 @attr.s
@@ -155,7 +164,7 @@ class Operation(Member):
     special: str = attr.ib(default='')
 
     def accept(self, visitor):
-        visitor.visit_operation(self)
+        return visitor.visit_operation(self)
 
 
 @attr.s
@@ -224,7 +233,7 @@ class MapLike(Member):
     async_: bool = attr.ib(default=False)
 
     def accept(self, visitor):
-        visitor.visit_maplike(self)
+        return visitor.visit_maplike(self)
 
 
 @attr.s
@@ -238,7 +247,7 @@ class SetLike(Member):
     async_: bool = attr.ib(default=False)
 
     def accept(self, visitor):
-        visitor.visit_setlike(self)
+        return visitor.visit_setlike(self)
 
 
 @attr.s
@@ -297,7 +306,7 @@ class Interface(Definition):
         self.inheritance = escaped_name(self.inheritance)
 
     def accept(self, visitor):
-        visitor.visit_interface(self)
+        return visitor.visit_interface(self)
 
 
 @attr.s
@@ -315,7 +324,7 @@ class InterfaceMixin(Definition):
         self.inheritance = escaped_name(self.inheritance)
 
     def accept(self, visitor):
-        visitor.visit_interface_mixin(self)
+        return visitor.visit_interface_mixin(self)
 
 
 @attr.s
@@ -327,7 +336,7 @@ class Enum(Definition):
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
 
     def accept(self, visitor):
-        visitor.visit_enum(self)
+        return visitor.visit_enum(self)
 
 
 @attr.s
@@ -392,4 +401,4 @@ class Namespace(Definition):
         self.name = escaped_name(self.name)
 
     def accept(self, visitor):
-        visitor.visit_namespace(self)
+        return visitor.visit_namespace(self)

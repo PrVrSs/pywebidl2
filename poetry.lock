@@ -232,6 +232,14 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 version = "1.14.0"
 
 [[package]]
+category = "main"
+description = "String case converter."
+name = "stringcase"
+optional = false
+python-versions = "*"
+version = "1.2.0"
+
+[[package]]
 category = "dev"
 description = "Python Library for Tom's Obvious, Minimal Language"
 name = "toml"
@@ -272,7 +280,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "f38a5fafd39d02c3929ee118beac6787252ed0d435708ca84773689524253a7b"
+content-hash = "966bdc045832df69cf443c26cb815b12f9e3abe514f7befe6fbaa1e039eb4dd3"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -418,6 +426,9 @@ pytest-cov = [
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
     {file = "six-1.14.0.tar.gz", hash = "sha256:236bdbdce46e6e6a3d61a337c0f8b763ca1e8717c03b369e87a7ec7ce1319c0a"},
+]
+stringcase = [
+    {file = "stringcase-1.2.0.tar.gz", hash = "sha256:48a06980661908efe8d9d34eab2b6c13aefa2163b3ced26972902e3bdfd87008"},
 ]
 toml = [
     {file = "toml-0.10.0-py2.7.egg", hash = "sha256:f1db651f9657708513243e61e6cc67d101a39bad662eaa9b5546f789338e07a3"},

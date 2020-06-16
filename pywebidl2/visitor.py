@@ -1,12 +1,18 @@
+from operator import attrgetter
 from typing import Generic, TypeVar
+
+import stringcase
+from attr import fields
 
 from .expr import (
     Argument,
+    AST,
     Attribute,
     Callback,
     CallbackInterface,
     Const,
     Constructor,
+    Definitions,
     Dictionary,
     Enum,
     ExtendedAttribute,
@@ -32,10 +38,13 @@ from .expr import (
 _U = TypeVar('_U')
 
 
-class Visitor(Generic[_U]):  # pragma: no cover
+class AbcVisitor(Generic[_U]):
     # pylint: disable=too-many-public-methods
-    def visit(self, node) -> _U:
-        return node.accept(self)
+    def visit(self, node: AST) -> _U:
+        raise NotImplementedError
+
+    def visit_definitions(self, node: Definitions) -> _U:
+        raise NotImplementedError
 
     def visit_interface(self, node: Interface) -> _U:
         raise NotImplementedError
@@ -114,3 +123,25 @@ class Visitor(Generic[_U]):  # pragma: no cover
 
     def visit_null(self, node: Null) -> _U:
         raise NotImplementedError
+
+
+class IdlNodeVisitor:
+
+    def visit(self, node: AST):
+        method = 'visit_' + stringcase.snakecase(node.__class__.__name__)
+        visitor = getattr(self, method, self.generic_visit)
+
+        return visitor(node)
+
+    def generic_visit(self, node):
+        get_attr_name = attrgetter('name')
+
+        for name in map(get_attr_name, fields(type(node))):
+            field = getattr(node, name)
+
+            if isinstance(field, list):
+                for item in field:
+                    if isinstance(item, AST):
+                        self.visit(item)
+            elif isinstance(field, AST):
+                self.visit(field)

@@ -12,9 +12,11 @@ def validate(file: str):
 
 
 def pretty_parse(file: str):
+    ast = Visitor(Idl(file).parse()).run()
+
     return [
         attr.asdict(definition)
-        for definition in Visitor(Idl(file).parse()).run()
+        for definition in ast.definitions
     ]
 
 

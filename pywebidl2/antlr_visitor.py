@@ -9,6 +9,7 @@ from .expr import (
     CallbackInterface,
     Const,
     Constructor,
+    Definitions,
     Dictionary,
     Enum,
     ExtendedAttribute,
@@ -47,9 +48,12 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         return ctx.definitions().accept(self)
 
     def visitDefinitions(self, ctx: WebIDLParser.DefinitionsContext):
-        return [
-            definition.accept(self) for definition in ctx.extendedDefinition()
-        ]
+        return Definitions(
+            definitions=[
+                definition.accept(self)
+                for definition in ctx.extendedDefinition()
+            ],
+        )
 
     def visitExtendedDefinition(
             self, ctx: WebIDLParser.ExtendedDefinitionContext):
