@@ -128,20 +128,21 @@ class AbcVisitor(Generic[_U]):
 class IdlNodeVisitor:
 
     def visit(self, node: AST):
-        method = 'visit_' + stringcase.snakecase(node.__class__.__name__)
-        visitor = getattr(self, method, self.generic_visit)
+        visitor = getattr(
+            self,
+            f'visit_{stringcase.snakecase(node.__class__.__name__)}',
+            self.generic_visit,
+        )
 
         return visitor(node)
 
     def generic_visit(self, node):
-        get_attr_name = attrgetter('name')
-
-        for name in map(get_attr_name, fields(type(node))):
+        for name in map(attrgetter('name'), fields(type(node))):
             field = getattr(node, name)
 
-            if isinstance(field, list):
+            if isinstance(field, AST):
+                self.visit(field)
+            elif isinstance(field, list):
                 for item in field:
                     if isinstance(item, AST):
                         self.visit(item)
-            elif isinstance(field, AST):
-                self.visit(field)

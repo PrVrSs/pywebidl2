@@ -35,12 +35,12 @@ class Expression(AST):
 
 
 @attr.s
-class Definitions(Definition):
+class Definitions(AST):
 
     definitions: List[Definition] = attr.ib(factory=list)
 
     def accept(self, visitor):
-        visitor.visit_definitions(self)
+        return visitor.visit_definitions(self)
 
 
 @attr.s
