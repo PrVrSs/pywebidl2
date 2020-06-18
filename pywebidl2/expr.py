@@ -7,31 +7,19 @@ from .utils import escaped_name
 
 
 class AST(abc.ABC):
-
-    @abc.abstractmethod
-    def accept(self, visitor):
-        ...
+    ...
 
 
 class Definition(AST):
-
-    @abc.abstractmethod
-    def accept(self, visitor):
-        ...
+    ...
 
 
 class Member(AST):
-
-    @abc.abstractmethod
-    def accept(self, visitor):
-        ...
+    ...
 
 
 class Expression(AST):
-
-    @abc.abstractmethod
-    def accept(self, visitor):
-        ...
+    ...
 
 
 @attr.s
@@ -39,17 +27,11 @@ class Definitions(AST):
 
     definitions: List[Definition] = attr.ib(factory=list)
 
-    def accept(self, visitor):
-        return visitor.visit_definitions(self)
-
 
 @attr.s
 class Null(Expression):
 
     type: str = attr.ib(default='null')
-
-    def accept(self, visitor):
-        return visitor.visit_null(self)
 
 
 @attr.s
@@ -57,18 +39,12 @@ class NaN(Expression):
 
     type: str = attr.ib(default='NaN')
 
-    def accept(self, visitor):
-        return visitor.visit_nan(self)
-
 
 @attr.s
 class Infinity(Expression):
 
     negative: bool = attr.ib()
     type: str = attr.ib(default='Infinity')
-
-    def accept(self, visitor):
-        return visitor.visit_infinity(self)
 
 
 @attr.s
@@ -80,9 +56,6 @@ class Literal(Expression):
     def __attrs_post_init__(self):
         self.value = escaped_name(self.value)
 
-    def accept(self, visitor):
-        return visitor.visit_literal(self)
-
 
 @attr.s
 class Value(Expression):
@@ -92,18 +65,12 @@ class Value(Expression):
     def __attrs_post_init__(self):
         self.value = escaped_name(self.value)
 
-    def accept(self, visitor):
-        return visitor.visit_value(self)
-
 
 @attr.s
 class LiteralList(Expression):
 
     type: str = attr.ib()
     value: List[Value] = attr.ib(factory=list)
-
-    def accept(self, visitor):
-        return visitor.visit_literal_list(self)
 
 
 @attr.s
@@ -113,9 +80,6 @@ class ExtendedAttribute(AST):
     arguments: List[str] = attr.ib(factory=list)
     rhs: Optional[Union[Literal, LiteralList]] = attr.ib(default=None)
     type: str = attr.ib(default='extended-attribute')
-
-    def accept(self, visitor):
-        return visitor.visit_extended_attribute(self)
 
 
 @attr.s
@@ -130,9 +94,6 @@ class IdlType(AST):
 
     def __attrs_post_init__(self):
         self.idl_type = escaped_name(self.idl_type)
-
-    def accept(self, visitor):
-        return visitor.visit_idl_type(self)
 
 
 @attr.s
@@ -149,9 +110,6 @@ class Argument(AST):
     def __attrs_post_init__(self):
         self.name = escaped_name(self.name)
 
-    def accept(self, visitor):
-        return visitor.visit_argument(self)
-
 
 @attr.s
 class Operation(Member):
@@ -163,9 +121,6 @@ class Operation(Member):
     type: str = attr.ib(default='operation')
     special: str = attr.ib(default='')
 
-    def accept(self, visitor):
-        return visitor.visit_operation(self)
-
 
 @attr.s
 class Iterable_(Member):  # pylint: disable=invalid-name
@@ -176,9 +131,6 @@ class Iterable_(Member):  # pylint: disable=invalid-name
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
     type: str = attr.ib(default='iterable')
     readonly: bool = attr.ib(default=False)
-
-    def accept(self, visitor):
-        return visitor.visit_iterable(self)
 
 
 @attr.s
@@ -194,9 +146,6 @@ class Attribute(Member):
     def __attrs_post_init__(self):
         self.name = escaped_name(self.name)
 
-    def accept(self, visitor):
-        return visitor.visit_attribute(self)
-
 
 @attr.s
 class Const(Member):
@@ -207,9 +156,6 @@ class Const(Member):
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
     type: str = attr.ib(default='const')
 
-    def accept(self, visitor):
-        return visitor.visit_const(self)
-
 
 @attr.s
 class Constructor(Member):
@@ -217,9 +163,6 @@ class Constructor(Member):
     arguments: List[Argument] = attr.ib(factory=list)
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
     type: str = attr.ib(default='constructor')
-
-    def accept(self, visitor):
-        return visitor.visit_constructor(self)
 
 
 @attr.s
@@ -232,9 +175,6 @@ class MapLike(Member):
     type: str = attr.ib(default='maplike')
     async_: bool = attr.ib(default=False)
 
-    def accept(self, visitor):
-        return visitor.visit_maplike(self)
-
 
 @attr.s
 class SetLike(Member):
@@ -245,9 +185,6 @@ class SetLike(Member):
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
     type: str = attr.ib(default='setlike')
     async_: bool = attr.ib(default=False)
-
-    def accept(self, visitor):
-        return visitor.visit_setlike(self)
 
 
 @attr.s
@@ -260,9 +197,6 @@ class Field(Member):
     type: str = attr.ib(default='field')
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
 
-    def accept(self, visitor):
-        return visitor.visit_field(self)
-
 
 @attr.s
 class CallbackInterface(Definition):
@@ -274,9 +208,6 @@ class CallbackInterface(Definition):
     type: str = attr.ib(default='callback interface')
     partial: bool = attr.ib(default=False)
 
-    def accept(self, visitor):
-        return visitor.visit_callback_interface(self)
-
 
 @attr.s
 class Callback(Definition):
@@ -286,9 +217,6 @@ class Callback(Definition):
     arguments: List[Argument] = attr.ib(factory=list)
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
     type: str = attr.ib(default='callback')
-
-    def accept(self, visitor):
-        return visitor.visit_callback(self)
 
 
 @attr.s
@@ -305,9 +233,6 @@ class Interface(Definition):
         self.name = escaped_name(self.name)
         self.inheritance = escaped_name(self.inheritance)
 
-    def accept(self, visitor):
-        return visitor.visit_interface(self)
-
 
 @attr.s
 class InterfaceMixin(Definition):
@@ -323,9 +248,6 @@ class InterfaceMixin(Definition):
         self.name = escaped_name(self.name)
         self.inheritance = escaped_name(self.inheritance)
 
-    def accept(self, visitor):
-        return visitor.visit_interface_mixin(self)
-
 
 @attr.s
 class Enum(Definition):
@@ -334,9 +256,6 @@ class Enum(Definition):
     type: str = attr.ib(default='enum')
     values: List[Literal] = attr.ib(factory=list)
     ext_attrs: List[ExtendedAttribute] = attr.ib(factory=list)
-
-    def accept(self, visitor):
-        return visitor.visit_enum(self)
 
 
 @attr.s
@@ -352,9 +271,6 @@ class Dictionary(Definition):
     def __attrs_post_init__(self):
         self.name = escaped_name(self.name)
 
-    def accept(self, visitor):
-        return visitor.visit_dictionary(self)
-
 
 @attr.s
 class Includes(Definition):
@@ -368,9 +284,6 @@ class Includes(Definition):
         self.target = escaped_name(self.target)
         self.includes = escaped_name(self.includes)
 
-    def accept(self, visitor):
-        return visitor.visit_includes(self)
-
 
 @attr.s
 class Typedef(Definition):
@@ -382,9 +295,6 @@ class Typedef(Definition):
 
     def __attrs_post_init__(self):
         self.name = escaped_name(self.name)
-
-    def accept(self, visitor):
-        return visitor.visit_typedef(self)
 
 
 @attr.s
@@ -399,6 +309,3 @@ class Namespace(Definition):
 
     def __attrs_post_init__(self):
         self.name = escaped_name(self.name)
-
-    def accept(self, visitor):
-        return visitor.visit_namespace(self)
