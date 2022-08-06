@@ -1,27 +1,12 @@
 import pprint
 
-import attr
 import click
 
-from .antlr_visitor import Visitor
-from .idl import Idl
-
-
-def validate(file: str):
-    return Idl(file).validate()
-
-
-def pretty_parse(file: str):
-    ast = Visitor(Idl(file).parse()).run()
-
-    return [
-        attr.asdict(definition)
-        for definition in ast.definitions
-    ]
+from .idl import validate, parse_as_dict
 
 
 _actions = {
-    'parse': pretty_parse,
+    'parse': parse_as_dict,
     'validate': validate,
 }
 
@@ -29,7 +14,7 @@ _actions = {
 @click.command()
 @click.option('--action', '-a',
               default='parse',
-              type=click.Choice(_actions.keys()))
+              type=click.Choice(tuple(_actions.keys())))
 @click.option('--file', '-f',
               required=True,
               type=click.Path(exists=True, dir_okay=False, resolve_path=True))

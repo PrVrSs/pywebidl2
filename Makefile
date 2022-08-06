@@ -1,6 +1,6 @@
 SHELL := /usr/bin/env bash
 
-ANTLR4 := java -jar antlr-4.8-complete.jar
+ANTLR4 := java -jar antlr-4.10.1-complete.jar
 PROJECT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 .PHONY: unit
