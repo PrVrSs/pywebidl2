@@ -16,4 +16,4 @@ def parse(file: str) -> Ast:
 
 
 def parse_as_dict(file: str) -> dict[str, Any]:
-    return attr.asdict(parse(file))
+    return attr.asdict(parse(file))  # type: ignore
