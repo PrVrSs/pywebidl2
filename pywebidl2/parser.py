@@ -1,7 +1,7 @@
 from functools import reduce, update_wrapper
 from typing import ClassVar, Dict, List, NamedTuple, cast
 
-from antlr4 import BailErrorStrategy, CommonTokenStream, FileStream
+from antlr4 import BailErrorStrategy, CommonTokenStream, InputStream
 from antlr4.error.Errors import ParseCancellationException
 from antlr4.error.ErrorListener import ErrorListener
 from antlr4.error.ErrorStrategy import DefaultErrorStrategy, ErrorStrategy
@@ -54,8 +54,8 @@ class Parser:
         'bail': BailErrorStrategy(),
     }
 
-    def __init__(self, file: str):
-        self._parser = self._build_parser(file)
+    def __init__(self, data: str):
+        self._parser = self._build_parser(data)
         self._error_listener = self._setup_listener()
 
     def _setup_listener(self) -> WebIDLErrorListener:
@@ -65,8 +65,8 @@ class Parser:
         return error_listener
 
     @staticmethod
-    def _build_parser(file: str) -> WebIDLParser:
-        stream = FileStream(fileName=file, encoding='utf-8')
+    def _build_parser(data: str) -> WebIDLParser:
+        stream = InputStream(data=data)
 
         functions = (
             WebIDLLexer,

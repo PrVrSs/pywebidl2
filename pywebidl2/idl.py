@@ -7,13 +7,13 @@ from .parser import Parser, SyntaxErrorInfo
 from .visitor import Visitor
 
 
-def validate(file: str) -> list[SyntaxErrorInfo]:
-    return Parser(file).validate()
+def validate(data: str) -> list[SyntaxErrorInfo]:
+    return Parser(data).validate()
 
 
-def parse(file: str) -> Ast:
-    return Visitor(Parser(file).parse()).run()
+def raw_parse(data: str) -> Ast:
+    return Visitor(Parser(data).parse()).run()
 
 
-def parse_as_dict(file: str) -> dict[str, Any]:
-    return attr.asdict(parse(file))  # type: ignore
+def parse(data: str) -> dict[str, Any]:
+    return attr.asdict(raw_parse(data))  # type: ignore
