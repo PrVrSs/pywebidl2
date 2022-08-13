@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pywebidl2"
-version = "0.1.4"
+version = "0.1.5"
 description = "WebIDL tool"
 authors = ["Sergey Reshetnikov <resh.sersh@gmail.com>"]
 license = "MIT"
