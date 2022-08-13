@@ -20,25 +20,44 @@ pip install pywebidl2
 make test
 ```
 
+### Usage
+
+```
+Usage: pywebidl2 [OPTIONS] FILE
+
+Options:
+  -a, --action [parse|validate]
+  --help                         Show this message and exit.
+```
+
 ## Antlr
 
 ### Install
 
 [Getting Started with ANTLR v4](https://github.com/antlr/antlr4/blob/master/doc/getting-started.md)
 
-### Update parser
+### Update grammar
 ```shell script
-antlr4 -o generated -no-listener -visitor -Dlanguage=Python3  WebIDLParser.g4 WebIDLLexer.g4
+make grammar
 ```
 
 ## Example
 
 ### Parser
 
-```
-interface B {
-  void g([AllowAny] DOMString s);
-};
+```python
+from pprint import pprint
+
+from pywebidl2 import parse
+
+
+idl = '''
+    interface B {
+      void g([AllowAny] DOMString s);
+    };
+'''
+
+pprint(parse(idl))
 ```
 
 ```json
