@@ -511,7 +511,8 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
     def visitUnionType(self, ctx: WebIDLParser.UnionTypeContext):
         return [
-            member_type.accept(self) for member_type in ctx.unionMemberType()
+            member_type.accept(self)
+            for member_type in ctx.unionMemberType()
         ]
 
     def visitUnionMemberType(self, ctx: WebIDLParser.UnionMemberTypeContext):
@@ -531,7 +532,8 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             return IdlType(
                 idl_type=[generic.accept(self)],
                 ext_attrs=ext_attrs or [],
-                nullable=nullable
+                nullable=nullable,
+                generic='sequence',
             )
 
         return IdlType(
