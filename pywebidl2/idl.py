@@ -1,6 +1,5 @@
+from dataclasses import asdict
 from typing import Any
-
-import attr
 
 from .expr import Ast
 from .parser import Parser, SyntaxErrorInfo
@@ -16,4 +15,4 @@ def raw_parse(data: str) -> Ast:
 
 
 def parse(data: str) -> dict[str, Any]:
-    return attr.asdict(raw_parse(data))  # type: ignore
+    return asdict(raw_parse(data))  # type: ignore
