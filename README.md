@@ -14,12 +14,6 @@
 pip install pywebidl2
 ```
 
-## Tests
-
-```shell script
-make test
-```
-
 ### Usage
 
 ```
@@ -31,16 +25,22 @@ Options:
 ```
 
 ## For Developer
-___
-## Antlr4
+
+### Antlr4
 
 *Download* [ANTLR4 tool](https://www.antlr.org/download/antlr-4.11.1-complete.jar)
 
 [Getting Started with ANTLR v4](https://github.com/antlr/antlr4/blob/master/doc/getting-started.md)
 
-### Create a Python parser and lexer.
+### Create a python parser and lexer.
 ```shell script
 make parser
+```
+
+### Tests
+
+```shell script
+make test
 ```
 
 ## Example
