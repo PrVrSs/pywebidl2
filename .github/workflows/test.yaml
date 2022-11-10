@@ -37,11 +37,11 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      - name: Download Grammar
-        run: wget https://www.antlr.org/download/antlr-4.10.1-complete.jar
+      - name: Download Antlr4
+        run: wget https://www.antlr.org/download/antlr-4.11.1-complete.jar
 
-      - name: Make grammar
-        run: make grammar
+      - name: create a python parser
+        run: make parser
 
       - name: Run tests
         run: make test

@@ -1,6 +1,6 @@
 SHELL := /usr/bin/env bash
 
-ANTLR4 := java -jar antlr-4.10.1-complete.jar
+ANTLR4 := java -jar antlr-4.11.1-complete.jar
 PROJECT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 .PHONY: unit
@@ -21,8 +21,8 @@ mypy:
 lint:
 	poetry run pylint pywebidl2
 
-.PHONY: grammar
-grammar:
+.PHONY: parser
+parser:
 	$(ANTLR4) -no-listener \
 		-visitor -Dlanguage=Python3 \
 		-o $(PROJECT_DIR)/pywebidl2/generated \

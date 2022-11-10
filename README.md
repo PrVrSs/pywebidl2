@@ -30,15 +30,17 @@ Options:
   --help                         Show this message and exit.
 ```
 
-## Antlr
+## For Developer
+___
+## Antlr4
 
-### Install
+*Download* [ANTLR4 tool](https://www.antlr.org/download/antlr-4.11.1-complete.jar)
 
 [Getting Started with ANTLR v4](https://github.com/antlr/antlr4/blob/master/doc/getting-started.md)
 
-### Update grammar
+### Create a Python parser and lexer.
 ```shell script
-make grammar
+make parser
 ```
 
 ## Example
