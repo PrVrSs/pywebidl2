@@ -2,7 +2,7 @@
 [![Build Status](https://github.com/PrVrSs/pywebidl2/workflows/test/badge.svg?branch=master&event=push)](https://github.com/PrVrSs/pywebidl2/actions?query=workflow%3Atest)
 [![Codecov](https://codecov.io/gh/PrVrSs/pywebidl2/branch/master/graph/badge.svg)](https://codecov.io/gh/PrVrSs/pywebidl2)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/PrVrSs/pywebidl2/blob/master/LICENSE)
-[![Python Version](https://img.shields.io/badge/python-3.10-blue)](https://www.python.org/)
+[![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11-blue)](https://www.python.org/)
 
 ## Description
 
