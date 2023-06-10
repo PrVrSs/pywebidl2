@@ -5,13 +5,7 @@ PROJECT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 .PHONY: unit
 unit:
-	poetry run pytest -v \
-		-vv \
-		--cov=pywebidl2 \
-		--capture=no \
-		--cov-report=term-missing \
- 		--cov-config=.coveragerc \
- 		--cov-report=xml \
+	poetry run pytest
 
 .PHONY: mypy
 mypy:
