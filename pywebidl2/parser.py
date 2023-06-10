@@ -2,8 +2,8 @@ from functools import reduce, update_wrapper
 from typing import ClassVar, Dict, List, NamedTuple, cast
 
 from antlr4 import BailErrorStrategy, CommonTokenStream, InputStream
-from antlr4.error.Errors import ParseCancellationException
 from antlr4.error.ErrorListener import ErrorListener
+from antlr4.error.Errors import ParseCancellationException
 from antlr4.error.ErrorStrategy import DefaultErrorStrategy, ErrorStrategy
 from antlr4.Parser import ParserRuleContext
 

@@ -2,7 +2,7 @@ import pprint
 
 import click
 
-from .idl import validate, parse
+from .idl import parse, validate
 
 
 _actions = {
