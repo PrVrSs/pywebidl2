@@ -2,13 +2,13 @@
 
 [[package]]
 name = "antlr4-python3-runtime"
-version = "4.11.1"
-description = "ANTLR 4.11.1 runtime for Python 3"
+version = "4.13.0"
+description = "ANTLR 4.13.0 runtime for Python 3"
 optional = false
 python-versions = "*"
 files = [
-    {file = "antlr4-python3-runtime-4.11.1.tar.gz", hash = "sha256:a53de701312f9bdacc5258a6872cd6c62b90d3a90ae25e494026f76267333b60"},
-    {file = "antlr4_python3_runtime-4.11.1-py3-none-any.whl", hash = "sha256:ff1954eda1ca9072c02bf500387d0c86cb549bef4dbb3b64f39468b547ec5f6b"},
+    {file = "antlr4-python3-runtime-4.13.0.tar.gz", hash = "sha256:0d5454928ae40c8a6b653caa35046cd8492c8743b5fbc22ff4009099d074c7ae"},
+    {file = "antlr4_python3_runtime-4.13.0-py3-none-any.whl", hash = "sha256:53e6e208cf4a1ad53fb8b1b4467b756375a4f827331e290618aedcf481cb1d5c"},
 ]
 
 [[package]]
@@ -549,4 +549,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "0cabb33a0a230fe6654100562d9dcb73294c3dcde6bbe62f63ec4a339b79bcfa"
+content-hash = "e750c1a5656555c8fa28fef68159e98f8147eb33e0c5ea19363f8fcf577ba727"
