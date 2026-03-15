@@ -24,7 +24,7 @@ class WebIDLErrorListener(ErrorListener):
     def __init__(self):
         self._errors: List[SyntaxErrorInfo] = []
 
-    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):  # pylint: disable=too-many-positional-arguments
         self._errors.append(SyntaxErrorInfo(line, column, msg))
 
     @property
