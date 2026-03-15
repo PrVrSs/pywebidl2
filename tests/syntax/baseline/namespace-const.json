@@ -1,0 +1,76 @@
+[
+    {
+        "type": "namespace",
+        "members": [
+            {
+                "name": "STYLE_RULE",
+                "value": {
+                    "type": "number",
+                    "value": "1"
+                },
+                "idl_type": {
+                    "idl_type": "unsigned short",
+                    "type": "const-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "ext_attrs": [],
+                "type": "const"
+            },
+            {
+                "name": "supports",
+                "idl_type": {
+                    "idl_type": "boolean",
+                    "type": "return-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "arguments": [
+                    {
+                        "name": "property",
+                        "idl_type": {
+                            "idl_type": "DOMString",
+                            "type": "argument-type",
+                            "ext_attrs": [],
+                            "nullable": false,
+                            "union": false,
+                            "generic": ""
+                        },
+                        "ext_attrs": [],
+                        "default": null,
+                        "type": "argument",
+                        "optional": false,
+                        "variadic": false
+                    },
+                    {
+                        "name": "value",
+                        "idl_type": {
+                            "idl_type": "DOMString",
+                            "type": "argument-type",
+                            "ext_attrs": [],
+                            "nullable": false,
+                            "union": false,
+                            "generic": ""
+                        },
+                        "ext_attrs": [],
+                        "default": null,
+                        "type": "argument",
+                        "optional": false,
+                        "variadic": false
+                    }
+                ],
+                "ext_attrs": [],
+                "type": "operation",
+                "special": ""
+            }
+        ],
+        "name": "CSS",
+        "inheritance": null,
+        "partial": false,
+        "ext_attrs": []
+    }
+]

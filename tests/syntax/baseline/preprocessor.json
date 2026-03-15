@@ -1,0 +1,26 @@
+[
+    {
+        "type": "interface",
+        "members": [
+            {
+                "idl_type": {
+                    "idl_type": "boolean",
+                    "type": "attribute-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "name": "debug",
+                "ext_attrs": [],
+                "type": "attribute",
+                "readonly": false,
+                "special": ""
+            }
+        ],
+        "name": "DebugOnly",
+        "inheritance": null,
+        "partial": false,
+        "ext_attrs": []
+    }
+]

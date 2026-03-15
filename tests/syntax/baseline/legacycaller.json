@@ -1,0 +1,75 @@
+[
+    {
+        "type": "interface",
+        "members": [
+            {
+                "name": "",
+                "idl_type": {
+                    "idl_type": "HTMLCollection",
+                    "type": "return-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "arguments": [
+                    {
+                        "name": "name",
+                        "idl_type": {
+                            "idl_type": "DOMString",
+                            "type": "argument-type",
+                            "ext_attrs": [],
+                            "nullable": false,
+                            "union": false,
+                            "generic": ""
+                        },
+                        "ext_attrs": [],
+                        "default": null,
+                        "type": "argument",
+                        "optional": false,
+                        "variadic": false
+                    }
+                ],
+                "ext_attrs": [],
+                "type": "operation",
+                "special": "legacycaller"
+            },
+            {
+                "name": "item",
+                "idl_type": {
+                    "idl_type": "DOMString",
+                    "type": "return-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "arguments": [
+                    {
+                        "name": "index",
+                        "idl_type": {
+                            "idl_type": "unsigned long",
+                            "type": "argument-type",
+                            "ext_attrs": [],
+                            "nullable": false,
+                            "union": false,
+                            "generic": ""
+                        },
+                        "ext_attrs": [],
+                        "default": null,
+                        "type": "argument",
+                        "optional": false,
+                        "variadic": false
+                    }
+                ],
+                "ext_attrs": [],
+                "type": "operation",
+                "special": "getter"
+            }
+        ],
+        "name": "HTMLAllCollection",
+        "inheritance": null,
+        "partial": false,
+        "ext_attrs": []
+    }
+]

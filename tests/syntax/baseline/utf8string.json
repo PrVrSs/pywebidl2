@@ -1,0 +1,58 @@
+[
+    {
+        "type": "interface",
+        "members": [
+            {
+                "idl_type": {
+                    "idl_type": "UTF8String",
+                    "type": "attribute-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "name": "encoding",
+                "ext_attrs": [],
+                "type": "attribute",
+                "readonly": false,
+                "special": ""
+            },
+            {
+                "name": "encode",
+                "idl_type": {
+                    "idl_type": "UTF8String",
+                    "type": "return-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "arguments": [
+                    {
+                        "name": "input",
+                        "idl_type": {
+                            "idl_type": "DOMString",
+                            "type": "argument-type",
+                            "ext_attrs": [],
+                            "nullable": false,
+                            "union": false,
+                            "generic": ""
+                        },
+                        "ext_attrs": [],
+                        "default": null,
+                        "type": "argument",
+                        "optional": false,
+                        "variadic": false
+                    }
+                ],
+                "ext_attrs": [],
+                "type": "operation",
+                "special": ""
+            }
+        ],
+        "name": "TextEncoder",
+        "inheritance": null,
+        "partial": false,
+        "ext_attrs": []
+    }
+]

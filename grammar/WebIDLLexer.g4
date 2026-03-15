@@ -4,6 +4,7 @@ channels { ERROR }
 
 WHITESPACE:                          [\t\n\r ]+                         -> channel(HIDDEN);
 COMMENT:                             ('//'~[\n\r]*|'/*'(.|'\n')*?'*/')+ -> channel(HIDDEN);
+PREPROCESSOR:                        '#' ~[\n\r]*                       -> channel(HIDDEN);
 
 EQUAL_SYMBOL:                        '=';
 QUESTION_SYMBOL:                     '?';
@@ -25,8 +26,10 @@ DOT:                                 '.';
 // Keywords
 
 ANY:                                 'any';
+ASYNC_ITERABLE:                      'async_iterable';
 ASYNC:                               'async';
 ATTRIBUTE:                           'attribute';
+BIGINT:                              'bigint';
 BOOLEAN:                             'boolean';
 BYTE:                                'byte';
 BYTE_STRING:                         'ByteString';
@@ -47,6 +50,7 @@ INCLUDES:                            'includes';
 INHERIT:                             'inherit';
 INTERFACE:                           'interface';
 ITERABLE:                            'iterable';
+LEGACY_CALLER:                       'legacycaller';
 LONG:                                'long';
 MAPLIKE:                             'maplike';
 MINUS_INFINITY:                      '-Infinity';
@@ -73,9 +77,11 @@ STRINGIFIER:                         'stringifier';
 SYMBOL:                              'symbol';
 TRUE:                                'true';
 TYPEDEF:                             'typedef';
+UNDEFINED:                           'undefined';
 UNRESTRICTED:                        'unrestricted';
 UNSIGNED:                            'unsigned';
 USV_STRING:                          'USVString';
+UTF8_STRING:                         'UTF8String';
 VOID:                                'void';
 
 // bufferRelatedType
@@ -89,8 +95,12 @@ UINT_8_ARRAY:                        'Uint8Array';
 UINT_16_ARRAY:                       'Uint16Array';
 UINT_32_ARRAY:                       'Uint32Array';
 UINT_8_CLAMPED_ARRAY:                'Uint8ClampedArray';
+FLOAT_16_ARRAY:                      'Float16Array';
 FLOAT_32_ARRAY:                      'Float32Array';
 FLOAT_64_ARRAY:                      'Float64Array';
+SHARED_ARRAY_BUFFER:                 'SharedArrayBuffer';
+BIG_INT_64_ARRAY:                    'BigInt64Array';
+BIG_UINT_64_ARRAY:                   'BigUint64Array';
 
 IntegerLiteral
     :                                '-'? HexIntegerLiteral

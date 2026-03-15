@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pywebidl2"
-version = "0.1.7"
+version = "0.1.8"
 description = "WebIDL tool"
 authors = ["Sergey Reshetnikov <resh.sersh@gmail.com>"]
 license = "MIT"
@@ -18,17 +18,17 @@ keywords = [
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
 
-antlr4-python3-runtime = "4.11.1"
-click = "^8.1.3"
-more-itertools = ">=8.14,<11.0"
+antlr4-python3-runtime = "4.13.2"
+click = "^8.3.1"
+more-itertools = "^10.8.0"
 stringcase = "^1.2.0"
 
-[tool.poetry.dev-dependencies]
-mypy = "^1.4"
-pylint = "^2.17.4"
-pytest = "^7.4.0"
-pytest-cov = "^4.1.0"
-isort = "^5.12.0"
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.19.1"
+pylint = "^4.0.5"
+pytest = "^9.0.2"
+pytest-cov = "^7.0.0"
+isort = "^8.0.1"
 
 [build-system]
 requires = ["poetry>=0.12"]

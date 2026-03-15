@@ -1,0 +1,41 @@
+[
+    {
+        "type": "interface",
+        "members": [
+            {
+                "idl_type": {
+                    "idl_type": "bigint",
+                    "type": "attribute-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "name": "value",
+                "ext_attrs": [],
+                "type": "attribute",
+                "readonly": false,
+                "special": ""
+            },
+            {
+                "name": "getBigValue",
+                "idl_type": {
+                    "idl_type": "bigint",
+                    "type": "return-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "arguments": [],
+                "ext_attrs": [],
+                "type": "operation",
+                "special": ""
+            }
+        ],
+        "name": "Foo",
+        "inheritance": null,
+        "partial": false,
+        "ext_attrs": []
+    }
+]

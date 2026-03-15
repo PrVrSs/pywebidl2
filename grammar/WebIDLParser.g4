@@ -37,6 +37,7 @@ interfaceOrMixin
 
 interfaceRest
     : IDENTIFIER inheritance? LEFT_BRACE interfaceMembers* RIGHT_BRACE SEMI
+    | IDENTIFIER SEMI
     ;
 
 partial
@@ -104,6 +105,7 @@ includesStatement
 callbackRestOrInterface
     : callbackRest
     | INTERFACE IDENTIFIER LEFT_BRACE callbackInterfaceMembers* RIGHT_BRACE SEMI
+    | CONSTRUCTOR callbackRest
     ;
 
 
@@ -159,10 +161,11 @@ defaultValue
     | LEFT_BRACKET RIGHT_BRACKET
     | LEFT_BRACE RIGHT_BRACE
     | NULL
+    | UNDEFINED
     ;
 
 operation
-    : special=(GETTER | SETTER | DELETER)? regularOperation
+    : special=(GETTER | SETTER | DELETER | LEGACY_CALLER)? regularOperation
     ;
 
 regularOperation
@@ -225,6 +228,7 @@ staticMemberRest
 iterable
     : ITERABLE LEFT_ANGLE typeWithExtendedAttributes (COMMA typeWithExtendedAttributes)? RIGHT_ANGLE SEMI
     | ASYNC ITERABLE LEFT_ANGLE typeWithExtendedAttributes (COMMA typeWithExtendedAttributes)? RIGHT_ANGLE optionalArgumentList? SEMI
+    | ASYNC_ITERABLE LEFT_ANGLE typeWithExtendedAttributes (COMMA typeWithExtendedAttributes)? RIGHT_ANGLE optionalArgumentList? SEMI
     ;
 
 optionalArgumentList
@@ -258,6 +262,7 @@ namespaceMembers
 namespaceMember
     : regularOperation
     | READONLY attributeRest
+    | const_
     ;
 
 dictionary
@@ -322,6 +327,7 @@ identifier
 returnType
     : type_
     | VOID
+    | UNDEFINED
     ;
 
 singleType
@@ -353,6 +359,7 @@ distinguishableType
     | IDENTIFIER
     | OBJECT
     | SYMBOL
+    | UNDEFINED
     ;
 
 primitiveType
@@ -361,6 +368,7 @@ primitiveType
     | BOOLEAN
     | BYTE
     | OCTET
+    | BIGINT
     ;
 
 constType
@@ -398,6 +406,7 @@ stringType
     : BYTE_STRING
     | DOM_STRING
     | USV_STRING
+    | UTF8_STRING
     ;
 
 bufferRelatedType
@@ -410,8 +419,12 @@ bufferRelatedType
     | UINT_16_ARRAY
     | UINT_32_ARRAY
     | UINT_8_CLAMPED_ARRAY
+    | FLOAT_16_ARRAY
     | FLOAT_32_ARRAY
     | FLOAT_64_ARRAY
+    | SHARED_ARRAY_BUFFER
+    | BIG_INT_64_ARRAY
+    | BIG_UINT_64_ARRAY
     ;
 
 booleanLiteral
@@ -454,7 +467,9 @@ other
     | OBSERVABLE_ARRAY
     | PROMISE
     | USV_STRING
+    | UTF8_STRING
     | ANY
+    | BIGINT
     | BOOLEAN
     | BYTE
     | DOUBLE
@@ -471,8 +486,11 @@ other
     | SHORT
     | SYMBOL
     | TRUE
+    | UNDEFINED
     | UNSIGNED
     | VOID
+    | ASYNC_ITERABLE
+    | LEGACY_CALLER
     | argumentNameKeyword
     | bufferRelatedType
     ;
@@ -491,6 +509,7 @@ argumentNameKeyword
     | INHERIT
     | INTERFACE
     | ITERABLE
+    | LEGACY_CALLER
     | MAPLIKE
     | MIXIN
     | NAMESPACE

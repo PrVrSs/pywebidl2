@@ -1,0 +1,16 @@
+[
+    {
+        "type": "callback",
+        "name": "CustomElementConstructor",
+        "idl_type": {
+            "idl_type": "HTMLElement",
+            "type": "return-type",
+            "ext_attrs": [],
+            "nullable": false,
+            "union": false,
+            "generic": ""
+        },
+        "arguments": [],
+        "ext_attrs": []
+    }
+]

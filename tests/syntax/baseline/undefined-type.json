@@ -1,0 +1,76 @@
+[
+    {
+        "type": "interface",
+        "members": [
+            {
+                "name": "bar",
+                "idl_type": {
+                    "idl_type": "undefined",
+                    "type": "return-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "arguments": [],
+                "ext_attrs": [],
+                "type": "operation",
+                "special": ""
+            },
+            {
+                "idl_type": {
+                    "idl_type": "undefined",
+                    "type": "attribute-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "name": "baz",
+                "ext_attrs": [],
+                "type": "attribute",
+                "readonly": false,
+                "special": ""
+            },
+            {
+                "name": "qux",
+                "idl_type": {
+                    "idl_type": "undefined",
+                    "type": "return-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "arguments": [
+                    {
+                        "name": "x",
+                        "idl_type": {
+                            "idl_type": "long",
+                            "type": "argument-type",
+                            "ext_attrs": [],
+                            "nullable": false,
+                            "union": false,
+                            "generic": ""
+                        },
+                        "ext_attrs": [],
+                        "default": {
+                            "type": "undefined",
+                            "value": "undefined"
+                        },
+                        "type": "argument",
+                        "optional": true,
+                        "variadic": false
+                    }
+                ],
+                "ext_attrs": [],
+                "type": "operation",
+                "special": ""
+            }
+        ],
+        "name": "Foo",
+        "inheritance": null,
+        "partial": false,
+        "ext_attrs": []
+    }
+]

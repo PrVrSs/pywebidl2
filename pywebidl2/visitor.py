@@ -93,8 +93,11 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         )
 
     def visitInterfaceRest(self, ctx: WebIDLParser.InterfaceRestContext):
+        name = ctx.IDENTIFIER().getText()
+        if ctx.LEFT_BRACE() is None:
+            return Interface(name=name, inheritance=None, members=[])
         return Interface(
-            name=ctx.IDENTIFIER().getText(),
+            name=name,
             inheritance=ctx.inheritance() and ctx.inheritance().accept(self),
             members=[member.accept(self) for member in ctx.interfaceMembers()],
         )
@@ -164,12 +167,14 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
             ctx.callbackInterfaceMember(), ctx.extendedAttributeList())
 
     def visitMixinMember(self, ctx: WebIDLParser.MixinMemberContext):
-        if ctx.READONLY() is None:
-            return ctx.getChild(0).accept(self)
-
+        if regular_operation := ctx.regularOperation():
+            return self._operation(regular_operation)
+        if const := ctx.const_():
+            return const.accept(self)
+        if stringifier := ctx.stringifier():
+            return stringifier.accept(self)
         attribute = ctx.attributeRest().accept(self)
-        attribute.readonly = True
-
+        attribute.readonly = ctx.READONLY() is not None
         return attribute
 
     def visitDictionaryMember(self, ctx: WebIDLParser.DictionaryMemberContext):
@@ -193,10 +198,10 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
     def visitNamespaceMember(self, ctx: WebIDLParser.NamespaceMemberContext):
         if regular_operation := ctx.regularOperation():
             return self._operation(regular_operation)
-
+        if const := ctx.const_():
+            return const.accept(self)
         attribute = ctx.attributeRest().accept(self)
         attribute.readonly = True
-
         return attribute
 
     def visitStringifier(self, ctx: WebIDLParser.StringifierContext):
@@ -288,7 +293,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         if regular_operation := ctx.regularOperation():
             return self._operation(regular_operation)
 
-        return ctx.const_()
+        return ctx.const_().accept(self)
 
     def visitConstValue(self, ctx: WebIDLParser.ConstValueContext):
         if boolean_literal := ctx.booleanLiteral():
@@ -354,7 +359,7 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
 
         return Iterable_(
             arguments=arg_list or [],
-            async_=ctx.ASYNC() is not None,
+            async_=ctx.ASYNC() is not None or ctx.ASYNC_ITERABLE() is not None,
             idl_type=[
                 type_with_extended_attr.accept(self)
                 for type_with_extended_attr in ctx.typeWithExtendedAttributes()
@@ -497,6 +502,9 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
         if ctx.NULL():
             return Null()
 
+        if ctx.UNDEFINED():
+            return Literal(type='undefined', value='undefined')
+
         return Literal(type='sequence', value=[])
 
     def visitType_(self, ctx: WebIDLParser.Type_Context):
@@ -545,6 +553,8 @@ class Visitor(WebIDLParserVisitor):  # pylint: disable=too-many-public-methods
     def visitReturnType(self, ctx: WebIDLParser.ReturnTypeContext):
         if void := ctx.VOID():
             return IdlType(idl_type=void.getText())
+        if undefined := ctx.UNDEFINED():
+            return IdlType(idl_type=undefined.getText())
 
         return ctx.type_().accept(self)
 

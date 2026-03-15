@@ -1,0 +1,62 @@
+[
+    {
+        "type": "interface",
+        "members": [
+            {
+                "idl_type": [
+                    {
+                        "idl_type": "any",
+                        "type": null,
+                        "ext_attrs": [],
+                        "nullable": false,
+                        "union": false,
+                        "generic": ""
+                    }
+                ],
+                "arguments": [],
+                "async_": true,
+                "ext_attrs": [],
+                "type": "iterable",
+                "readonly": false
+            }
+        ],
+        "name": "ReadableStream",
+        "inheritance": null,
+        "partial": false,
+        "ext_attrs": []
+    },
+    {
+        "type": "interface",
+        "members": [
+            {
+                "idl_type": [
+                    {
+                        "idl_type": "DOMString",
+                        "type": null,
+                        "ext_attrs": [],
+                        "nullable": false,
+                        "union": false,
+                        "generic": ""
+                    },
+                    {
+                        "idl_type": "any",
+                        "type": null,
+                        "ext_attrs": [],
+                        "nullable": false,
+                        "union": false,
+                        "generic": ""
+                    }
+                ],
+                "arguments": [],
+                "async_": true,
+                "ext_attrs": [],
+                "type": "iterable",
+                "readonly": false
+            }
+        ],
+        "name": "ObservableEntries",
+        "inheritance": null,
+        "partial": false,
+        "ext_attrs": []
+    }
+]

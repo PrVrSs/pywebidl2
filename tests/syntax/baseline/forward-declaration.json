@@ -1,0 +1,42 @@
+[
+    {
+        "type": "interface",
+        "members": [],
+        "name": "Foo",
+        "inheritance": null,
+        "partial": false,
+        "ext_attrs": []
+    },
+    {
+        "type": "interface",
+        "members": [],
+        "name": "Bar",
+        "inheritance": null,
+        "partial": false,
+        "ext_attrs": []
+    },
+    {
+        "type": "interface",
+        "members": [
+            {
+                "idl_type": {
+                    "idl_type": "DOMString",
+                    "type": "attribute-type",
+                    "ext_attrs": [],
+                    "nullable": false,
+                    "union": false,
+                    "generic": ""
+                },
+                "name": "name",
+                "ext_attrs": [],
+                "type": "attribute",
+                "readonly": false,
+                "special": ""
+            }
+        ],
+        "name": "Baz",
+        "inheritance": null,
+        "partial": false,
+        "ext_attrs": []
+    }
+]
